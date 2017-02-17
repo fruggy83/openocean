@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="openocean"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+    xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+    <!-- OpenOcean Bridge -->
+    <bridge-type id="bridge">
+        <label>OpenOcean Bridge</label>
+        <description>The OpenOcean bridge connects to an ESP3 device.</description>
+
+        <properties>
+            <property name="vendor">Enocean</property>
+        </properties>
+        
+        <config-description>
+            <parameter name="enoceanPort" type="text">
+                <context>port_name</context>
+                <label>Serial port</label>
+                <description>Serial port of enocean device</description>
+                <required>false</required>
+            </parameter>
+            <parameter name="baseAddress" type="text">
+                <context>base_address</context>
+                <label>Base Address</label>
+                <description>Base address of the OpenOcean bridge used to communicate with enocean gateway.</description>
+                <required>false</required>
+            </parameter>
+            <parameter name="pollingInterval" type="integer" min="1" step="1">
+                <label>Polling Interval</label>
+                <description>Seconds between fetching values from the Bridge.</description>
+                <required>true</required>
+                <default>10</default>
+            </parameter>
+        </config-description>
+    </bridge-type>
+
+</thing:thing-descriptions>
