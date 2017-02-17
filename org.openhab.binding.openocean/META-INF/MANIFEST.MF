@@ -7,15 +7,18 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
 Import-Package: 
- org.openhab.binding.openocean,
- org.openhab.binding.openocean.handler,
+ com.google.common.collect;version="10.0.1",
+ gnu.io;version="3.12.0.OH",
  org.eclipse.smarthome.config.core,
+ org.eclipse.smarthome.config.core.status,
  org.eclipse.smarthome.core.library.types,
  org.eclipse.smarthome.core.thing,
  org.eclipse.smarthome.core.thing.binding,
  org.eclipse.smarthome.core.thing.binding.builder,
  org.eclipse.smarthome.core.thing.type,
  org.eclipse.smarthome.core.types,
+ org.openhab.binding.openocean,
+ org.openhab.binding.openocean.handler,
  org.slf4j
 Service-Component: OSGI-INF/*.xml
 Export-Package: org.openhab.binding.openocean,
