@@ -21,6 +21,8 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ConfigStatusBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
+import org.openhab.binding.openocean.transceiver.OpenOceanSerialTransceiver;
+import org.openhab.binding.openocean.transceiver.OpenOceanTransceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,8 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
     private Logger logger = LoggerFactory.getLogger(OpenOceanBridgeHandler.class);
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_BRIDGE);
+
+    private OpenOceanTransceiver transceiver;
 
     public OpenOceanBridgeHandler(Bridge bridge) {
         super(bridge);
@@ -56,6 +60,10 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
     public void initialize() {
         // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
         // Long running initialization should be done asynchronously in background.
+
+        transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT));
+        transceiver.Initialize();
+
         updateStatus(ThingStatus.ONLINE);
 
         // Note: When initialization can NOT be done set the status with more details for further
@@ -64,6 +72,22 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
         // as expected. E.g.
         // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
         // "Can not access device as username and/or password are invalid");
+    }
+
+    @Override
+    public void dispose() {
+        if (transceiver != null) {
+            transceiver.ShutDown();
+        }
+        super.dispose();
+    }
+
+    @Override
+    public void handleRemoval() {
+        if (transceiver != null) {
+            transceiver.ShutDown();
+        }
+        super.handleRemoval();
     }
 
     @Override
