@@ -12,6 +12,8 @@ import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -21,6 +23,8 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ConfigStatusBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
+import org.openhab.binding.openocean.transceiver.ESP3Packet;
+import org.openhab.binding.openocean.transceiver.ESP3PacketListener;
 import org.openhab.binding.openocean.transceiver.OpenOceanSerialTransceiver;
 import org.openhab.binding.openocean.transceiver.OpenOceanTransceiver;
 import org.slf4j.Logger;
@@ -32,13 +36,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
+public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements ESP3PacketListener {
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanBridgeHandler.class);
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_BRIDGE);
 
     private OpenOceanTransceiver transceiver;
+    private ScheduledFuture<?> connectorTask;
 
     public OpenOceanBridgeHandler(Bridge bridge) {
         super(bridge);
@@ -58,20 +63,36 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
 
     @Override
     public void initialize() {
-        // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
-        // Long running initialization should be done asynchronously in background.
+
+        updateStatus(ThingStatus.OFFLINE);
+        if (connectorTask == null || connectorTask.isCancelled()) {
+            connectorTask = scheduler.schedule(new Runnable() {
+
+                @Override
+                public void run() {
+                    initTransceiver();
+                }
+
+            }, 10, TimeUnit.SECONDS);
+        }
+    }
+
+    private void initTransceiver() {
 
         transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT));
+        transceiver.addPacketListener(this);
         transceiver.Initialize();
 
+        transceiver.StartReading(scheduler);
         updateStatus(ThingStatus.ONLINE);
 
-        // Note: When initialization can NOT be done set the status with more details for further
-        // analysis. See also class ThingStatusDetail for all available status details.
-        // Add a description to give user information to understand why thing does not work
-        // as expected. E.g.
-        // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-        // "Can not access device as username and/or password are invalid");
+        transceiver.sendESP3Packet(null, new ESP3PacketListener() {
+
+            @Override
+            public void espPacketReceived(ESP3Packet packet) {
+
+            }
+        });
     }
 
     @Override
@@ -107,5 +128,10 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
         }
 
         return configStatusMessages;
+    }
+
+    @Override
+    public void espPacketReceived(ESP3Packet packet) {
+
     }
 }
