@@ -14,19 +14,19 @@ public class ESP3Packet {
     private int[] optionalData = null;
 
     public enum ESPPacketType {
-        RADIO_ERP1(0x01),
-        RESPONSE(0x02),
-        RADIO_SUB_TEL(0x03),
-        EVENT(0x04),
-        COMMON_COMMAND(0x05),
-        SMART_ACK_COMMAND(0x06),
-        REMOTE_MAN_COMMAND(0x07),
-        RADIO_MESSAGE(0x09),
-        RADIO_ERP2(0x0A);
+        RADIO_ERP1((byte) 0x01),
+        RESPONSE((byte) 0x02),
+        RADIO_SUB_TEL((byte) 0x03),
+        EVENT((byte) 0x04),
+        COMMON_COMMAND((byte) 0x05),
+        SMART_ACK_COMMAND((byte) 0x06),
+        REMOTE_MAN_COMMAND((byte) 0x07),
+        RADIO_MESSAGE((byte) 0x09),
+        RADIO_ERP2((byte) 0x0A);
 
-        private int value;
+        private byte value;
 
-        private ESPPacketType(int value) {
+        private ESPPacketType(byte value) {
             this.value = value;
         }
 
@@ -82,11 +82,16 @@ public class ESP3Packet {
         return this.packetType;
     }
 
-    public byte[] serialize()
-    {
-        byte[] result = new byte[data.length + optionalData.length + ENOCEAN_HEADER_LENGTH + ENOCEAN_SYNC_BYTE_LENGTH + ENOCEAN_CRC3_HEADER_LENGTH + ENOCEAN_CRC8_DATA_LENGTH];
+    public byte[] serialize() {
+        byte[] result = new byte[ENOCEAN_SYNC_BYTE_LENGTH + ENOCEAN_HEADER_LENGTH + ENOCEAN_CRC3_HEADER_LENGTH
+                + data.length + optionalData.length + ENOCEAN_CRC8_DATA_LENGTH];
 
-        result[0] =
+        result[0] = Helper.ENOCEAN_SYNC_BYTE;
+        result[1] = (byte) ((data.length >> 8) & 0xff);
+        result[2] = (byte) (data.length & 0xff);
+        result[3] = (byte) (optionalData.length & 0xff);
+        result[4] = packetType.value;
+        result[5] = Helper.calcCRC8(result, ENOCEAN_SYNC_BYTE_LENGTH, ENOCEAN_HEADER_LENGTH);
 
         return result;
     }
