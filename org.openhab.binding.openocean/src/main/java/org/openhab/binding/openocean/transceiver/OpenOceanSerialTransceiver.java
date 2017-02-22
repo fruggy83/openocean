@@ -2,6 +2,7 @@ package org.openhab.binding.openocean.transceiver;
 
 import java.util.TooManyListenersException;
 
+import org.openhab.binding.openocean.internal.OpenOceanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
     }
 
     @Override
-    public void Initialize() {
+    public void Initialize() throws OpenOceanException {
 
         if (serialPort == null) {
 
@@ -41,6 +42,8 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
 
                 e.printStackTrace();
                 ShutDown();
+
+                throw new OpenOceanException("port already in use");
             }
         }
     }
@@ -50,11 +53,13 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
 
         super.ShutDown();
 
-        serialPort.removeEventListener();
-        serialPort.disconnect();
-        serialPort = null;
+        if (serialPort != null) {
+            serialPort.removeEventListener();
+            serialPort.disconnect();
+            serialPort = null;
 
-        logger.debug("Transceiver shutdown");
+            logger.debug("Transceiver shutdown");
+        }
     }
 
     @Override

@@ -10,11 +10,16 @@
         <description>The OpenOcean bridge connects to an ESP3 device.</description>
 
         <channels>
-            <channel id="baseId" typeId="baseId"/>
+            <channel id="repeater" typeId="repeaterMode"/>
         </channels>         
 
         <properties>
-            <property name="vendor">Enocean</property>
+            <property name="Base ID"></property>
+            <property name="Remaining Base ID Write Cycles"></property>
+            <property name="APP Version"></property>
+            <property name="API Version"></property>
+            <property name="Chip ID"></property>
+            <property name="Description"></property>
         </properties>
                     
         <config-description>

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.openhab.binding.openocean.internal.OpenOceanException;
+import org.openhab.binding.openocean.messages.Response;
 import org.openhab.binding.openocean.transceiver.ESP3Packet.ESPPacketType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public abstract class OpenOceanTransceiver {
     private Logger logger = LoggerFactory.getLogger(OpenOceanTransceiver.class);
 
     protected List<ESP3PacketListener> listeners;
-    protected ESP3PacketListener responseListener;
+    protected ResponseListener responseListener;
 
     // Input and output streams, must be created by transceiver implementations
     protected InputStream inputStream;
@@ -42,7 +44,7 @@ public abstract class OpenOceanTransceiver {
         listeners = new LinkedList<ESP3PacketListener>();
     }
 
-    public abstract void Initialize();
+    public abstract void Initialize() throws OpenOceanException;
 
     public void StartReading(ScheduledExecutorService scheduler) {
         if (readingTask == null || readingTask.isCancelled()) {
@@ -58,18 +60,16 @@ public abstract class OpenOceanTransceiver {
     }
 
     public void ShutDown() {
-        if (readingTask != null) {
+        if (readingTask != null && !readingTask.isCancelled()) {
             readingTask.cancel(true);
         }
-
-        this.syncObj.notify();
     }
 
     private void receivePackets() {
 
         byte[] readingBuffer = new byte[Helper.ENOCEAN_MAX_DATA];
         int bytesRead = -1;
-        byte _byte;
+        int _byte;
 
         int[] dataBuffer = new int[Helper.ENOCEAN_MAX_DATA];
         ReadingState state = ReadingState.WaitingForSyncByte;
@@ -97,7 +97,7 @@ public abstract class OpenOceanTransceiver {
                 }
 
                 for (int p = 0; p < bytesRead; p++) {
-                    _byte = readingBuffer[p];
+                    _byte = (readingBuffer[p] & 0xff);
 
                     switch (state) {
                         case WaitingForSyncByte:
@@ -151,15 +151,15 @@ public abstract class OpenOceanTransceiver {
                             if (currentPosition == dataLength + optionalLength) {
                                 if (Helper.checkCRC8(dataBuffer, dataLength + optionalLength, _byte)) {
                                     state = ReadingState.WaitingForSyncByte;
-                                    logger.debug("Received valid esp packet");
-
                                     ESP3Packet packet = new ESP3Packet(dataLength, optionalLength, packetType,
                                             dataBuffer);
 
                                     if (packet.getPacketType() == ESPPacketType.RESPONSE && responseListener != null) {
-                                        responseListener.espPacketReceived(packet);
+                                        logger.debug("publish response");
+                                        responseListener.responseReceived(new Response(packet));
                                         responseListener = null;
-                                    } else if (packet.getPacketType() == ESPPacketType.EVENT) {
+                                    } else { // if (packet.getPacketType() == ESPPacketType.EVENT) {
+                                        logger.debug("publish event");
                                         informListeners(
                                                 new ESP3Packet(dataLength, optionalLength, packetType, dataBuffer));
                                     }
@@ -183,15 +183,16 @@ public abstract class OpenOceanTransceiver {
             } catch (IOException ioexception) {
                 ioexception.printStackTrace();
             } catch (InterruptedException interruptedexception) {
-                interruptedexception.printStackTrace();
+                logger.debug("receiving packets interrupted");
             }
         }
 
         logger.debug("finished listening");
     }
 
-    public void sendESP3Packet(ESP3Packet packet, ESP3PacketListener responseCallback) {
+    public void sendESP3Packet(ESP3Packet packet, ResponseListener responseCallback) {
 
+        logger.debug("sending");
         if (responseListener != null) {
             // throw new Exception("Still awaiting a response");
         }

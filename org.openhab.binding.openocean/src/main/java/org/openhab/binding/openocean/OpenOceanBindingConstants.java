@@ -26,9 +26,21 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "sample");
 
     // List of all Channel ids
-    public final static String BASE_ID = "baseId";
+    public final static String REPEATERMODE = "repeater";
+
+    // List of all repeater mode states
+    public final static String REPEATERMODE_OFF = "OFF";
+    public final static String REPEATERMODE_LEVEL_1 = "LEVEL1";
+    public final static String REPEATERMODE_LEVEL_2 = "LEVEL2";
 
     // Bridge config properties
     public static final String PORT = "port";
 
+    // Bridge properties
+    public static final String PROPERTY_Base_ID = "Base ID";
+    public static final String PROPERTY_REMAINING_WRITE_CYCLES_Base_ID = "Remaining Base ID Write Cycles";
+    public static final String PROPERTY_APP_VERSION = "APP Version";
+    public static final String PROPERTY_API_VERSION = "API Version";
+    public static final String PROPERTY_CHIP_ID = "Chip ID";
+    public static final String PROPERTY_DESCRIPTION = "Description";
 }

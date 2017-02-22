@@ -58,7 +58,7 @@ public class ESP3Packet {
             throw new InvalidParameterException("Packet type is unknown");
         }
 
-        if (dataLength + optionalDataLength > data.length) {
+        if (dataLength + optionalDataLength > payload.length) {
             throw new InvalidParameterException("data length does not match provided lengths");
         }
 
@@ -67,7 +67,7 @@ public class ESP3Packet {
         System.arraycopy(payload, 0, this.data, 0, dataLength);
         if (optionalDataLength > 0) {
             this.optionalData = new int[optionalDataLength];
-            System.arraycopy(payload, dataLength, optionalDataLength, 0, optionalDataLength);
+            System.arraycopy(payload, dataLength, optionalData, 0, optionalDataLength);
         } else {
             this.optionalData = new int[0];
         }
@@ -92,7 +92,34 @@ public class ESP3Packet {
         result[3] = (byte) (optionalData.length & 0xff);
         result[4] = packetType.value;
         result[5] = Helper.calcCRC8(result, ENOCEAN_SYNC_BYTE_LENGTH, ENOCEAN_HEADER_LENGTH);
+        for (int i = 0; i < data.length; i++) {
+            result[6 + i] = (byte) (data[i] & 0xff);
+        }
+        for (int i = 0; i < optionalData.length; i++) {
+            result[6 + data.length + i] = (byte) (optionalData[i] & 0xff);
+        }
+        result[6 + data.length + optionalData.length] = Helper.calcCRC8(result, 6, data.length + optionalData.length);
 
         return result;
+    }
+
+    public int[] getData(int offset, int length) {
+        int[] result = new int[length];
+        System.arraycopy(data, offset, result, 0, length);
+        return result;
+    }
+
+    public int[] getData() {
+        return getData(0, data.length);
+    }
+
+    public int[] getOptionalData(int offset, int length) {
+        int[] result = new int[length];
+        System.arraycopy(optionalData, offset, result, 0, length);
+        return result;
+    }
+
+    public int[] getOptionalData() {
+        return getOptionalData(0, optionalData.length);
     }
 }

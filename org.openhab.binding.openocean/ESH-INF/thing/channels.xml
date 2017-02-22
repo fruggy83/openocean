@@ -5,10 +5,23 @@
         xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
     <!-- BaseId channel -->
-    <channel-type id="baseId">
+    <channel-type id="baseId" advanced="true">
         <item-type>String</item-type>
         <label>Base Id</label>
-        <description>Base Id of for sending messages</description>
+        <description>Base Id for sending messages</description>
+    </channel-type>
+    
+    <channel-type id="repeaterMode" advanced="true">
+        <item-type>String</item-type>
+        <label>Repeater Mode</label>
+        <description>Repeater mode of EnOcean gateway</description>
+        <state>
+            <options>
+                <option value="OFF">Repeater off</option>
+                <option value="LEVEL1">Level-1</option>
+                <option value="LEVEL2">Level-2</option>
+            </options>
+        </state>
     </channel-type>
 
 </thing:thing-descriptions>
