@@ -27,15 +27,16 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
 import org.openhab.binding.openocean.internal.OpenOceanException;
+import org.openhab.binding.openocean.messages.RDRepeaterResponse;
+import org.openhab.binding.openocean.messages.RDVersionResponse;
 import org.openhab.binding.openocean.messages.Response;
-import org.openhab.binding.openocean.messages.Response.ResponseType;
 import org.openhab.binding.openocean.transceiver.ESP3Packet;
 import org.openhab.binding.openocean.transceiver.ESP3PacketFactory;
 import org.openhab.binding.openocean.transceiver.ESP3PacketListener;
 import org.openhab.binding.openocean.transceiver.Helper;
 import org.openhab.binding.openocean.transceiver.OpenOceanSerialTransceiver;
 import org.openhab.binding.openocean.transceiver.OpenOceanTransceiver;
-import org.openhab.binding.openocean.transceiver.ResponseListener;
+import org.openhab.binding.openocean.transceiver.ResponseListenerIgnoringTimeouts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,24 +71,13 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
         if (channelUID.getId().equals(REPEATERMODE)) {
             if (command instanceof RefreshType) {
-                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_REPEATER, new ResponseListener() {
+                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_REPEATER, new ResponseListenerIgnoringTimeouts() {
+
                     @Override
                     public void responseReceived(Response response) {
-                        if (response.isOK()) {
-                            int data[] = response.getData();
-                            switch (data[2]) {
-                                case 0:
-                                    updateState(channelUID, StringType.valueOf(REPEATERMODE_OFF));
-                                    break;
-                                case 1:
-                                    updateState(channelUID, StringType.valueOf(REPEATERMODE_LEVEL_1));
-                                    break;
-                                case 2:
-                                    updateState(channelUID, StringType.valueOf(REPEATERMODE_LEVEL_2));
-                                    break;
-                                default:
-                                    break;
-                            }
+                        RDRepeaterResponse r = new RDRepeaterResponse(response);
+                        if (r.isOK()) {
+                            updateState(channelUID, r.getRepeaterLevel());
                         } else {
                             updateState(channelUID, StringType.valueOf(REPEATERMODE_OFF));
                         }
@@ -95,7 +85,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
                 });
             } else if (command instanceof StringType) {
                 transceiver.sendESP3Packet(ESP3PacketFactory.CO_WR_REPEATER((StringType) command),
-                        new ResponseListener() {
+                        new ResponseListenerIgnoringTimeouts() {
 
                             @Override
                             public void responseReceived(Response response) {
@@ -137,11 +127,11 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
             return;
         }
 
-        transceiver.StartReading(scheduler);
+        transceiver.StartSendingAndReading(scheduler);
         updateStatus(ThingStatus.ONLINE);
 
         logger.debug("request base id");
-        transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE, new ResponseListener() {
+        transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE, new ResponseListenerIgnoringTimeouts() {
 
             @Override
             public void responseReceived(Response response) {
@@ -160,41 +150,19 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
             }
         });
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION, new ResponseListener() {
+        transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION, new ResponseListenerIgnoringTimeouts() {
 
             @Override
             public void responseReceived(Response response) {
 
-                if (response.getResponseType() == ResponseType.RET_OK) {
+                RDVersionResponse r = new RDVersionResponse(response);
+                if (r.isOK()) {
 
-                    int[] data = response.getData();
-                    String version = String.format("%d.%d.%d.%d", data[1] & 0xff, data[2] & 0xff, data[3] & 0xff,
-                            data[4] & 0xff);
-                    updateProperty(PROPERTY_APP_VERSION, version);
+                    updateProperty(PROPERTY_APP_VERSION, r.getAPPVersion());
+                    updateProperty(PROPERTY_API_VERSION, r.getAPIVersion());
+                    updateProperty(PROPERTY_CHIP_ID, r.getChipID());
+                    updateProperty(PROPERTY_DESCRIPTION, r.getDescription());
 
-                    version = String.format("%d.%d.%d.%d", data[5] & 0xff, data[6] & 0xff, data[7] & 0xff,
-                            data[8] & 0xff);
-                    updateProperty(PROPERTY_API_VERSION, version);
-
-                    int[] chip = new int[4];
-                    System.arraycopy(data, 9, chip, 0, 4);
-                    updateProperty(PROPERTY_CHIP_ID, Helper.bytesToHexString(chip));
-
-                    StringBuffer description = new StringBuffer();
-                    for (int i = 17; i < data.length; i++) {
-                        description.append((char) (data[i] & 0xff));
-                    }
-                    updateProperty(PROPERTY_DESCRIPTION, description.toString());
-
-                } else {
-                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Could not get BaseId");
                 }
             }
         });

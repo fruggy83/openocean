@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -24,8 +25,18 @@ public abstract class OpenOceanTransceiver {
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanTransceiver.class);
 
+    class Request {
+        ESP3Packet RequestPacket;
+
+        Response ResponsePacket;
+        ResponseListener ResponseListener;
+    }
+
+    private Queue<Request> requests;
+    Request currentRequest = null;
+    private Future<?> sendingTask;
+
     protected List<ESP3PacketListener> listeners;
-    protected ResponseListener responseListener;
 
     // Input and output streams, must be created by transceiver implementations
     protected InputStream inputStream;
@@ -42,11 +53,12 @@ public abstract class OpenOceanTransceiver {
         this.syncObj = new Object();
 
         listeners = new LinkedList<ESP3PacketListener>();
+        requests = new LinkedList<Request>();
     }
 
     public abstract void Initialize() throws OpenOceanException;
 
-    public void StartReading(ScheduledExecutorService scheduler) {
+    public void StartSendingAndReading(ScheduledExecutorService scheduler) {
         if (readingTask == null || readingTask.isCancelled()) {
             readingTask = scheduler.submit(new Runnable() {
 
@@ -57,11 +69,25 @@ public abstract class OpenOceanTransceiver {
 
             });
         }
+
+        if (sendingTask == null || sendingTask.isCancelled()) {
+            sendingTask = scheduler.submit(new Runnable() {
+
+                @Override
+                public void run() {
+                    sendPackets();
+                }
+            });
+        }
     }
 
     public void ShutDown() {
         if (readingTask != null && !readingTask.isCancelled()) {
             readingTask.cancel(true);
+        }
+
+        if (sendingTask != null && !sendingTask.isCancelled()) {
+            sendingTask.cancel(true);
         }
     }
 
@@ -154,12 +180,19 @@ public abstract class OpenOceanTransceiver {
                                     ESP3Packet packet = new ESP3Packet(dataLength, optionalLength, packetType,
                                             dataBuffer);
 
-                                    if (packet.getPacketType() == ESPPacketType.RESPONSE && responseListener != null) {
+                                    if (packet.getPacketType() == ESPPacketType.RESPONSE && currentRequest != null) {
                                         logger.debug("publish response");
-                                        responseListener.responseReceived(new Response(packet));
-                                        responseListener = null;
-                                    } else { // if (packet.getPacketType() == ESPPacketType.EVENT) {
+                                        synchronized (currentRequest) {
+                                            currentRequest.ResponsePacket = new Response(packet);
+                                            currentRequest.notify();
+                                        }
+                                    } else {
                                         logger.debug("publish event");
+
+                                        int[] d = new int[dataLength + optionalLength];
+                                        System.arraycopy(dataBuffer, 0, d, 0, d.length);
+                                        logger.debug(Helper.bytesToHexString(d));
+
                                         informListeners(
                                                 new ESP3Packet(dataLength, optionalLength, packetType, dataBuffer));
                                     }
@@ -192,17 +225,70 @@ public abstract class OpenOceanTransceiver {
 
     public void sendESP3Packet(ESP3Packet packet, ResponseListener responseCallback) {
 
-        logger.debug("sending");
-        if (responseListener != null) {
-            // throw new Exception("Still awaiting a response");
-        }
+        synchronized (requests) {
+            logger.debug("new request arrived");
+            Request r = new Request();
+            r.RequestPacket = packet;
+            r.ResponseListener = responseCallback;
 
-        responseListener = responseCallback;
-        try {
-            outputStream.write(packet.serialize());
-            outputStream.flush();
-        } catch (IOException e) {
-            logger.debug("exception while sending data " + e.getMessage());
+            requests.offer(r);
+            requests.notify();
+        }
+    }
+
+    protected void sendPackets() {
+
+        logger.debug("start sending packets");
+
+        while (!sendingTask.isCancelled()) {
+            try {
+
+                synchronized (requests) {
+                    if (requests.isEmpty()) {
+                        logger.debug("awaiting packets to send");
+                        requests.wait();
+                    }
+                    currentRequest = requests.poll();
+                }
+
+                if (sendingTask.isCancelled()) {
+                    return;
+                }
+
+                if (currentRequest != null) {
+                    synchronized (currentRequest) {
+
+                        logger.debug("sending request");
+
+                        try {
+                            outputStream.write(currentRequest.RequestPacket.serialize());
+                            outputStream.flush();
+                        } catch (IOException e) {
+                            logger.debug("exception while sending data " + e.getMessage());
+                        }
+
+                        logger.debug("awaiting response");
+                        currentRequest.wait(500);
+
+                        if (currentRequest.ResponseListener != null) {
+                            if (currentRequest.ResponsePacket == null) {
+                                logger.debug("response timeout");
+                                currentRequest.ResponseListener.responseTimeOut();
+                            } else {
+                                logger.debug("response received");
+                                currentRequest.ResponseListener.responseReceived(currentRequest.ResponsePacket);
+                            }
+                        } else {
+                            logger.debug("request without listener");
+                        }
+
+                        logger.debug("handeled request");
+                        currentRequest = null;
+                    }
+                }
+            } catch (InterruptedException e) {
+                logger.debug("sending packets interrupted");
+            }
         }
     }
 

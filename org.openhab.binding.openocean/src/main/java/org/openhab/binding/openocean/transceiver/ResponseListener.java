@@ -5,4 +5,6 @@ import org.openhab.binding.openocean.messages.Response;
 public interface ResponseListener {
 
     public void responseReceived(Response response);
+
+    public void responseTimeOut();
 }

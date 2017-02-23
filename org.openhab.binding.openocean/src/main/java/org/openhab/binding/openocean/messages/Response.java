@@ -43,7 +43,11 @@ public class Response extends EnoceanMessage {
     public Response(ESP3Packet packet) {
         super(packet);
 
-        responseType = ResponseType.getResponsetype(packet.getData(0, 1)[0]);
+        try {
+            responseType = ResponseType.getResponsetype(packet.getData(0, 1)[0]);
+        } catch (Exception e) {
+            responseType = ResponseType.RET_ERROR;
+        }
     }
 
     public ResponseType getResponseType() {
