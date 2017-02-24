@@ -23,7 +23,7 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_BRIDGE = new ThingTypeUID(BINDING_ID, "bridge");
 
     // List of all Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "sample");
+    public final static ThingTypeUID THING_TYPE_ROCKERSWITCH = new ThingTypeUID(BINDING_ID, "rockerSwitch");
 
     // List of all Channel ids
     public final static String REPEATERMODE = "repeater";

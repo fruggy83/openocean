@@ -7,13 +7,15 @@
  */
 package org.openhab.binding.openocean.internal;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.THING_TYPE_BRIDGE;
+import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
 import java.util.Set;
 
+import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.openocean.handler.OpenOceanBridgeHandler;
@@ -38,12 +40,23 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
     }
 
     @Override
+    public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
+            ThingUID bridgeUID) {
+        // TODO Auto-generated method stub
+        Thing t = super.createThing(thingTypeUID, configuration, thingUID, bridgeUID);
+
+        return t;
+    }
+
+    @Override
     protected ThingHandler createHandler(Thing thing) {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
         if (thingTypeUID.equals(THING_TYPE_BRIDGE)) {
             return new OpenOceanBridgeHandler((Bridge) thing);
+        } else if (thingTypeUID.equals(THING_TYPE_ROCKERSWITCH)) {
+            return new OpenOceanThingHandler(thing);
         }
 
         return null;

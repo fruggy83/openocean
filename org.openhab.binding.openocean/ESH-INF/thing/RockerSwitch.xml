@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="openocean"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+    <!-- RockerSwitch -->
+    <thing-type id="rockerSwitch">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="bridge" />
+        </supported-bridge-type-refs>
+        
+        <label>Rocker Switch</label>
+        <description>Rocker Switch</description>
+
+        <config-description>            
+            <parameter name="channel" type="text">
+                <label>Channel</label>                
+                <required>true</required>
+                <options>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </options>                
+                <limitToOptions>true</limitToOptions>
+            </parameter>
+            <parameter name="rockerType" type="text">
+                <label>Type</label>                
+                <description>A toggle switch emits just pressed and released events. A state switch differs between O and I</description>
+                <required>true</required>
+                <options>
+                    <option value="Toggle0">Toggle O</option>
+                    <option value="Toggle1">Toggle I</option>
+                    <option value="State">State</option>
+                </options>                
+                <limitToOptions>true</limitToOptions>
+            </parameter>
+        </config-description>
+        
+    </thing-type>
+
+</thing:thing-descriptions>
+        
