@@ -24,6 +24,7 @@ public class OpenOceanBindingConstants {
 
     // List of all Thing Type UIDs
     public final static ThingTypeUID THING_TYPE_ROCKERSWITCH = new ThingTypeUID(BINDING_ID, "rockerSwitch");
+    public final static ThingTypeUID THING_TYPE_SWITCHINGACTUATOR = new ThingTypeUID(BINDING_ID, "switchingActuator");
 
     // List of all Channel ids
     public final static String REPEATERMODE = "repeater";
@@ -34,6 +35,8 @@ public class OpenOceanBindingConstants {
     public final static String REPEATERMODE_LEVEL_2 = "LEVEL2";
 
     // Bridge config properties
+    public static final String OFFSETID = "offsetId";
+    public static final String SENDERID = "senderId";
     public static final String PORT = "port";
 
     // Bridge properties

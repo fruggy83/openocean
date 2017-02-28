@@ -19,6 +19,7 @@ import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
+import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
@@ -56,6 +57,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
     private ScheduledFuture<?> connectorTask;
 
     private int[] baseId = null;
+    private Thing[] things = new Thing[128];
 
     public OpenOceanBridgeHandler(Bridge bridge) {
         super(bridge);
@@ -186,12 +188,10 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
     @Override
     public Collection<ConfigStatusMessage> getConfigStatus() {
+        Collection<ConfigStatusMessage> configStatusMessages;
 
         // The serial port must be provided
         final String bridgePort = (String) getThing().getConfiguration().get(PORT);
-        Collection<ConfigStatusMessage> configStatusMessages;
-
-        // Check whether an IP address is provided
         if (bridgePort == null || bridgePort.isEmpty()) {
             configStatusMessages = Collections.singletonList(ConfigStatusMessage.Builder.error(PORT)
                     .withMessageKeySuffix(OpenOceanConfigStatusMessage.PORT_MISSING.getMessageKey()).withArguments(PORT)
@@ -207,4 +207,27 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
     public void espPacketReceived(ESP3Packet packet) {
 
     }
+
+    public int[] getBaseId() {
+        return baseId.clone();
+    }
+
+    public int getNextId() {
+        for (int i = 1; i < things.length; i++) {
+            if (things[i] == null) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public void addThing(Thing thing) {
+
+    }
+
+    public void removeThing(Thing thing) {
+
+    }
+
 }

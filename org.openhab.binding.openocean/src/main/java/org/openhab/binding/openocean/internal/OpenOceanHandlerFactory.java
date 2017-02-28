@@ -18,8 +18,12 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.openhab.binding.openocean.config.OpenOceanActuatorConfig;
+import org.openhab.binding.openocean.config.OpenOceanBaseConfig;
 import org.openhab.binding.openocean.handler.OpenOceanBridgeHandler;
-import org.openhab.binding.openocean.handler.OpenOceanThingHandler;
+import org.openhab.binding.openocean.handler.OpenOceanSwitchHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -31,8 +35,10 @@ import com.google.common.collect.Sets;
  */
 public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
 
+    private Logger logger = LoggerFactory.getLogger(OpenOceanHandlerFactory.class);
+
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Sets
-            .union(OpenOceanBridgeHandler.SUPPORTED_THING_TYPES, OpenOceanThingHandler.SUPPORTED_THING_TYPES);
+            .union(OpenOceanBridgeHandler.SUPPORTED_THING_TYPES, OpenOceanSwitchHandler.SUPPORTED_THING_TYPES);
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -42,10 +48,34 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
     @Override
     public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
             ThingUID bridgeUID) {
-        // TODO Auto-generated method stub
+
         Thing t = super.createThing(thingTypeUID, configuration, thingUID, bridgeUID);
 
+        logger.debug("create thing");
+
         return t;
+    }
+
+    private ThingUID getSensorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+            ThingUID bridgeUID) {
+
+        OpenOceanBaseConfig config = configuration.as(OpenOceanBaseConfig.class);
+
+        if (thingUID == null) {
+            thingUID = new ThingUID(thingTypeUID, config.senderId, bridgeUID.getId());
+        }
+        return thingUID;
+    }
+
+    private ThingUID getActuatorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+            ThingUID bridgeUID) {
+
+        OpenOceanActuatorConfig config = configuration.as(OpenOceanActuatorConfig.class);
+
+        if (thingUID == null) {
+            thingUID = new ThingUID(thingTypeUID, Integer.toString(config.offsetId), bridgeUID.getId());
+        }
+        return thingUID;
     }
 
     @Override
@@ -55,8 +85,8 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
 
         if (thingTypeUID.equals(THING_TYPE_BRIDGE)) {
             return new OpenOceanBridgeHandler((Bridge) thing);
-        } else if (thingTypeUID.equals(THING_TYPE_ROCKERSWITCH)) {
-            return new OpenOceanThingHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_SWITCHINGACTUATOR)) {
+            return new OpenOceanSwitchHandler(thing);
         }
 
         return null;
