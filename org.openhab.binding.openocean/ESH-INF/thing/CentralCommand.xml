@@ -17,10 +17,15 @@
             </channels>
             
             <config-description>
+                <parameter name="channel" type="integer" min="1" max="128">
+                    <label>Channel</label>
+                    <description>Each channel represents an individual thing, channel is used to create an unique Id</description>
+                    <required>true</required>
+                </parameter>
                 <parameter name="senderId" type="text">
                     <label>Sender Id</label>
-                    <description>Id is used in messages send by thing</description>                
-                    <required>true</required>                
+                    <description>Id is used to identify messages send by thing (4 byte hex string)</description>
+                    <required>true</required>
                 </parameter>
                 <parameter name="offsetId" type="integer" min="1" max="128">
                     <label>Id offset</label>

@@ -104,7 +104,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
     public void initialize() {
 
         // TODO use scheduled task to try reconnect to gateway
-        updateStatus(ThingStatus.OFFLINE);
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "trying to connect to gateway...");
         if (connectorTask == null || connectorTask.isCancelled()) {
             connectorTask = scheduler.schedule(new Runnable() {
 

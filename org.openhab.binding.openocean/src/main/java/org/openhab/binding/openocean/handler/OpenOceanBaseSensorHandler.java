@@ -14,4 +14,8 @@ public abstract class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandl
         super(thing);
     }
 
+    @Override
+    boolean initializeIdForSending() {
+        return true;
+    }
 }

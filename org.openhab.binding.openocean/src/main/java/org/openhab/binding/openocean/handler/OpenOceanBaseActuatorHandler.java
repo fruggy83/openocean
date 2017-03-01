@@ -6,13 +6,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.openocean.config.OpenOceanActuatorConfig;
 
-public class OpenOceanBaseActuatorHandler extends OpenOceanBaseThingHandler {
+public abstract class OpenOceanBaseActuatorHandler extends OpenOceanBaseThingHandler {
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_SWITCHINGACTUATOR);
 
@@ -20,31 +18,31 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseThingHandler {
         super(thing);
     }
 
-    private boolean checkId() {
+    @Override
+    boolean initializeIdForSending() {
 
         OpenOceanActuatorConfig cfg = getConfigAs(OpenOceanActuatorConfig.class);
 
         int offset = cfg.offsetId;
         if (offset == 0) {
             Configuration config = editConfiguration();
-            config.put(OFFSETID, 1);
-            updateConfiguration(config);
+
+            OpenOceanBridgeHandler bridgeHandler = getBridgeHandler();
+            if (bridgeHandler != null) {
+                offset = bridgeHandler.getNextId();
+                if (offset == -1) {
+                    return false;
+                }
+                config.put(OFFSETID, offset);
+                updateConfiguration(config);
+            } else {
+                return false;
+            }
         }
 
-        // thingId = Helper.addOffsetToBaseId(offset, gateway.getBaseId());
+        // super.sendingId = Helper.addOffsetToBaseId(offset, getBridgeHandler().getBaseId());
 
         return true;
-    }
-
-    @Override
-    public void handleCommand(ChannelUID channelUID, Command command) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    boolean prepareThing() {
-        return checkId();
     }
 
 }

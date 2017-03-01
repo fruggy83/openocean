@@ -19,7 +19,9 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.openocean.config.OpenOceanActuatorConfig;
-import org.openhab.binding.openocean.config.OpenOceanBaseConfig;
+import org.openhab.binding.openocean.handler.OpenOceanBaseActuatorHandler;
+import org.openhab.binding.openocean.handler.OpenOceanBaseSensorHandler;
+import org.openhab.binding.openocean.handler.OpenOceanBaseThingHandler;
 import org.openhab.binding.openocean.handler.OpenOceanBridgeHandler;
 import org.openhab.binding.openocean.handler.OpenOceanSwitchHandler;
 import org.slf4j.Logger;
@@ -49,33 +51,31 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
     public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
             ThingUID bridgeUID) {
 
-        Thing t = super.createThing(thingTypeUID, configuration, thingUID, bridgeUID);
+        if (OpenOceanBridgeHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
+            return super.createThing(thingTypeUID, configuration, thingUID, null);
+        }
+        if (OpenOceanBaseThingHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
+            ThingUID thingId = createthingUID(thingTypeUID, configuration, thingUID, bridgeUID);
+            return super.createThing(thingTypeUID, configuration, thingId, bridgeUID);
+        }
 
-        logger.debug("create thing");
-
-        return t;
+        throw new IllegalArgumentException("The thing type " + thingTypeUID + " is not supported by the binding.");
     }
 
-    private ThingUID getSensorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+    protected ThingUID createthingUID(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
             ThingUID bridgeUID) {
 
-        OpenOceanBaseConfig config = configuration.as(OpenOceanBaseConfig.class);
-
-        if (thingUID == null) {
-            thingUID = new ThingUID(thingTypeUID, config.senderId, bridgeUID.getId());
+        String id = null;
+        if (OpenOceanBaseActuatorHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
+            OpenOceanActuatorConfig config = configuration.as(OpenOceanActuatorConfig.class);
+            id = thingUID.getId() + "_" + Integer.toString(config.channel);
+        } else if (OpenOceanBaseSensorHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
+            id = thingUID.getId();
+        } else {
+            throw new IllegalArgumentException("The thing type " + thingTypeUID + " is not supported by the binding.");
         }
-        return thingUID;
-    }
 
-    private ThingUID getActuatorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
-            ThingUID bridgeUID) {
-
-        OpenOceanActuatorConfig config = configuration.as(OpenOceanActuatorConfig.class);
-
-        if (thingUID == null) {
-            thingUID = new ThingUID(thingTypeUID, Integer.toString(config.offsetId), bridgeUID.getId());
-        }
-        return thingUID;
+        return new ThingUID(thingTypeUID, id, bridgeUID.getId());
     }
 
     @Override
