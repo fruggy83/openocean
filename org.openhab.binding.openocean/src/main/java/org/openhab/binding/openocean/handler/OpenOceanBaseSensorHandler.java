@@ -15,6 +15,11 @@ public abstract class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandl
     }
 
     @Override
+    boolean validateConfig() {
+        return validateThingId(thing.getUID().getId());
+    }
+
+    @Override
     boolean initializeIdForSending() {
         return true;
     }

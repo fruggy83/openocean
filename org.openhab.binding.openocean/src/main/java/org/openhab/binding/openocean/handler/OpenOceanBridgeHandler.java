@@ -212,14 +212,14 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
         return baseId.clone();
     }
 
-    public int getNextId() {
+    public String getNextId() {
         for (int i = 1; i < things.length; i++) {
             if (things[i] == null) {
-                return i;
+                return Helper.bytesToHexString(Helper.addOffsetToBaseId(i, baseId));
             }
         }
 
-        return -1;
+        return "";
     }
 
     public void addThing(Thing thing) {

@@ -40,7 +40,7 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
     private Logger logger = LoggerFactory.getLogger(OpenOceanHandlerFactory.class);
 
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Sets
-            .union(OpenOceanBridgeHandler.SUPPORTED_THING_TYPES, OpenOceanSwitchHandler.SUPPORTED_THING_TYPES);
+            .union(OpenOceanBridgeHandler.SUPPORTED_THING_TYPES, OpenOceanBaseThingHandler.SUPPORTED_THING_TYPES);
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {

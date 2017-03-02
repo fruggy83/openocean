@@ -24,12 +24,8 @@
                 </parameter>
                 <parameter name="senderId" type="text">
                     <label>Sender Id</label>
-                    <description>Id is used to identify messages send by thing (4 byte hex string)</description>
+                    <description>Id is used to send messages to thing (4 byte hex string). If not specified the next free Id will be determined by bridge</description>
                     <required>true</required>
-                </parameter>
-                <parameter name="offsetId" type="integer" min="1" max="128">
-                    <label>Id offset</label>
-                    <description>Offset is added to base id of bridge to send messages to thing. If not specified the next free offset will be determined by bridge</description>
                 </parameter>
                 <parameter name="manufacturerId" type="text">
                     <label>Manufacturer Id</label>

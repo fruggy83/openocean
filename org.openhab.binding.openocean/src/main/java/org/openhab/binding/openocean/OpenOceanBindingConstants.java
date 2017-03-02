@@ -46,4 +46,6 @@ public class OpenOceanBindingConstants {
     public static final String PROPERTY_API_VERSION = "API Version";
     public static final String PROPERTY_CHIP_ID = "Chip ID";
     public static final String PROPERTY_DESCRIPTION = "Description";
+
+    public static final String ACTUATOR_ID_SPLITTER = "_";
 }

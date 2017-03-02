@@ -15,7 +15,6 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ConfigStatusThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.openocean.config.OpenOceanActuatorConfig;
-import org.openhab.binding.openocean.config.OpenOceanBaseConfig;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
 
         if (getBridgeHandler() != null) {
             if (bridgeStatus == ThingStatus.ONLINE) {
-                if (validateConfig() && initializeIdForSending()) {
+                if (validateConfig()) {
                     updateStatus(ThingStatus.ONLINE);
                 } else {
                     updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR);
@@ -57,26 +56,25 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
         }
     }
 
-    private boolean validateConfig() {
-        final OpenOceanBaseConfig config = getConfigAs(OpenOceanBaseConfig.class);
-
-        if (config.senderId == null || config.senderId.isEmpty()) {
+    protected boolean validateThingId(String id) {
+        if (id == null || id.isEmpty()) {
             return false;
         } else {
 
-            if (config.senderId.length() != 8) {
+            if (id.length() != 8) {
                 return false;
             }
 
             try {
-                Integer.parseUnsignedInt(config.senderId, 16);
+                Integer.parseUnsignedInt(id, 16);
+                return true;
             } catch (Exception e) {
                 return false;
             }
         }
-
-        return true;
     }
+
+    abstract boolean validateConfig();
 
     abstract boolean initializeIdForSending();
 
