@@ -16,12 +16,7 @@
                 <channel typeId="switch" id="switch"></channel>
             </channels>
             
-            <config-description>
-                <parameter name="channel" type="integer" min="1" max="128">
-                    <label>Channel</label>
-                    <description>Each channel represents an individual thing, channel is used to create an unique Id</description>
-                    <required>true</required>
-                </parameter>
+            <config-description>                
                 <parameter name="senderId" type="text">
                     <label>Sender Id</label>
                     <description>Id is used to send messages to thing (4 byte hex string). If not specified the next free Id will be determined by bridge</description>

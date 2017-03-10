@@ -36,12 +36,19 @@
     <channel-type id="switch">
         <item-type>Switch</item-type>
         <label>Switch</label>
-        <description>The switch channel allows to switch the light on and off.
-        </description>
+        <description>The switch channel allows to switch the light on and off.</description>
         <category>Light</category>
         <tags>
             <tag>Lighting</tag>
         </tags>
+    </channel-type>
+    
+    <!-- Switch Channel -->
+    <channel-type id="rollershutter">
+        <item-type>Rollershutter</item-type>
+        <label>Rollershutter</label>
+        <description>Rollershutter</description>
+        <category>Blinds</category>
     </channel-type>
 
 </thing:thing-descriptions>

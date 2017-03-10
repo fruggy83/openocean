@@ -68,7 +68,7 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
         String id = null;
         if (OpenOceanBaseActuatorHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
             OpenOceanActuatorConfig config = configuration.as(OpenOceanActuatorConfig.class);
-            id = thingUID.getId() + "_" + Integer.toString(config.channel);
+            id = thingUID.getId();
         } else if (OpenOceanBaseSensorHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
             id = thingUID.getId();
         } else {

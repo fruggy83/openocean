@@ -71,6 +71,18 @@ public class Helper {
         return new String(hexChars);
     }
 
+    public static int[] hexStringToBytes(String hex) {
+        long id = Long.parseLong(hex, 16);
+
+        int[] result = new int[4];
+        result[3] = (int) (id & 0xff);
+        result[2] = (int) ((id >> 8) & 0xff);
+        result[1] = (int) ((id >> 16) & 0xff);
+        result[0] = (int) ((id >> 24) & 0xff);
+
+        return result;
+    }
+
     public static int[] addOffsetToBaseId(int offset, int[] baseId) {
         long id = (((long) baseId[0]) << 24) + (baseId[1] << 16) + (baseId[2] << 8) + baseId[3];
         id += offset;

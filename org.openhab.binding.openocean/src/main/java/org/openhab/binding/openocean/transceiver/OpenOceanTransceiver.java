@@ -3,15 +3,19 @@ package org.openhab.binding.openocean.transceiver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openhab.binding.openocean.internal.OpenOceanException;
+import org.openhab.binding.openocean.messages.ESP3Packet;
+import org.openhab.binding.openocean.messages.ESP3Packet.ESPPacketType;
+import org.openhab.binding.openocean.messages.ESP3PacketFactory;
 import org.openhab.binding.openocean.messages.Response;
-import org.openhab.binding.openocean.transceiver.ESP3Packet.ESPPacketType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +40,7 @@ public abstract class OpenOceanTransceiver {
     Request currentRequest = null;
     private Future<?> sendingTask;
 
-    protected List<ESP3PacketListener> listeners;
+    protected Map<Long, List<ESP3PacketListener>> listeners;
 
     // Input and output streams, must be created by transceiver implementations
     protected InputStream inputStream;
@@ -52,8 +56,8 @@ public abstract class OpenOceanTransceiver {
         this.path = path;
         this.syncObj = new Object();
 
-        listeners = new LinkedList<ESP3PacketListener>();
         requests = new LinkedList<Request>();
+        listeners = new HashMap<Long, List<ESP3PacketListener>>();
     }
 
     public abstract void Initialize() throws OpenOceanException;
@@ -77,6 +81,7 @@ public abstract class OpenOceanTransceiver {
                 public void run() {
                     sendPackets();
                 }
+
             });
         }
     }
@@ -177,26 +182,33 @@ public abstract class OpenOceanTransceiver {
                             if (currentPosition == dataLength + optionalLength) {
                                 if (Helper.checkCRC8(dataBuffer, dataLength + optionalLength, _byte)) {
                                     state = ReadingState.WaitingForSyncByte;
-                                    ESP3Packet packet = new ESP3Packet(dataLength, optionalLength, packetType,
-                                            dataBuffer);
+                                    ESP3Packet packet = ESP3PacketFactory.BuildPacket(dataLength, optionalLength,
+                                            packetType, dataBuffer);
 
-                                    if (packet.getPacketType() == ESPPacketType.RESPONSE && currentRequest != null) {
-                                        logger.debug("publish response");
-                                        synchronized (currentRequest) {
-                                            currentRequest.ResponsePacket = new Response(packet);
-                                            currentRequest.notify();
+                                    if (packet != null) {
+                                        if (packet.getPacketType() == ESPPacketType.RESPONSE
+                                                && currentRequest != null) {
+                                            logger.debug("publish response");
+                                            synchronized (currentRequest) {
+                                                currentRequest.ResponsePacket = (Response) packet;
+                                                currentRequest.notify();
+                                            }
+                                        } else {
+                                            logger.debug("publish event for: "
+                                                    + Helper.bytesToHexString(packet.getSenderId()));
+
+                                            int[] d = new int[dataLength + optionalLength];
+                                            System.arraycopy(dataBuffer, 0, d, 0, d.length);
+                                            logger.debug(Helper.bytesToHexString(d));
+
+                                            informListeners(packet);
                                         }
                                     } else {
-                                        logger.debug("publish event");
-
+                                        logger.debug("Unknown ESP3Packet");
                                         int[] d = new int[dataLength + optionalLength];
                                         System.arraycopy(dataBuffer, 0, d, 0, d.length);
                                         logger.debug(Helper.bytesToHexString(d));
-
-                                        informListeners(
-                                                new ESP3Packet(dataLength, optionalLength, packetType, dataBuffer));
                                     }
-
                                 } else {
                                     state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
                                             : ReadingState.WaitingForSyncByte;
@@ -221,6 +233,7 @@ public abstract class OpenOceanTransceiver {
         }
 
         logger.debug("finished listening");
+
     }
 
     public void sendESP3Packet(ESP3Packet packet, ResponseListener responseCallback) {
@@ -261,7 +274,13 @@ public abstract class OpenOceanTransceiver {
                         logger.debug("sending request");
 
                         try {
-                            outputStream.write(currentRequest.RequestPacket.serialize());
+                            byte[] b = currentRequest.RequestPacket.serialize();
+                            int[] i = new int[b.length];
+                            for (int j = 0; j < b.length; i[j] = b[j++]) {
+                                ;
+                            }
+                            logger.debug(Helper.bytesToHexString(i));
+                            outputStream.write(b);
                             outputStream.flush();
                         } catch (IOException e) {
                             logger.debug("exception while sending data " + e.getMessage());
@@ -293,14 +312,27 @@ public abstract class OpenOceanTransceiver {
     }
 
     protected void informListeners(ESP3Packet packet) {
-        for (ESP3PacketListener listener : listeners) {
-            listener.espPacketReceived(packet);
+
+        try {
+            int[] senderId = packet.getSenderId();
+            if (senderId != null) {
+                long s = Long.parseLong(Helper.bytesToHexString(senderId), 16);
+                List<ESP3PacketListener> list = listeners.get(s);
+                if (list != null) {
+                    logger.debug("inform listener");
+                    for (ESP3PacketListener listener : list) {
+                        listener.espPacketReceived(packet);
+                    }
+                }
+            }
+        } catch (Exception e) {
+
         }
     }
 
     public void addPacketListener(ESP3PacketListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
+        listeners.putIfAbsent(listener.getSenderIdToListenTo(), new LinkedList<ESP3PacketListener>());
+        listeners.get(listener.getSenderIdToListenTo()).add(listener);
+        logger.debug("Listener added: " + listener.getSenderIdToListenTo());
     }
 }

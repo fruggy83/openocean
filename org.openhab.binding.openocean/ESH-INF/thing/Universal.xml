@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="openocean"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+        
+        <thing-type id="universalCommand">
+            <supported-bridge-type-refs>
+                <bridge-type-ref id="bridge" />
+            </supported-bridge-type-refs>
+            
+            <label>Universal actuator</label>
+            <description>Actuator operates with universal EEP command A5-3F-7F</description>
+            
+            <config-description>                
+                <parameter name="senderId" type="text">
+                    <label>Sender Id</label>
+                    <description>Id is used to send messages to thing (4 byte hex string). If not specified the next free Id will be determined by bridge</description>
+                    <required>true</required>
+                </parameter>
+                <parameter name="manufacturerId" type="text">
+                    <label>Manufacturer Id</label>
+                    <description>Id is used for 4BS teach in with EEP</description>
+                </parameter>
+                <parameter name="teachInType" type="text">
+                    <label>Teach in type</label>
+                    <description>Type of 4BS teach in message</description>
+                    <options>
+                        <option value="uniWoEEP">unidirectional without EEP</option>
+                        <option value="uniWEEP">unidirectional with EEP</option>
+                        <option value="biWoEEP">bidirectional without EEP</option>
+                        <option value="biWEEP">bidirectional with EEP</option>
+                    </options>
+                    <limitToOptions>true</limitToOptions>
+                </parameter>
+                
+            </config-description>
+            
+        </thing-type>
+        
+</thing:thing-descriptions>

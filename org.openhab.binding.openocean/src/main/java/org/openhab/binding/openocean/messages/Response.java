@@ -2,9 +2,7 @@ package org.openhab.binding.openocean.messages;
 
 import java.security.InvalidParameterException;
 
-import org.openhab.binding.openocean.transceiver.ESP3Packet;
-
-public class Response extends EnoceanMessage {
+public class Response extends ESP3Packet {
 
     public enum ResponseType {
         RET_OK(0x00),
@@ -40,11 +38,11 @@ public class Response extends EnoceanMessage {
 
     protected ResponseType responseType;
 
-    public Response(ESP3Packet packet) {
-        super(packet);
+    public Response(int dataLength, int optionalDataLength, int[] payload) {
+        super(dataLength, optionalDataLength, ESPPacketType.RESPONSE, payload);
 
         try {
-            responseType = ResponseType.getResponsetype(packet.getData(0, 1)[0]);
+            responseType = ResponseType.getResponsetype(data[0]);
         } catch (Exception e) {
             responseType = ResponseType.RET_ERROR;
         }
@@ -56,5 +54,10 @@ public class Response extends EnoceanMessage {
 
     public boolean isOK() {
         return responseType == ResponseType.RET_OK;
+    }
+
+    @Override
+    public int[] getSenderId() {
+        return null;
     }
 }

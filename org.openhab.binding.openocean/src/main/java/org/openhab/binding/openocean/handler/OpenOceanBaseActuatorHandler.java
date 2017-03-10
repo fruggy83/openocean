@@ -9,29 +9,38 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.openhab.binding.openocean.config.OpenOceanActuatorConfig;
+import org.openhab.binding.openocean.transceiver.Helper;
 
 public abstract class OpenOceanBaseActuatorHandler extends OpenOceanBaseThingHandler {
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_SWITCHINGACTUATOR);
 
+    protected String enoceanId;
+
     public OpenOceanBaseActuatorHandler(Thing thing) {
         super(thing);
     }
 
-    @Override
-    boolean validateConfig() {
-        String[] tokens = thing.getUID().getId().split(ACTUATOR_ID_SPLITTER);
-        if (tokens.length != 2) {
-            return false;
+    boolean validateSenderId(String senderId) {
+        if (senderId == null || senderId.isEmpty()) {
+            return true;
         }
 
         try {
-            Integer.parseInt(tokens[1]);
+            long s = Long.parseLong(senderId, 16);
+            long b = Long.parseLong(Helper.bytesToHexString(getBridgeHandler().getBaseId()), 16);
+
+            return (s - b) > 0 && (s - b) < 128;
         } catch (Exception e) {
             return false;
         }
+    }
 
-        return validateThingId(tokens[0]);
+    @Override
+    boolean validateConfig() {
+        enoceanId = thing.getUID().getId();
+        OpenOceanActuatorConfig config = thing.getConfiguration().as(OpenOceanActuatorConfig.class);
+        return validateEnoceanId(enoceanId) && validateSenderId(config.senderId);
     }
 
     @Override
@@ -44,19 +53,25 @@ public abstract class OpenOceanBaseActuatorHandler extends OpenOceanBaseThingHan
             OpenOceanBridgeHandler bridgeHandler = getBridgeHandler();
             if (bridgeHandler != null) {
                 senderId = bridgeHandler.getNextId();
-                if (offset == -1) {
+                if (senderId.isEmpty()) {
                     return false;
                 }
                 config.put(SENDERID, senderId);
                 updateConfiguration(config);
+                sendingId = Helper.hexStringToBytes(cfg.senderId);
+                return true;
             }
-        } else {
-            return validateThingId(senderId);
+        } else if (validateEnoceanId(senderId)) {
+            sendingId = Helper.hexStringToBytes(cfg.senderId);
+            return true;
         }
 
-        // super.sendingId = Helper.addOffsetToBaseId(offset, getBridgeHandler().getBaseId());
+        return false;
+    }
 
-        return true;
+    @Override
+    public long getSenderIdToListenTo() {
+        return Long.parseLong(enoceanId, 16);
     }
 
 }

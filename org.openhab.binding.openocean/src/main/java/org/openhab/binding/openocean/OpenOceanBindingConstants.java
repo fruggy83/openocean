@@ -28,6 +28,7 @@ public class OpenOceanBindingConstants {
 
     // List of all Channel ids
     public final static String REPEATERMODE = "repeater";
+    public final static String SWITCHING = "switch";
 
     // List of all repeater mode states
     public final static String REPEATERMODE_OFF = "OFF";

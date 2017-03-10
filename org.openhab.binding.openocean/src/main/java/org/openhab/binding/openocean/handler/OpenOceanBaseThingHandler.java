@@ -11,15 +11,17 @@ import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
+import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ConfigStatusThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.openocean.config.OpenOceanActuatorConfig;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
+import org.openhab.binding.openocean.transceiver.ESP3PacketListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler {
+public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler implements ESP3PacketListener {
 
     private OpenOceanBridgeHandler gateway = null;
     private Logger logger = LoggerFactory.getLogger(OpenOceanBaseThingHandler.class);
@@ -43,8 +45,9 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
 
         if (getBridgeHandler() != null) {
             if (bridgeStatus == ThingStatus.ONLINE) {
-                if (validateConfig()) {
+                if (validateConfig() && initializeIdForSending()) {
                     updateStatus(ThingStatus.ONLINE);
+                    getBridgeHandler().addPacketListener(this);
                 } else {
                     updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR);
                 }
@@ -56,7 +59,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
         }
     }
 
-    protected boolean validateThingId(String id) {
+    protected boolean validateEnoceanId(String id) {
         if (id == null || id.isEmpty()) {
             return false;
         } else {
@@ -117,5 +120,12 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
         }
 
         return configStatusMessages;
+    }
+
+    @Override
+    public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
+        if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE) {
+            initializeThing(bridgeStatusInfo.getStatus());
+        }
     }
 }

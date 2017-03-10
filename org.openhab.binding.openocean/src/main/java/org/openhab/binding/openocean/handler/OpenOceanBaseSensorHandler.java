@@ -10,17 +10,25 @@ public abstract class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandl
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.emptySet();
 
+    protected String enoceanId;
+
     public OpenOceanBaseSensorHandler(Thing thing) {
         super(thing);
     }
 
     @Override
     boolean validateConfig() {
-        return validateThingId(thing.getUID().getId());
+        enoceanId = thing.getUID().getId();
+        return validateEnoceanId(enoceanId);
     }
 
     @Override
     boolean initializeIdForSending() {
         return true;
+    }
+
+    @Override
+    public long getSenderIdToListenTo() {
+        return Long.parseLong(enoceanId, 16);
     }
 }
