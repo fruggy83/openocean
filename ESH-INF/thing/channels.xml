@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="openocean"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+    <!-- RepeaterMode channel -->
+    <channel-type id="repeaterMode" advanced="true">
+        <item-type>String</item-type>
+        <label>Repeater Mode</label>
+        <description>Repeater mode of EnOcean gateway</description>
+        <state>
+            <options>
+                <option value="OFF">Repeater off</option>
+                <option value="LEVEL1">Level-1</option>
+                <option value="LEVEL2">Level-2</option>
+            </options>
+        </state>
+    </channel-type>
+    
+    <!-- Light Switch Channel -->
+    <channel-type id="lightSwitch">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>The switch channel allows to switch the light on and off.</description>
+        <category>Light</category>
+        <tags>
+            <tag>Lighting</tag>
+        </tags>
+    </channel-type>
+    
+    <!-- Light Switch Channel with transformation configuration -->
+    <channel-type id="genericLightSwitch">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>The switch channel allows to switch the light on and off.</description>
+        <category>Light</category>
+        <tags>
+            <tag>Lighting</tag>
+        </tags>
+        <config-description>
+            <parameter name="transformationType" type="text">
+                    <label>Type of transformation</label>
+                    <description>e.g. "MAP"</description>
+                    <required>true</required>
+                </parameter>
+                <parameter name="transformationFuntion" type="text">
+                    <label>Function of transformation type</label>
+                    <description>e.g. for transformation type map => filename of mapping file</description>
+                    <required>true</required>
+                </parameter>
+        </config-description>
+    </channel-type>
+    
+    <!-- General Switch Channel -->
+    <channel-type id="generalSwitch">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>The switch channel allows to switch something on and off.</description>
+        <category>Switch</category>
+    </channel-type>
+    
+    <!-- General Switch Channel with transformation configuration -->
+    <channel-type id="genericGeneralSwitch">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>The switch channel allows to switch something on and off.</description>
+        <category>Switch</category>
+        <config-description>
+            <parameter name="transformationType" type="text">
+                    <label>Type of transformation</label>
+                    <description>e.g. "MAP"</description>
+                    <required>true</required>
+                </parameter>
+                <parameter name="transformationFuntion" type="text">
+                    <label>Function of transformation type</label>
+                    <description>e.g. for transformation type map => filename of mapping file</description>
+                    <required>true</required>
+                </parameter>
+        </config-description>
+    </channel-type>
+    
+    <!-- Rollershutter Channel -->
+    <channel-type id="rollershutter">
+        <item-type>Rollershutter</item-type>
+        <label>Rollershutter</label>
+        <description>Rollershutter</description>
+        <category>Blinds</category>
+        <config-description>
+            <parameter name="shutTime" type="integer">
+                    <label>Shut time</label>
+                    <description>Time (in seconds) to completely close the rollershutter</description>
+            </parameter>
+        </config-description>
+    </channel-type>
+    
+    <!-- Rollershutter Channel with transformation configuration -->
+    <channel-type id="genericRollershutter">
+        <item-type>Rollershutter</item-type>
+        <label>Rollershutter</label>
+        <description>Rollershutter</description>
+        <category>Blinds</category>
+        <config-description>
+            <parameter name="transformationType" type="text">
+                    <label>Type of transformation</label>
+                    <description>e.g. "MAP"</description>
+                    <required>true</required>
+                </parameter>
+                <parameter name="transformationFuntion" type="text">
+                    <label>Function of transformation type</label>
+                    <description>e.g. for transformation type map => filename of mapping file</description>
+                    <required>true</required>
+                </parameter>
+                <parameter name="shutTime" type="integer">
+                    <label>Shut time</label>
+                    <description>Time to completely close the rollershutter</description>
+                </parameter>
+        </config-description>
+    </channel-type>
+    
+    <!-- Dimmer Channel -->
+    <channel-type id="dimmer">
+        <item-type>Dimmer</item-type>
+        <label>Dimmer</label>
+        <description>Dimmer</description>
+        <category>DimmableLight</category>
+    </channel-type>
+    
+    <!-- Dimmer Channel with transformation configuration -->
+    <channel-type id="genericDimmer">
+        <item-type>Dimmer</item-type>
+        <label>Dimmer</label>
+        <description>Dimmer</description>
+        <category>DimmableLight</category>
+        <config-description>
+            <parameter name="transformationType" type="text">
+                    <label>Type of transformation</label>
+                    <description>e.g. "MAP"</description>
+                    <required>true</required>
+                </parameter>
+                <parameter name="transformationFuntion" type="text">
+                    <label>Function of transformation type</label>
+                    <description>e.g. for transformation type map => filename of mapping file</description>
+                    <required>true</required>
+                </parameter>
+        </config-description>
+    </channel-type>
+    
+    <channel-type id="temperature">
+        <item-type>Number</item-type>
+        <label>Temperature</label>
+        <description>Current temperature in degree Celsius</description>
+        <category>Temperature</category>
+        <state pattern="%.1f °C" readOnly="true"></state>
+    </channel-type>
+    
+    <channel-type id="humidity">
+        <item-type>Number</item-type>
+        <label>Humidity</label>
+        <description>Relative humidity level in percentages</description>
+        <category>Humidity</category>
+        <state min="0" max="100" step="1" pattern="%d %%" readOnly="true"></state>
+    </channel-type>
+    
+    <channel-type id="barometer">
+        <item-type>Number</item-type>
+        <label>Humidity</label>
+        <description>Relative humidity level in percentages</description>
+        <category>Humidity</category>
+        <state min="0" max="100" step="1" pattern="%d %%" readOnly="true"></state>
+    </channel-type>
+    
+    <channel-type id="setPoint">
+        <item-type>Number</item-type>
+        <label>Set point</label>
+        <description>linear set point</description>        
+        <state readOnly="true" min="0" max="255"></state>
+    </channel-type>
+    
+    <channel-type id="contact">
+        <item-type>Contact</item-type>
+        <label>Contact</label>
+        <description>Contact channel</description>
+    </channel-type>
+    
+    <channel-type id="windowHandleState">
+        <item-type>String</item-type>
+        <label>Window handle state</label>
+        <description>Describes the window handle state</description>
+        <state readOnly="true">
+            <options>
+                <option value="OPEN">Open</option>
+                <option value="TILTED">Tilted</option>
+                <option value="CLOSED">Closed</option>
+            </options>
+        </state>
+    </channel-type>
+    
+    <channel-type id="rockerSwitch">
+        <kind>trigger</kind>
+        <label>Rockerswitch</label>
+        <event>
+            <options>
+                <option value="UP_PRESSED">State 0 pressed</option>
+                <option value="UP_RELEASED">State 0 released</option>
+                <option value="DOWN_PRESSED">State I pressed</option>
+                <option value="DOWN_RELEASED">State I released</option>
+            </options>
+        </event>
+    </channel-type>
+    
+    <!-- Teach in Channel -->
+    <channel-type id="teachInCMD" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Teach In</label>
+        <description>The teach in channel allows to send a teach in msg.</description>
+        <category>Switch</category>
+        <config-description>
+            <!--  
+            <parameter name="teachInType" type="text">
+                <label>Teach in type</label>
+                <description>Type of 4BS teach in message</description>
+                <options>
+                    <option value="uniWoEEP">unidirectional without EEP</option>
+                    <option value="uniWEEP">unidirectional with EEP</option>
+                    <option value="biWEEP">bidirectional with EEP</option>
+                </options>
+                <limitToOptions>true</limitToOptions>
+            </parameter> 
+            -->
+            <parameter name="manufacturerId" type="text">
+                <label>Manufacturer Id</label>
+                <description>Id is used for 4BS teach in with EEP</description>
+            </parameter>
+            <parameter name="teachInMSG" type="text">
+                <label>Teach in message</label>
+                <description>Use this message if teach in type and/or manufacturer id are unknown</description>
+            </parameter>
+        </config-description>
+    </channel-type>
+
+</thing:thing-descriptions>
