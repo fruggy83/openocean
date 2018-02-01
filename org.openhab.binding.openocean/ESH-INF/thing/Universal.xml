@@ -12,28 +12,33 @@
             <label>Universal actuator</label>
             <description>Actuator operates with universal EEP command A5-3F-7F</description>
             
+            <properties>
+                <property name="enoceanId" />
+            </properties>
             <config-description>                
-                <parameter name="senderId" type="text">
+                <parameter name="senderIdOffset" type="integer">
                     <label>Sender Id</label>
                     <description>Id is used to send messages to thing (4 byte hex string). If not specified the next free Id will be determined by bridge</description>
-                    <required>true</required>
                 </parameter>
-                <parameter name="manufacturerId" type="text">
-                    <label>Manufacturer Id</label>
-                    <description>Id is used for 4BS teach in with EEP</description>
-                </parameter>
-                <parameter name="teachInType" type="text">
-                    <label>Teach in type</label>
-                    <description>Type of 4BS teach in message</description>
+                <parameter name="sendingEEPId" type="text">
+                    <label>EEP for sending commands</label>
                     <options>
-                        <option value="uniWoEEP">unidirectional without EEP</option>
-                        <option value="uniWEEP">unidirectional with EEP</option>
-                        <option value="biWoEEP">bidirectional without EEP</option>
-                        <option value="biWEEP">bidirectional with EEP</option>
+                        <option value="A5_3F_7F">A5_3F_7F (universal command)</option>                        
+                        <option value="A5_3F_7F_EltakoFSB">Eltako FSB14/61/71</option>
                     </options>
                     <limitToOptions>true</limitToOptions>
+                    <required>true</required>
                 </parameter>
-                
+                <parameter name="receivingEEPId" type="text">
+                    <label>EEP for receiving states</label>
+                    <options>
+                        <option value="F6_00_00">PTM200 (F6 message widely used by Eltako devices)</option>
+                        <option value="00_00_00">Generic EEP (use mapping for inbound transformation)</option>
+                        <option value="A5_3F_7F_EltakoFSB">Eltako FSB14/61/71</option>
+                    </options>
+                    <limitToOptions>true</limitToOptions>
+                    <required>true</required>
+                </parameter>
             </config-description>
             
         </thing-type>

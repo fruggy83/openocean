@@ -12,32 +12,27 @@
         
         <label>Rocker Switch</label>
         <description>Rocker Switch</description>
-
-        <config-description>            
-            <parameter name="channel" type="text">
-                <label>Channel</label>                
-                <required>true</required>
-                <options>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                </options>                
-                <limitToOptions>true</limitToOptions>
-            </parameter>
-            <parameter name="rockerType" type="text">
-                <label>Type</label>                
-                <description>A toggle switch emits just pressed and released events. A state switch differs between O and I</description>
-                <required>true</required>
-                <options>
-                    <option value="Toggle0">Toggle O</option>
-                    <option value="Toggle1">Toggle I</option>
-                    <option value="State">State</option>
-                </options>                
-                <limitToOptions>true</limitToOptions>
-            </parameter>
-        </config-description>
-        
+          
+        <properties>
+            <property name="enoceanId"></property>
+        </properties>
+        <config-description>
+                <parameter name="receivingEEPId" type="text">
+                    <label>EEP</label>
+                    <description>EEP which is used by panel</description>
+                    <options>
+                        <option value="F6_02_02">F6-02-02/01</option>
+                        <option value="F6_02_03">F6-02-03</option>
+                        <option value="F6_02_04">F6-02-04</option>
+                    </options>
+                    <limitToOptions>true</limitToOptions>
+                    <required>true</required>
+                </parameter>                
+                <parameter name="senderIdOffset" type="integer">
+                    <label>Sender Id</label>
+                    <description>If you want to send On/Off commands with this rocker switch a sender Id offset must be provided ([0;127]).</description>
+                </parameter>
+        </config-description>        
     </thing-type>
 
 </thing:thing-descriptions>
