@@ -153,8 +153,9 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
             Configuration config = channel.getConfiguration();
             State currentState = channelState.get(channelId);
 
-            ESP3Packet msg = eep.setSenderId(senderId).setDestinationId(destinationId)
-                    .convertFromCommand(channelId, command, currentState, config).getERP1Message();
+            ESP3Packet msg = // eep.setSenderId(senderId)
+                    eep.setSenderId(new int[] { 0x00, 0xff, 0xff, 0xff }).setDestinationId(destinationId)
+                            .convertFromCommand(channelId, command, currentState, config).getERP1Message();
 
             getBridgeHandler().sendMessage(msg, null);
 
