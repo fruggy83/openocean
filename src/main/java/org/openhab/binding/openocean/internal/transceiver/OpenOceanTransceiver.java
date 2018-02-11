@@ -60,6 +60,8 @@ public abstract class OpenOceanTransceiver {
     protected InputStream inputStream;
     protected OutputStream outputStream;
 
+    private int[] filteredDeviceId;
+
     enum ReadingState {
         WaitingForSyncByte,
         ReadingHeader,
@@ -149,7 +151,7 @@ public abstract class OpenOceanTransceiver {
                         case WaitingForSyncByte:
                             if (_byte == Helper.ENOCEAN_SYNC_BYTE) {
                                 state = ReadingState.ReadingHeader;
-                                logger.debug("Received Sync Byte");
+                                logger.trace("Received Sync Byte");
                             }
                             break;
                         case ReadingHeader:
@@ -164,7 +166,7 @@ public abstract class OpenOceanTransceiver {
                                     packetType = dataBuffer[3];
                                     currentPosition = 0;
 
-                                    logger.debug("Received header, data length {} optional length {} packet type {}",
+                                    logger.trace("Received header, data length {} optional length {} packet type {}",
                                             dataLength, optionalLength, packetType);
                                 } else {
                                     // check if we find a sync byte in current buffer
@@ -187,7 +189,7 @@ public abstract class OpenOceanTransceiver {
                                         state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
                                                 : ReadingState.WaitingForSyncByte;
                                     }
-                                    logger.debug("CrC8 header check not successful");
+                                    logger.trace("CrC8 header check not successful");
                                 }
                             } else {
                                 dataBuffer[currentPosition++] = _byte;
@@ -203,7 +205,7 @@ public abstract class OpenOceanTransceiver {
                                     if (packet != null) {
                                         if (packet.getPacketType() == ESPPacketType.RESPONSE
                                                 && currentRequest != null) {
-                                            logger.debug("publish response");
+                                            logger.trace("publish response");
                                             synchronized (currentRequest) {
                                                 currentRequest.ResponsePacket = (Response) packet;
                                                 currentRequest.notify();
@@ -212,25 +214,25 @@ public abstract class OpenOceanTransceiver {
 
                                             ERP1Message msg = (ERP1Message) packet;
 
-                                            logger.debug("publish event for: {}",
+                                            logger.trace("publish event for: {}",
                                                     Helper.bytesToHexString(msg.getSenderId()));
 
                                             int[] d = new int[dataLength + optionalLength];
                                             System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                            logger.info("{}", Helper.bytesToHexString(d));
+                                            logger.trace("{}", Helper.bytesToHexString(d));
 
                                             informListeners(msg);
                                         }
                                     } else {
-                                        logger.debug("Unknown ESP3Packet");
+                                        logger.trace("Unknown ESP3Packet");
                                         int[] d = new int[dataLength + optionalLength];
                                         System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                        logger.debug("{}", Helper.bytesToHexString(d));
+                                        logger.trace("{}", Helper.bytesToHexString(d));
                                     }
                                 } else {
                                     state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
                                             : ReadingState.WaitingForSyncByte;
-                                    logger.debug("esp packet malformed");
+                                    logger.trace("esp packet malformed");
                                 }
 
                                 currentPosition = 0;
@@ -244,9 +246,9 @@ public abstract class OpenOceanTransceiver {
                     }
                 }
             } catch (IOException ioexception) {
-                logger.debug("{}", ioexception.getMessage()); // ioexception.printStackTrace();
+                logger.error("{}", ioexception.getMessage()); // ioexception.printStackTrace();
             } catch (InterruptedException interruptedexception) {
-                logger.debug("receiving packets interrupted");
+                logger.error("receiving packets interrupted");
             }
         }
 
@@ -293,28 +295,30 @@ public abstract class OpenOceanTransceiver {
                             continue;
                         }
 
-                        logger.debug("sending request");
+                        logger.trace("sending request");
 
                         try {
                             byte[] b = currentRequest.RequestPacket.serialize();
                             int[] i = new int[b.length];
+                            // array copy with conversion byte -> int
                             for (int j = 0; j < b.length; i[j] = b[j++]) {
                                 ;
                             }
-                            logger.debug("{}", Helper.bytesToHexString(i));
+                            logger.trace("{}", Helper.bytesToHexString(i));
+
                             outputStream.write(b);
                             outputStream.flush();
                         } catch (IOException e) {
-                            logger.debug("IO exception while sending data {}", e.getMessage());
+                            logger.error("IO exception while sending data {}", e.getMessage());
                             currentRequest = null;
                             continue;
                         } catch (Exception e) {
-                            logger.debug("exception while sending data {}", e.getMessage());
+                            logger.error("exception while sending data {}", e.getMessage());
                             currentRequest = null;
                             continue;
                         }
 
-                        logger.debug("awaiting response");
+                        logger.trace("awaiting response");
                         currentRequest.wait(2000);
 
                         if (currentRequest.ResponseListener != null) {
@@ -322,19 +326,19 @@ public abstract class OpenOceanTransceiver {
                                 logger.debug("response timeout");
                                 currentRequest.ResponseListener.responseTimeOut();
                             } else {
-                                logger.debug("response received");
+                                logger.trace("response received");
                                 currentRequest.ResponseListener.handleResponse(currentRequest.ResponsePacket);
                             }
                         } else {
-                            logger.debug("request without listener");
+                            logger.trace("request without listener");
                         }
 
-                        logger.debug("handeled request");
+                        logger.trace("handeled request");
                         currentRequest = null;
                     }
                 }
             } catch (InterruptedException e) {
-                logger.debug("sending packets interrupted");
+                logger.error("sending packets interrupted");
             }
         }
     }
@@ -344,8 +348,13 @@ public abstract class OpenOceanTransceiver {
         try {
             int[] senderId = msg.getSenderId();
 
-            // todo ignore own msg
             if (senderId != null) {
+
+                if (filteredDeviceId != null && senderId[0] == filteredDeviceId[0] && senderId[1] == filteredDeviceId[1]
+                        && senderId[2] == filteredDeviceId[2]) {
+                    // filter away own messages which are received through a repeater
+                    return;
+                }
 
                 if (msg.getIsTeachIn()) {
                     logger.info("Received teach in message from {}", Helper.bytesToHexString(msg.getSenderId()));
@@ -358,7 +367,6 @@ public abstract class OpenOceanTransceiver {
                 long s = Long.parseLong(Helper.bytesToHexString(senderId), 16);
                 List<ESP3PacketListener> list = listeners.get(s);
                 if (list != null) {
-                    logger.debug("inform listener");
                     for (ESP3PacketListener listener : list) {
                         listener.espPacketReceived(msg);
                     }
@@ -381,5 +389,11 @@ public abstract class OpenOceanTransceiver {
 
     public void stopDiscovery() {
         this.teachInListener = null;
+    }
+
+    public void setFilteredDeviceId(int[] filteredDeviceId) {
+        if (filteredDeviceId != null) {
+            System.arraycopy(filteredDeviceId, 0, filteredDeviceId, 0, filteredDeviceId.length);
+        }
     }
 }

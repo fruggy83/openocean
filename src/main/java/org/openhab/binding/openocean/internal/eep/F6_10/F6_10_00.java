@@ -45,6 +45,7 @@ public class F6_10_00 extends _RPSMessage {
             return UnDefType.UNDEF;
         }
 
+        // todo localization
         switch (channelId) {
             case CHANNEL_WINDOWHANDLESTATE:
                 if (getBit(bytes[0], 4)) {

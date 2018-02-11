@@ -72,6 +72,8 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_GENERIC_GENERAL_SWITCHING = "genericGeneralSwitch";
     public final static String CHANNEL_GENERIC_DIMMER = "genericDimmer";
     public final static String CHANNEL_GENERIC_ROLLERSHUTTER = "genericRollershutter";
+    public final static String CHANNEL_INSTANTPOWER = "instantpower";
+    public final static String CHANNEL_TOTALUSAGE = "totalusage";
 
     // item types
     public final static String DIMMER = "Dimmer";
@@ -121,6 +123,10 @@ public class OpenOceanBindingConstants {
                     put(CHANNEL_GENERALSWITCH_CHANNELB,
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_GENERALSWITCH_CHANNELB),
                                     SWITCH, "Rockerswitch channel B"));
+                    put(CHANNEL_INSTANTPOWER,
+                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER), NUMBER));
+                    put(CHANNEL_TOTALUSAGE,
+                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TOTALUSAGE), NUMBER));
                 }
             });
 

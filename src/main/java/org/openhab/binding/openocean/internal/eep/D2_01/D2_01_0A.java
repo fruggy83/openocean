@@ -43,11 +43,7 @@ public class D2_01_0A extends D2_01 {
 
         switch (channelId) {
             case CHANNEL_GENERAL_SWITCHING:
-                if (getCMD() == CMD_ACTUATOR_STATUS_RESPONE) {
-                    return (bytes[bytes.length - 1] & outputValueMask) > 0 ? OnOffType.ON : OnOffType.OFF;
-                }
-
-                break;
+                return getSwitchingData();
         }
 
         return UnDefType.UNDEF;

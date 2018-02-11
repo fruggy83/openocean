@@ -205,6 +205,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
 
     @Override
     public Collection<ConfigStatusMessage> getConfigStatus() {
+        // TODO
         // Collection<ConfigStatusMessage> configStatusMessages;
 
         // The senderId must be provided

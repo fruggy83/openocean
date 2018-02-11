@@ -11,7 +11,10 @@ package org.openhab.binding.openocean.internal.eep.D2_01;
 import static org.openhab.binding.openocean.OpenOceanBindingConstants.PARAMETER_EEPID;
 
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
+import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.openocean.internal.eep._VLDMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
@@ -25,7 +28,11 @@ public abstract class D2_01 extends _VLDMessage {
     protected int cmdMask = 0x0f;
     protected int outputValueMask = 0x7f;
 
+    protected int CMD_ACTUATOR_SET_STATUS = 0x01;
+    protected int CMD_ACTUATOR_STATUS_QUERY = 0x03;
     protected int CMD_ACTUATOR_STATUS_RESPONE = 0x04;
+    protected int CMD_ACTUATOR_MEASUREMENT_QUERY = 0x06;
+    protected int CMD_ACTUATOR_MEASUREMENT_RESPONE = 0x07;
 
     public D2_01() {
         super();
@@ -41,14 +48,77 @@ public abstract class D2_01 extends _VLDMessage {
 
     protected void setSwitchingData(OnOffType command, int outputChannel) {
         if (command == OnOffType.ON) {
-            setData(0x01, outputChannel, 0x01);
+            setData(CMD_ACTUATOR_SET_STATUS, outputChannel, 0x01);
         } else {
-            setData(0x01, outputChannel, 0x00);
+            setData(CMD_ACTUATOR_SET_STATUS, outputChannel, 0x00);
+        }
+    }
+
+    protected void setSwitchingQueryData(int outputChannel) {
+        setData(CMD_ACTUATOR_STATUS_QUERY, outputChannel);
+    }
+
+    protected State getSwitchingData() {
+        if (getCMD() == CMD_ACTUATOR_STATUS_RESPONE) {
+            return (bytes[bytes.length - 1] & outputValueMask) > 0 ? OnOffType.ON : OnOffType.OFF;
         }
 
-        if (destinationId != null) {
-            setOptionalData(Helper.concatAll(new int[] { 0x01 }, destinationId, new int[] { 0xff, 0x00 }));
+        return UnDefType.UNDEF;
+    }
+
+    protected void setEnergyMeasurementQueryData(int outputChannel) {
+        setData(CMD_ACTUATOR_MEASUREMENT_QUERY, outputChannel);
+    }
+
+    protected void setPowerMeasurementQueryData(int outputChannel) {
+        setData(CMD_ACTUATOR_MEASUREMENT_QUERY, 0x20 + outputChannel);
+    }
+
+    protected State getEnergyMeasurementData() {
+        if (getCMD() == CMD_ACTUATOR_MEASUREMENT_RESPONE) {
+            float factor = 1;
+
+            switch (bytes[1] >> 5) {
+                case 0:
+                    factor /= 3600.0;
+                    break;
+                case 1:
+                    factor /= 1000;
+                    break;
+                case 2:
+                    factor = 1;
+                    break;
+                default:
+                    factor = 0;
+            }
+
+            return new DecimalType(
+                    Long.parseLong(Helper.bytesToHexString(bytes[2], bytes[3], bytes[4], bytes[5]), 16) * factor);
         }
+
+        return UnDefType.UNDEF;
+    }
+
+    protected State getPowerMeasurementData() {
+        if (getCMD() == CMD_ACTUATOR_MEASUREMENT_RESPONE) {
+            float factor = 1;
+
+            switch (bytes[1] >> 5) {
+                case 3:
+                    factor = 1;
+                    break;
+                case 4:
+                    factor /= 1000;
+                    break;
+                default:
+                    factor = 0;
+            }
+
+            return new DecimalType(
+                    Long.parseLong(Helper.bytesToHexString(bytes[2], bytes[3], bytes[4], bytes[5]), 16) * factor);
+        }
+
+        return UnDefType.UNDEF;
     }
 
     @Override

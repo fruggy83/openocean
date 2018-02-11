@@ -23,12 +23,15 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.openhab.binding.openocean.handler.OpenOceanBaseActuatorHandler;
 import org.openhab.binding.openocean.handler.OpenOceanBaseSensorHandler;
 import org.openhab.binding.openocean.handler.OpenOceanBaseThingHandler;
 import org.openhab.binding.openocean.handler.OpenOceanBridgeHandler;
 import org.openhab.binding.openocean.internal.discovery.OpenOceanDeviceDiscoveryService;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 
 import com.google.common.collect.Sets;
 
@@ -38,6 +41,7 @@ import com.google.common.collect.Sets;
  *
  * @author Daniel Weber - Initial contribution
  */
+@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.openocean", configurationPolicy = ConfigurationPolicy.OPTIONAL)
 public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
 
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Sets

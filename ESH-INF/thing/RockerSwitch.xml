@@ -30,7 +30,7 @@
                 </parameter>                
                 <parameter name="senderIdOffset" type="integer">
                     <label>Sender Id</label>
-                    <description>If you want to send On/Off commands with this rocker switch a sender Id offset must be provided ([0;127]).</description>
+                    <description>If you want to send On/Off commands with this rocker switch an Id offset must be provided ([1;127]).</description>
                 </parameter>
         </config-description>        
     </thing-type>

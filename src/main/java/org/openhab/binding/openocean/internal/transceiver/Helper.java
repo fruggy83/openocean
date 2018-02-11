@@ -74,7 +74,7 @@ public class Helper {
     private static final char[] hexArray = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
             'f' };
 
-    public static String bytesToHexString(int[] bytes) {
+    public static String bytesToHexString(int... bytes) {
         char[] hexChars = new char[bytes.length * 2];
         int v;
         for (int j = 0; j < bytes.length; j++) {

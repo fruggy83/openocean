@@ -41,13 +41,12 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
             try {
                 serialPort = new NRSerialPort(path, ENOCEAN_DEFAULT_BAUD);
                 if (!serialPort.connect()) {
-                    logger.info("Could not connect");
+                    logger.debug("Could not connect to serial port {}", path);
                     return;
                 }
             } catch (Exception e) {
 
-                logger.info("Exception while trying to connect");
-                // e.printStackTrace();
+                logger.debug("Exception while trying to connect to serial port {}", path);
                 ShutDown();
             }
 
@@ -62,9 +61,7 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
 
             } catch (TooManyListenersException e) {
 
-                // e.printStackTrace();
                 ShutDown();
-
                 throw new OpenOceanException("port already in use");
             }
         }
@@ -82,7 +79,7 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
                 serialPort = null;
             }
 
-            logger.debug("Transceiver shutdown");
+            logger.info("Transceiver shutdown");
         }
     }
 

@@ -26,6 +26,7 @@ import org.eclipse.smarthome.core.thing.profiles.ProfileTypeProvider;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
 import org.eclipse.smarthome.core.thing.type.ChannelKind;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
+import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -33,6 +34,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Daniel Weber - Initial contribution
  */
+@Component(service = ProfileFactory.class)
 public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, ProfileTypeProvider {
 
     @Override

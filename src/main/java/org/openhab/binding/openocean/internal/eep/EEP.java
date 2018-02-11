@@ -213,7 +213,10 @@ public abstract class EEP {
     }
 
     public EEP setDestinationId(int[] destinationId) {
-        this.destinationId = Arrays.copyOf(destinationId, destinationId.length);
+        if (destinationId != null) {
+            this.destinationId = Arrays.copyOf(destinationId, destinationId.length);
+            setOptionalData(Helper.concatAll(new int[] { 0x01 }, destinationId, new int[] { 0xff, 0x00 }));
+        }
         return this;
     }
 }

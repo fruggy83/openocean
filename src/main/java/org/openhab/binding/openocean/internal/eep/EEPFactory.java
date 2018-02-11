@@ -106,7 +106,8 @@ public class EEPFactory {
     }
 
     public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, int[] senderId) {
-        EEP result = new UTEResponse(msg, senderId);
+        EEP result = new UTEResponse(msg);
+        result.setSenderId(senderId);
 
         return result;
     }

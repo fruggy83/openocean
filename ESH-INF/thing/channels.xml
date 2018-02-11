@@ -196,6 +196,20 @@
         </state>
     </channel-type>
     
+    <channel-type id="instantpower">
+        <item-type>Number</item-type>
+        <label>Instant Power</label>
+        <description>Instant power consumption in Watts</description>
+        <state pattern="%d W" readOnly="true"></state>
+    </channel-type>
+
+    <channel-type id="totalusage">
+        <item-type>Number</item-type>
+        <label>Total Usage</label>
+        <description>Used energy in Kilowatt hours</description>
+        <state pattern="%d kWh" readOnly="true"></state>
+    </channel-type>
+    
     <channel-type id="rockerSwitch">
         <kind>trigger</kind>
         <label>Rockerswitch</label>

@@ -27,7 +27,7 @@ public class ERP1Message extends ESP3Packet {
         _1BS(0xD5, 1),
         _4BS(0xA5, 4),
         VLD(0xD2, -1),
-        ADT(0xA6, -1),
+        // ADT(0xA6, -1),
         UTE(0xD4, -1);
 
         private int value;

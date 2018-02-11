@@ -36,17 +36,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Weber - Initial contribution
  */
+
 public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
         implements ESP3PacketListener, ExtendedDiscoveryService {
     private final Logger logger = LoggerFactory.getLogger(OpenOceanDeviceDiscoveryService.class);
 
     private OpenOceanBridgeHandler bridgeHandler;
     DiscoveryServiceCallback discoveryServiceCallback;
-
-    public OpenOceanDeviceDiscoveryService() {
-        super(null, 60, false);
-
-    }
 
     public OpenOceanDeviceDiscoveryService(OpenOceanBridgeHandler bridgeHandler) {
         super(null, 60, false);
@@ -67,13 +63,21 @@ public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
 
     @Override
     protected void startScan() {
-        logger.debug("Starting EnOcean discovery and accepting teach in requests");
+        if (bridgeHandler == null) {
+            return;
+        }
+
+        logger.info("Starting EnOcean discovery and accepting teach in requests");
         bridgeHandler.startDiscovery(this);
     }
 
     @Override
     public synchronized void stopScan() {
-        logger.debug("Stopping EnOcean discovery scan");
+        if (bridgeHandler == null) {
+            return;
+        }
+
+        logger.info("Stopping EnOcean discovery scan");
         bridgeHandler.stopDiscovery();
         super.stopScan();
     }

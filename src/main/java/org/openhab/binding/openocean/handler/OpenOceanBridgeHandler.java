@@ -112,9 +112,6 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
     @Override
     public void initialize() {
 
-        // String result = Transformation.transform("MAP", "test.map", "CLOSE");
-        // logger.debug(result);
-
         // TODO use scheduled task to try reconnect to gateway
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "trying to connect to gateway...");
         Object devId = getConfig().get(NEXTDEVICEID);
@@ -169,6 +166,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
                             updateProperty(PROPERTY_Base_ID, Helper.bytesToHexString(response.getBaseId()));
                             updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
                                     Integer.toString(response.getRemainingWriteCycles()));
+                            transceiver.setFilteredDeviceId(baseId);
 
                             updateStatus(ThingStatus.ONLINE);
                         } else {

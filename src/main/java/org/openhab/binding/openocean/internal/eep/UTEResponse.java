@@ -9,7 +9,6 @@
 package org.openhab.binding.openocean.internal.eep;
 
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
  *
@@ -21,22 +20,15 @@ public class UTEResponse extends _VLDMessage {
     public static final int ResponseNeeded_MASK = 0x40;
     public static final int TeachIn_NotSpecified = 0x20;
 
-    public UTEResponse(ERP1Message packet, int[] senderId) {
+    public UTEResponse(ERP1Message packet) {
 
         int dataLength = packet.getPayload().length - SenderIdLength - RORGLength - StatusLength;
 
-        // setData(Helper.concatAll(new int[] { RORG.UTE.getValue() }, packet.getPayload(RORGLength, dataLength),
-        // packet.getSenderId()));
-
         setData(packet.getPayload(RORGLength, dataLength));
+        bytes[0] = 0x91; // bidirectional communication, teach in accepted, teach in response
 
-        setSenderId(senderId);
-        // setStatus(packet.getPayload(RORGLength + dataLength + SenderIdLength, 1)[0]);
         setStatus(0x80);
 
-        // bytes[1] = 0x91; // bidirectional communication, teach in accepted, teach in response
-        bytes[0] = 0x91;
-
-        setOptionalData(Helper.concatAll(new int[] { 0x01 }, packet.getSenderId(), new int[] { 0xff, 0x00 }));
+        setDestinationId(packet.getSenderId());
     }
 }

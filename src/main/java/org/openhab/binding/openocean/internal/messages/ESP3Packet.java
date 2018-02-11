@@ -112,10 +112,6 @@ public abstract class ESP3Packet {
 
     public int[] getPayload(int offset, int length) {
         return Arrays.copyOfRange(payload, offset, offset + length);
-
-        // int[] result = new int[length];
-        // System.arraycopy(payload, offset, result, 0, length);
-        // return result;
     }
 
     public final int[] getPayload() {

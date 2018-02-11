@@ -52,7 +52,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
             return true;
         }
 
-        if (senderIdOffset >= 0 && senderIdOffset < 128) {
+        if (senderIdOffset > 0 && senderIdOffset < 128) {
 
             OpenOceanBridgeHandler bridgeHandler = getBridgeHandler();
             if (bridgeHandler != null) {
@@ -131,7 +131,9 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
         // we do not support refreshs
         if (command == RefreshType.REFRESH) {
-            return;
+            if (sendingEEPType == null || !sendingEEPType.getSupportsRefresh()) {
+                return;
+            }
         }
 
         // We must have a valid sender id to send commands
@@ -158,6 +160,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
             getBridgeHandler().sendMessage(msg, null);
 
+            // is mainly used by rocker switches => first message push, second release
             while (eep.PrepareNextMessage()) {
                 getBridgeHandler().sendMessage(eep.getERP1Message(), null);
             }
@@ -168,7 +171,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
     @Override
     public void handleRemoval() {
         OpenOceanActuatorConfig config = thing.getConfiguration().as(OpenOceanActuatorConfig.class);
-        if (config.senderIdOffset >= 0) {
+        if (config.senderIdOffset > 0) {
             OpenOceanBridgeHandler bridgeHandler = getBridgeHandler();
             if (bridgeHandler != null) {
                 bridgeHandler.removeSender(config.senderIdOffset);
