@@ -177,6 +177,28 @@
         <state readOnly="true" min="0" max="255"></state>
     </channel-type>
     
+    <channel-type id="fanSpeedStage">
+        <item-type>String</item-type>
+        <label>Fan speed</label>
+        <state readOnly="true" >
+            <options>
+                <option value="-1">Auto</option>
+                <option value="0">Stage 0</option>
+                <option value="1">Stage 1</option>
+                <option value="2">Stage 2</option>
+                <option value="3">Stage 3</option>
+            </options>
+        </state>
+    </channel-type>
+    
+    <channel-type id="occupancy">
+        <item-type>Switch</item-type>
+        <label>Occupancy</label>
+        <description>Occupancy button pressed or released.</description>
+        <category>Switch</category>
+        <state readOnly="true"/>
+    </channel-type>
+    
     <channel-type id="contact">
         <item-type>Contact</item-type>
         <label>Contact</label>
@@ -251,6 +273,12 @@
                 <description>Use this message if teach in type and/or manufacturer id are unknown</description>
             </parameter>
         </config-description>
+    </channel-type>
+    
+    <channel-type id="receivingState">
+        <item-type>String</item-type>
+        <label>Receiving status</label>
+        <state readOnly="true"/>
     </channel-type>
 
 </thing:thing-descriptions>

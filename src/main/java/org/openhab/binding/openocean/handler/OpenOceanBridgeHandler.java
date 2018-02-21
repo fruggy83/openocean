@@ -176,6 +176,24 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
                     }
                 });
 
+        /*
+         * transceiver.sendESP3Packet(ESP3PacketFactory.CO_WR_SUBTEL(true),
+         * new ResponseListenerIgnoringTimeouts<BaseResponse>() {
+         * 
+         * @Override
+         * public void responseReceived(BaseResponse response) {
+         * 
+         * if (response.isOK()) {
+         * logger.debug("set subtel");
+         * } else if (response.getResponseType() == ResponseType.RET_NOT_SUPPORTED) {
+         * logger.debug("set subtel not supported");
+         * } else if (response.getResponseType() == ResponseType.RET_WRONG_PARAM) {
+         * logger.debug("set subtel wrong param");
+         * }
+         * }
+         * });
+         */
+
         transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION,
                 new ResponseListenerIgnoringTimeouts<RDVersionResponse>() {
 
@@ -190,6 +208,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
                         }
                     }
                 });
+
     }
 
     @Override

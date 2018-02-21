@@ -166,6 +166,10 @@ public abstract class OpenOceanTransceiver {
                                     packetType = dataBuffer[3];
                                     currentPosition = 0;
 
+                                    if (packetType == 3) {
+                                        logger.trace("Received sub_msg");
+                                    }
+
                                     logger.trace("Received header, data length {} optional length {} packet type {}",
                                             dataLength, optionalLength, packetType);
                                 } else {
@@ -334,6 +338,7 @@ public abstract class OpenOceanTransceiver {
                         }
 
                         logger.trace("handeled request");
+                        currentRequest.wait(500);
                         currentRequest = null;
                     }
                 }
@@ -357,8 +362,8 @@ public abstract class OpenOceanTransceiver {
                 }
 
                 if (msg.getIsTeachIn()) {
-                    logger.info("Received teach in message from {}", Helper.bytesToHexString(msg.getSenderId()));
                     if (teachInListener != null) {
+                        logger.info("Received teach in message from {}", Helper.bytesToHexString(msg.getSenderId()));
                         teachInListener.espPacketReceived(msg);
                         return;
                     }

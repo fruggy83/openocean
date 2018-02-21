@@ -57,6 +57,9 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_ROLLERSHUTTER = "rollershutter";
     public final static String CHANNEL_TEMPERATURE = "temperature";
     public final static String CHANNEL_SETPOINT = "setPoint";
+    public final static String CHANNEL_FANSPEEDSTAGE = "fanSpeedStage";
+    public final static String CHANNEL_OCCUPANCY = "occupancy";
+
     public final static String CHANNEL_ROCKERSWITCH_CHANNELA = "rockerswitchA"; // this channel is used to react on
                                                                                 // trigger events
     public final static String CHANNEL_ROCKERSWITCH_CHANNELB = "rockerswitchB"; // this channel is used to react on
@@ -74,6 +77,7 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_GENERIC_ROLLERSHUTTER = "genericRollershutter";
     public final static String CHANNEL_INSTANTPOWER = "instantpower";
     public final static String CHANNEL_TOTALUSAGE = "totalusage";
+    public final static String CHANNEL_RECEIVINGSTATE = "receivingState";
 
     // item types
     public final static String DIMMER = "Dimmer";
@@ -97,6 +101,10 @@ public class OpenOceanBindingConstants {
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_ROLLERSHUTTER), BLIND));
                     put(CHANNEL_TEMPERATURE,
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TEMPERATURE), NUMBER));
+                    put(CHANNEL_FANSPEEDSTAGE,
+                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_FANSPEEDSTAGE), STRING));
+                    put(CHANNEL_OCCUPANCY,
+                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_OCCUPANCY), SWITCH));
                     put(CHANNEL_SETPOINT,
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_SETPOINT), NUMBER));
                     put(CHANNEL_CONTACT,
@@ -127,6 +135,8 @@ public class OpenOceanBindingConstants {
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER), NUMBER));
                     put(CHANNEL_TOTALUSAGE,
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TOTALUSAGE), NUMBER));
+                    put(CHANNEL_RECEIVINGSTATE,
+                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_RECEIVINGSTATE), STRING));
                 }
             });
 

@@ -75,7 +75,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
                 destinationId = Helper.hexStringToBytes(thing.getUID().getId());
 
             } catch (Exception e) {
-                configurationErrorDescription = "EEP is not supported";
+                configurationErrorDescription = "Sending EEP is not supported";
                 return false;
             }
 
@@ -129,9 +129,11 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
 
-        // we do not support refreshs
+        // check if we do support refreshs
         if (command == RefreshType.REFRESH) {
-            if (sendingEEPType == null || !sendingEEPType.getSupportsRefresh()) {
+            // receiving status cannot be refreshed
+            if (channelUID.getId().equals(CHANNEL_RECEIVINGSTATE) || sendingEEPType == null
+                    || !sendingEEPType.getSupportsRefresh()) {
                 return;
             }
         }

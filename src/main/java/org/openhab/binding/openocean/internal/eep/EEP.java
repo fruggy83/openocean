@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
@@ -64,6 +65,7 @@ public abstract class EEP {
         setData(packet.getPayload(RORGLength, getDataLength()));
         setSenderId(packet.getPayload(RORGLength + getDataLength(), SenderIdLength));
         setStatus(packet.getPayload(RORGLength + getDataLength() + SenderIdLength, 1)[0]);
+        setOptionalData(packet.getOptionalPayload());
     }
 
     public EEP convertFromCommand(String channelId, Command command, State currentState, Configuration config) {
@@ -82,6 +84,10 @@ public abstract class EEP {
     public State convertToState(String channelId, Configuration config, State currentState) {
         if (!getSupportedChannels().contains(channelId)) {
             throw new IllegalArgumentException("Channel " + channelId + " is not supported");
+        }
+
+        if (channelId.equals(CHANNEL_RECEIVINGSTATE)) {
+            return convertToReceivingState();
         }
 
         return convertToStateImpl(channelId, currentState, config);
@@ -105,7 +111,10 @@ public abstract class EEP {
     }
 
     public EEP setOptionalData(int... bytes) {
-        this.optionalData = Arrays.copyOf(bytes, bytes.length);
+        if (bytes != null) {
+            this.optionalData = Arrays.copyOf(bytes, bytes.length);
+        }
+
         return this;
     }
 
@@ -218,5 +227,13 @@ public abstract class EEP {
             setOptionalData(Helper.concatAll(new int[] { 0x01 }, destinationId, new int[] { 0xff, 0x00 }));
         }
         return this;
+    }
+
+    protected State convertToReceivingState() {
+        if (this.optionalData == null || this.optionalData.length < 6) {
+            return UnDefType.UNDEF;
+        }
+
+        return new StringType(String.format("Rssi %s, repeated %s", this.optionalData[5], this.status & 0b1111));
     }
 }

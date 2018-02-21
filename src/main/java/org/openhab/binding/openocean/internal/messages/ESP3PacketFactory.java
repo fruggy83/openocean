@@ -33,6 +33,14 @@ public class ESP3PacketFactory {
         }
     }
 
+    public static ESP3Packet CO_WR_SUBTEL(boolean enable) {
+        if (enable) {
+            return new CCMessage(2, 0, new int[] { 17, 1 });
+        } else {
+            return new CCMessage(2, 0, new int[] { 17, 0 });
+        }
+    }
+
     public static ESP3Packet BuildPacket(int dataLength, int optionalDataLength, int packetType, int[] payload) {
         ESPPacketType type = ESPPacketType.getPacketType(packetType);
 

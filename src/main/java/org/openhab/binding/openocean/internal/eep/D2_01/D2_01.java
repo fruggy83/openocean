@@ -8,11 +8,14 @@
  */
 package org.openhab.binding.openocean.internal.eep.D2_01;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.PARAMETER_EEPID;
+import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
+import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.openocean.internal.eep._VLDMessage;
@@ -125,4 +128,39 @@ public abstract class D2_01 extends _VLDMessage {
     public void addConfigPropertiesTo(DiscoveryResultBuilder discoveredThingResultBuilder) {
         discoveredThingResultBuilder.withProperty(PARAMETER_EEPID, getEEPType().getId());
     }
+
+    @Override
+    protected void convertFromCommandImpl(Command command, String channelId, State currentState, Configuration config) {
+        if (!getEEPType().GetChannelIds().contains(channelId)) {
+            return;
+        }
+
+        if (channelId.equals(CHANNEL_GENERAL_SWITCHING)) {
+            if (command == RefreshType.REFRESH) {
+                setSwitchingQueryData(0x1e);
+            } else {
+                setSwitchingData((OnOffType) command, 0x1e);
+            }
+        } else if (channelId.equals(CHANNEL_INSTANTPOWER) && command == RefreshType.REFRESH) {
+            setPowerMeasurementQueryData(0x1e);
+        } else if (channelId.equals(CHANNEL_TOTALUSAGE) && command == RefreshType.REFRESH) {
+            setEnergyMeasurementQueryData(0x1e);
+        }
+    }
+
+    @Override
+    protected State convertToStateImpl(String channelId, State currentState, Configuration config) {
+
+        switch (channelId) {
+            case CHANNEL_GENERAL_SWITCHING:
+                return getSwitchingData();
+            case CHANNEL_INSTANTPOWER:
+                return getPowerMeasurementData();
+            case CHANNEL_TOTALUSAGE:
+                return getEnergyMeasurementData();
+        }
+
+        return UnDefType.UNDEF;
+    }
+
 }

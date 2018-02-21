@@ -15,7 +15,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -52,38 +51,6 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
         return SUPPORTED_THING_TYPES_UIDS.contains(thingTypeUID);
-    }
-
-    @Override
-    public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
-            ThingUID bridgeUID) {
-
-        if (OpenOceanBridgeHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
-            return super.createThing(thingTypeUID, configuration, thingUID, null);
-        }
-        if (OpenOceanBaseThingHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
-            ThingUID thingId = createthingUID(thingTypeUID, configuration, thingUID, bridgeUID);
-            Thing thing = super.createThing(thingTypeUID, configuration, thingId, bridgeUID);
-
-            return thing;
-        }
-
-        throw new IllegalArgumentException("The thing type " + thingTypeUID + " is not supported by the binding.");
-    }
-
-    protected ThingUID createthingUID(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
-            ThingUID bridgeUID) {
-
-        String id = null;
-        if (OpenOceanBaseActuatorHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
-            id = thingUID.getId();
-        } else if (OpenOceanBaseSensorHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
-            id = thingUID.getId();
-        } else {
-            throw new IllegalArgumentException("The thing type " + thingTypeUID + " is not supported by the binding.");
-        }
-
-        return new ThingUID(thingTypeUID, id, bridgeUID.getId());
     }
 
     @Override

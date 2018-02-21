@@ -56,7 +56,7 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
             updateChannels(receivingEEPType, true);
 
         } catch (Exception e) {
-            configurationErrorDescription = "EEP is not supported";
+            configurationErrorDescription = "Receiving EEP is not supported";
             return false;
         }
 
