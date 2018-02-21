@@ -8,10 +8,15 @@
  */
 package org.openhab.binding.openocean.internal.eep.A5_10;
 
+import org.openhab.binding.openocean.internal.messages.ERP1Message;
+
 /**
  *
  * @author Daniel Weber - Initial contribution
  */
 public class A5_10_05 extends A5_10 {
 
+    public A5_10_05(ERP1Message packet) {
+        super(packet);
+    }
 }

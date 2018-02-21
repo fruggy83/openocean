@@ -8,10 +8,20 @@
  */
 package org.openhab.binding.openocean.internal.eep.D2_01;
 
+import org.openhab.binding.openocean.internal.messages.ERP1Message;
+
 /**
  *
  * @author Daniel Weber - Initial contribution
  */
 public class D2_01_09 extends D2_01 {
+
+    public D2_01_09() {
+        super();
+    }
+
+    public D2_01_09(ERP1Message packet) {
+        super(packet);
+    }
 
 }

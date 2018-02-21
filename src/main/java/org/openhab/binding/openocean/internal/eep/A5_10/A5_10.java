@@ -30,10 +30,6 @@ public abstract class A5_10 extends _4BSMessage {
         super(packet);
     }
 
-    public A5_10() {
-        super();
-    }
-
     @Override
     protected State convertToStateImpl(String channelId, State currentState, Configuration config) {
         if (!isValid() || !this.getSupportedChannels().contains(channelId)) {
