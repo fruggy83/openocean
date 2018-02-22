@@ -30,7 +30,6 @@ import org.eclipse.smarthome.core.thing.binding.ConfigStatusBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
-import org.openhab.binding.openocean.internal.OpenOceanException;
 import org.openhab.binding.openocean.internal.messages.BaseResponse;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;
 import org.openhab.binding.openocean.internal.messages.ESP3PacketFactory;
@@ -145,13 +144,16 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
 
         try {
             transceiver.Initialize();
-        } catch (OpenOceanException e) {
+        } catch (Exception e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, e.getMessage());
             return;
         }
 
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
+                "starting receiving and sending threads...");
         transceiver.StartSendingAndReading(scheduler);
 
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "trying to get bridge base id...");
         logger.debug("request base id");
         transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
                 new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
@@ -179,10 +181,10 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
         /*
          * transceiver.sendESP3Packet(ESP3PacketFactory.CO_WR_SUBTEL(true),
          * new ResponseListenerIgnoringTimeouts<BaseResponse>() {
-         * 
+         *
          * @Override
          * public void responseReceived(BaseResponse response) {
-         * 
+         *
          * if (response.isOK()) {
          * logger.debug("set subtel");
          * } else if (response.getResponseType() == ResponseType.RET_NOT_SUPPORTED) {
