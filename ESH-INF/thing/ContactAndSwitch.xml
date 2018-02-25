@@ -9,7 +9,7 @@
                 <bridge-type-ref id="bridge" />
             </supported-bridge-type-refs>
             
-            <label>Single input contact</label>
+            <label>D5-00 - Single input contact</label>
             <description>Single input contact which sends EEP D5-00-01</description>
             
              <config-description>

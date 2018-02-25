@@ -9,7 +9,7 @@
                 <bridge-type-ref id="bridge" />
             </supported-bridge-type-refs>
             
-            <label>Central command</label>
+            <label>A5-38 - Central command</label>
             <description>Send a command to an actor by using A5-38 EEP</description>
             
             <properties>

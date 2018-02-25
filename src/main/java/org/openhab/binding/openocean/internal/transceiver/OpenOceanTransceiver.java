@@ -130,11 +130,7 @@ public abstract class OpenOceanTransceiver {
 
         while (!readingTask.isCancelled()) {
             try {
-                synchronized (this.syncObj) {
-                    if (this.inputStream.available() == 0) {
-                        this.syncObj.wait();
-                    }
-                }
+
                 if (readingTask.isCancelled()) {
                     return;
                 }
@@ -251,9 +247,9 @@ public abstract class OpenOceanTransceiver {
                 }
             } catch (IOException ioexception) {
                 logger.error("{}", ioexception.getMessage()); // ioexception.printStackTrace();
-            } catch (InterruptedException interruptedexception) {
-                logger.error("receiving packets interrupted");
-            }
+            } // catch (InterruptedException interruptedexception) {
+              // logger.error("receiving packets interrupted");
+              // }
         }
 
         logger.debug("finished listening");
@@ -308,7 +304,7 @@ public abstract class OpenOceanTransceiver {
                             for (int j = 0; j < b.length; i[j] = b[j++]) {
                                 ;
                             }
-                            logger.trace("{}", Helper.bytesToHexString(i));
+                            logger.debug("{}", Helper.bytesToHexString(i));
 
                             outputStream.write(b);
                             outputStream.flush();

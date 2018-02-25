@@ -9,7 +9,7 @@
                 <bridge-type-ref id="bridge" />
             </supported-bridge-type-refs>
             
-            <label>Room operating panel</label>
+            <label>A5-10 - Room operating panel</label>
             <description>Room operating panel which sends EEP A5-10-03</description>
             
              <config-description>

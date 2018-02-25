@@ -14,7 +14,9 @@ import org.openhab.binding.openocean.internal.OpenOceanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gnu.io.NRSerialPort;
+import gnu.io.CommPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
@@ -24,7 +26,7 @@ import gnu.io.SerialPortEventListener;
  */
 public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements SerialPortEventListener {
 
-    NRSerialPort serialPort;
+    SerialPort serialPort;
     private static final int ENOCEAN_DEFAULT_BAUD = 57600;
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanSerialTransceiver.class);
@@ -39,11 +41,15 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
         if (serialPort == null) {
 
             try {
-                serialPort = new NRSerialPort(path, ENOCEAN_DEFAULT_BAUD);
-                if (!serialPort.connect()) {
-                    logger.info("Could not connect to serial port {}", path);
-                    return;
-                }
+                CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(path);
+                CommPort commPort = portIdentifier.open(this.getClass().getName(), 2000);
+
+                serialPort = (SerialPort) commPort;
+                serialPort.setSerialPortParams(ENOCEAN_DEFAULT_BAUD, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+                        SerialPort.PARITY_NONE);
+                serialPort.enableReceiveThreshold(1);
+                serialPort.enableReceiveTimeout(100); // In ms. Small values mean faster shutdown but more cpu usage.
+
             } catch (Exception e) {
 
                 logger.info("Exception while trying to connect to serial port {}: {}", path, e.getMessage());
@@ -57,6 +63,7 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
                 outputStream = serialPort.getOutputStream();
 
                 serialPort.addEventListener(this);
+                serialPort.notifyOnDataAvailable(true);
 
                 logger.info("OpenOceanSerialTransceiver initialized");
 
@@ -65,6 +72,10 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
                 ShutDown();
                 logger.info("Serial port {} already in use: {}", path, e.getMessage());
                 throw new OpenOceanException("Serial port already in use");
+            } catch (Exception e) {
+                ShutDown();
+                logger.info("Exception while trying to access streams: {}", e.getMessage());
+                throw new OpenOceanException(e.getMessage());
             }
         }
     }
@@ -75,22 +86,22 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
         super.ShutDown();
 
         if (serialPort != null) {
-            if (serialPort.isConnected()) {
-                serialPort.removeEventListener();
-                serialPort.disconnect();
-                serialPort = null;
-            }
 
-            logger.info("Transceiver shutdown");
+            serialPort.removeEventListener();
+
+            serialPort = null;
         }
+
+        logger.info("Transceiver shutdown");
+
     }
 
     @Override
     public void serialEvent(SerialPortEvent event) {
-        if (event.getEventType() == 1) {
-            synchronized (this.syncObj) {
-                this.syncObj.notify();
-            }
+        try {
+            logger.trace("RXTX library CPU load workaround, sleep forever");
+            Thread.sleep(Long.MAX_VALUE);
+        } catch (InterruptedException e) {
         }
     }
 }

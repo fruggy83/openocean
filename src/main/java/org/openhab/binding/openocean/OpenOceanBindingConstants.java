@@ -40,10 +40,12 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_MECHANICALHANDLE = new ThingTypeUID(BINDING_ID, "mechanicalHandle");
     public final static ThingTypeUID THING_TYPE_CONTACTANDSWITCH = new ThingTypeUID(BINDING_ID, "contactSwitch");
     public final static ThingTypeUID THING_TYPE_MEASUREMENTSWITCH = new ThingTypeUID(BINDING_ID, "measurementSwitch");
+    public final static ThingTypeUID THING_TYPE_TEMPERATURESENSOR = new ThingTypeUID(BINDING_ID, "temperatureSensor");
 
     public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_ROCKERSWITCH,
             THING_TYPE_UNIVERSALACTUATOR, THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROOMOPERATINGPANEL,
-            THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_MEASUREMENTSWITCH);
+            THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_MEASUREMENTSWITCH,
+            THING_TYPE_TEMPERATURESENSOR);
 
     public final static String CHANNELTYPE_ROCKERSWITCH = "rockerSwitch";
     public final static ChannelTypeUID CHANNEL_TYPE_ROCKERSWITCH = new ChannelTypeUID(BINDING_ID,

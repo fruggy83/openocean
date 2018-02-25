@@ -10,7 +10,7 @@
             <bridge-type-ref id="bridge" />
         </supported-bridge-type-refs>
         
-        <label>Rocker Switch</label>
+        <label>F6-02 - Rocker Switch</label>
         <description>Rocker Switch</description>
           
         <properties>

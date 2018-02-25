@@ -9,7 +9,7 @@
                 <bridge-type-ref id="bridge" />
             </supported-bridge-type-refs>
             
-            <label>Universal actuator</label>
+            <label>A5-3F-7F - Universal actuator</label>
             <description>Actuator operates with universal EEP command A5-3F-7F</description>
             
             <properties>

@@ -16,6 +16,31 @@ import java.util.Set;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_01;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_02;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_03;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_04;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_05;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_06;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_07;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_08;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_09;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_0A;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_0B;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_10;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_11;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_12;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_13;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_14;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_15;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_16;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_17;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_18;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_19;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_1A;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_1B;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_20;
+import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_30;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_01;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_02;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_03;
@@ -87,6 +112,56 @@ public enum EEPType {
     PTM200(RORG.RPS, 0x00, 0x00, false, PTM200Message.class, null, CHANNEL_LIGHT_SWITCHING, CHANNEL_RECEIVINGSTATE),
     ContactAndSwitch(RORG._1BS, 0x00, 0x01, false, D5_00_01.class, THING_TYPE_CONTACTANDSWITCH, CHANNEL_CONTACT,
             CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_01(RORG._4BS, 0x02, 0x01, false, A5_02_01.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_02(RORG._4BS, 0x02, 0x02, false, A5_02_02.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_03(RORG._4BS, 0x02, 0x03, false, A5_02_03.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_04(RORG._4BS, 0x02, 0x04, false, A5_02_04.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_05(RORG._4BS, 0x02, 0x05, false, A5_02_05.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_06(RORG._4BS, 0x02, 0x06, false, A5_02_06.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_07(RORG._4BS, 0x02, 0x07, false, A5_02_07.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_08(RORG._4BS, 0x02, 0x08, false, A5_02_08.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_09(RORG._4BS, 0x02, 0x09, false, A5_02_09.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_0A(RORG._4BS, 0x02, 0x0A, false, A5_02_0A.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_0B(RORG._4BS, 0x02, 0x0B, false, A5_02_0B.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_10(RORG._4BS, 0x02, 0x10, false, A5_02_10.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_11(RORG._4BS, 0x02, 0x11, false, A5_02_11.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_12(RORG._4BS, 0x02, 0x12, false, A5_02_12.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_13(RORG._4BS, 0x02, 0x13, false, A5_02_13.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_14(RORG._4BS, 0x02, 0x14, false, A5_02_14.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_15(RORG._4BS, 0x02, 0x15, false, A5_02_15.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_16(RORG._4BS, 0x02, 0x16, false, A5_02_16.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_17(RORG._4BS, 0x02, 0x17, false, A5_02_17.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_18(RORG._4BS, 0x02, 0x18, false, A5_02_18.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_19(RORG._4BS, 0x02, 0x19, false, A5_02_19.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_1A(RORG._4BS, 0x02, 0x1A, false, A5_02_1A.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_1B(RORG._4BS, 0x02, 0x1B, false, A5_02_1B.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_20(RORG._4BS, 0x02, 0x20, false, A5_02_20.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    TemperatureSensor_A5_02_30(RORG._4BS, 0x02, 0x30, false, A5_02_30.class, THING_TYPE_TEMPERATURESENSOR,
+            CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
     RoomPanel_A5_10_01(RORG._4BS, 0x10, 0x01, false, A5_10_01.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
             CHANNEL_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
     RoomPanel_A5_10_02(RORG._4BS, 0x10, 0x02, false, A5_10_02.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,

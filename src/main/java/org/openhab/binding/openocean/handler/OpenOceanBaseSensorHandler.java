@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implements ESP3PacketListener {
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_ROOMOPERATINGPANEL,
-            THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH);
+            THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_TEMPERATURESENSOR);
 
     protected EEPType receivingEEPType = null;
 
