@@ -10,6 +10,7 @@ package org.openhab.binding.openocean.internal.transceiver;
 
 import java.lang.reflect.ParameterizedType;
 
+import org.openhab.binding.openocean.internal.OpenOceanException;
 import org.openhab.binding.openocean.internal.messages.Response;
 
 /**
@@ -30,11 +31,11 @@ public abstract class ResponseListener<T extends Response> {
 
     public abstract void responseTimeOut();
 
-    public void handleResponse(Response response) {
+    public void handleResponse(Response response) throws OpenOceanException {
         try {
             responseReceived(persistentClass.getConstructor(Response.class).newInstance(response));
         } catch (Exception e) {
-
+            throw new OpenOceanException(e.getMessage());
         }
     }
 }

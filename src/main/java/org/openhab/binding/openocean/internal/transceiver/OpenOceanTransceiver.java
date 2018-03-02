@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TooManyListenersException;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openhab.binding.openocean.internal.OpenOceanException;
@@ -28,6 +30,10 @@ import org.openhab.binding.openocean.internal.messages.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.UnsupportedCommOperationException;
+
 /**
  *
  * @author Daniel Weber - Initial contribution
@@ -36,7 +42,6 @@ public abstract class OpenOceanTransceiver {
 
     // Thread management
     private Future<?> readingTask;
-    protected Object syncObj;
 
     protected String path;
 
@@ -49,9 +54,79 @@ public abstract class OpenOceanTransceiver {
         ResponseListener<? extends Response> ResponseListener;
     }
 
-    private Queue<Request> requests;
+    private class RequestQueue {
+        private Queue<Request> queue = new LinkedBlockingQueue<>();
+
+        public synchronized void enqueRequest(Request request) throws IOException {
+            boolean wasEmpty = queue.isEmpty();
+
+            if (queue.offer(request)) {
+                if (wasEmpty) {
+                    send();
+                }
+            } else {
+                logger.error("Transmit queue overflow. Lost message: {}", request);
+            }
+        }
+
+        public synchronized void sendNext() throws IOException {
+            queue.poll();
+            send();
+        }
+
+        private synchronized void send() throws IOException {
+            if (!queue.isEmpty()) {
+
+                currentRequest = queue.peek();
+                try {
+                    if (currentRequest != null && currentRequest.RequestPacket != null) {
+                        synchronized (currentRequest) {
+
+                            logger.trace("sending request");
+
+                            byte[] b = currentRequest.RequestPacket.serialize();
+
+                            if (logger.isDebugEnabled()) {
+                                int[] i = new int[b.length];
+                                // array copy with conversion byte -> int
+                                for (int j = 0; j < b.length; i[j] = b[j++]) {
+                                    ;
+                                }
+                                logger.debug("{}", Helper.bytesToHexString(i));
+                            }
+
+                            outputStream.write(b);
+                            outputStream.flush();
+
+                            /*
+                             * if (currentRequest.ResponseListener != null) {
+                             * logger.trace("awaiting response");
+                             * currentRequest.wait(2000);
+                             *
+                             * if (currentRequest.ResponsePacket == null) {
+                             * logger.debug("response timeout");
+                             * currentRequest.ResponseListener.responseTimeOut();
+                             * } else {
+                             * logger.trace("response received");
+                             * currentRequest.ResponseListener.handleResponse(currentRequest.ResponsePacket);
+                             * }
+                             *
+                             * logger.trace("handled request");
+                             * } else {
+                             * logger.trace("request without listener");
+                             * }
+                             */
+                        }
+                    }
+                } catch (OpenOceanException e) {
+                    logger.error("exception while sending data {}", e);
+                }
+            }
+        }
+    }
+
+    RequestQueue requestQueue;
     Request currentRequest = null;
-    private Future<?> sendingTask;
 
     protected Map<Long, List<ESP3PacketListener>> listeners;
     protected ESP3PacketListener teachInListener;
@@ -61,6 +136,7 @@ public abstract class OpenOceanTransceiver {
     protected OutputStream outputStream;
 
     private int[] filteredDeviceId;
+    TransceiverErrorListener errorListener;
 
     enum ReadingState {
         WaitingForSyncByte,
@@ -68,18 +144,20 @@ public abstract class OpenOceanTransceiver {
         ReadingData
     }
 
-    public OpenOceanTransceiver(String path) {
+    public OpenOceanTransceiver(String path, TransceiverErrorListener errorListener) {
         this.path = path;
-        this.syncObj = new Object();
 
-        requests = new LinkedList<Request>();
+        requestQueue = new RequestQueue();
         listeners = new HashMap<Long, List<ESP3PacketListener>>();
         teachInListener = null;
+        this.errorListener = errorListener;
     }
 
-    public abstract void Initialize() throws OpenOceanException;
+    public abstract void Initialize() throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException,
+            IOException, TooManyListenersException;
 
-    public void StartSendingAndReading(ScheduledExecutorService scheduler) {
+    public void StartReceiving(ScheduledExecutorService scheduler) {
+
         if (readingTask == null || readingTask.isCancelled()) {
             readingTask = scheduler.submit(new Runnable() {
 
@@ -90,27 +168,19 @@ public abstract class OpenOceanTransceiver {
 
             });
         }
-
-        if (sendingTask == null || sendingTask.isCancelled()) {
-            sendingTask = scheduler.submit(new Runnable() {
-
-                @Override
-                public void run() {
-                    sendPackets();
-                }
-
-            });
-        }
     }
 
     public void ShutDown() {
-        if (readingTask != null && !readingTask.isCancelled()) {
+
+        logger.debug("Interrupt rx Thread");
+        if (readingTask != null) {
             readingTask.cancel(true);
         }
 
-        if (sendingTask != null && !sendingTask.isCancelled()) {
-            sendingTask.cancel(true);
-        }
+        readingTask = null;
+        listeners.clear();
+        teachInListener = null;
+        errorListener = null;
     }
 
     private void receivePackets() {
@@ -203,12 +273,24 @@ public abstract class OpenOceanTransceiver {
                                             packetType, dataBuffer);
 
                                     if (packet != null) {
-                                        if (packet.getPacketType() == ESPPacketType.RESPONSE
-                                                && currentRequest != null) {
+                                        if (packet.getPacketType() == ESPPacketType.RESPONSE) {
                                             logger.trace("publish response");
-                                            synchronized (currentRequest) {
-                                                currentRequest.ResponsePacket = (Response) packet;
-                                                currentRequest.notify();
+
+                                            if (currentRequest != null) {
+                                                if (currentRequest.ResponseListener != null) {
+
+                                                    logger.trace("response received");
+                                                    currentRequest.ResponsePacket = (Response) packet;
+                                                    try {
+                                                        currentRequest.ResponseListener
+                                                                .handleResponse(currentRequest.ResponsePacket);
+                                                    } catch (Exception e) {
+                                                    }
+
+                                                    logger.trace("handled request");
+                                                } else {
+                                                    logger.trace("request without listener");
+                                                }
                                             }
                                         } else if (packet instanceof ERP1Message) {
 
@@ -229,6 +311,9 @@ public abstract class OpenOceanTransceiver {
                                         System.arraycopy(dataBuffer, 0, d, 0, d.length);
                                         logger.trace("{}", Helper.bytesToHexString(d));
                                     }
+
+                                    requestQueue.sendNext();
+
                                 } else {
                                     state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
                                             : ReadingState.WaitingForSyncByte;
@@ -246,102 +331,23 @@ public abstract class OpenOceanTransceiver {
                     }
                 }
             } catch (IOException ioexception) {
-                logger.error("{}", ioexception.getMessage()); // ioexception.printStackTrace();
-            } // catch (InterruptedException interruptedexception) {
-              // logger.error("receiving packets interrupted");
-              // }
+                errorListener.ErrorOccured(ioexception);
+                return;
+            }
         }
 
         logger.debug("finished listening");
-
     }
 
-    public void sendESP3Packet(ESP3Packet packet, ResponseListener<? extends Response> responseCallback) {
+    public void sendESP3Packet(ESP3Packet packet, ResponseListener<? extends Response> responseCallback)
+            throws IOException {
 
-        synchronized (requests) {
-            logger.debug("new request arrived");
-            Request r = new Request();
-            r.RequestPacket = packet;
-            r.ResponseListener = responseCallback;
+        logger.debug("new request arrived");
+        Request r = new Request();
+        r.RequestPacket = packet;
+        r.ResponseListener = responseCallback;
 
-            requests.offer(r);
-            requests.notify();
-        }
-    }
-
-    protected void sendPackets() {
-
-        logger.debug("start sending packets");
-
-        while (!sendingTask.isCancelled()) {
-            try {
-
-                synchronized (requests) {
-                    if (requests.isEmpty()) {
-                        logger.debug("awaiting packets to send");
-                        requests.wait();
-                    }
-                    currentRequest = requests.poll();
-                }
-
-                if (sendingTask.isCancelled()) {
-                    return;
-                }
-
-                if (currentRequest != null) {
-                    synchronized (currentRequest) {
-
-                        if (currentRequest.RequestPacket == null) {
-                            continue;
-                        }
-
-                        logger.trace("sending request");
-
-                        try {
-                            byte[] b = currentRequest.RequestPacket.serialize();
-                            int[] i = new int[b.length];
-                            // array copy with conversion byte -> int
-                            for (int j = 0; j < b.length; i[j] = b[j++]) {
-                                ;
-                            }
-                            logger.debug("{}", Helper.bytesToHexString(i));
-
-                            outputStream.write(b);
-                            outputStream.flush();
-                        } catch (IOException e) {
-                            logger.error("IO exception while sending data {}", e.getMessage());
-                            currentRequest = null;
-                            continue;
-                        } catch (Exception e) {
-                            logger.error("exception while sending data {}", e.getMessage());
-                            currentRequest = null;
-                            continue;
-                        }
-
-                        logger.trace("awaiting response");
-                        currentRequest.wait(2000);
-
-                        if (currentRequest.ResponseListener != null) {
-                            if (currentRequest.ResponsePacket == null) {
-                                logger.debug("response timeout");
-                                currentRequest.ResponseListener.responseTimeOut();
-                            } else {
-                                logger.trace("response received");
-                                currentRequest.ResponseListener.handleResponse(currentRequest.ResponsePacket);
-                            }
-                        } else {
-                            logger.trace("request without listener");
-                        }
-
-                        logger.trace("handeled request");
-                        currentRequest.wait(500);
-                        currentRequest = null;
-                    }
-                }
-            } catch (InterruptedException e) {
-                logger.error("sending packets interrupted");
-            }
-        }
+        requestQueue.enqueRequest(r);
     }
 
     protected void informListeners(ERP1Message msg) {

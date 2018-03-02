@@ -10,9 +10,11 @@ package org.openhab.binding.openocean.handler;
 
 import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +45,12 @@ import org.openhab.binding.openocean.internal.transceiver.OpenOceanSerialTransce
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListener;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListenerIgnoringTimeouts;
+import org.openhab.binding.openocean.internal.transceiver.TransceiverErrorListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
 
 /**
  * The {@link OpenOceanBridgeHandler} is responsible for handling commands, which are
@@ -52,7 +58,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
+public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements TransceiverErrorListener {
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanBridgeHandler.class);
 
@@ -80,7 +86,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
 
         if (channelUID.getId().equals(REPEATERMODE)) {
             if (command instanceof RefreshType) {
-                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_REPEATER,
+                sendMessage(ESP3PacketFactory.CO_RD_REPEATER,
                         new ResponseListenerIgnoringTimeouts<RDRepeaterResponse>() {
 
                             @Override
@@ -93,7 +99,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
                             }
                         });
             } else if (command instanceof StringType) {
-                transceiver.sendESP3Packet(ESP3PacketFactory.CO_WR_REPEATER((StringType) command),
+                sendMessage(ESP3PacketFactory.CO_WR_REPEATER((StringType) command),
                         new ResponseListenerIgnoringTimeouts<BaseResponse>() {
 
                             @Override
@@ -111,7 +117,6 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
     @Override
     public void initialize() {
 
-        // TODO use scheduled task to try reconnect to gateway
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "trying to connect to gateway...");
         Object devId = getConfig().get(NEXTDEVICEID);
         if (devId != null) {
@@ -120,63 +125,89 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
             nextDeviceId = 0;
         }
 
-        if (connectorTask != null) {
-            connectorTask.cancel(true);
-            dispose();
-            connectorTask = null;
-        }
-
-        if (connectorTask == null || connectorTask.isCancelled()) {
-            connectorTask = scheduler.schedule(new Runnable() {
+        if (connectorTask == null || connectorTask.isDone()) {
+            connectorTask = scheduler.scheduleWithFixedDelay(new Runnable() {
 
                 @Override
                 public void run() {
-                    initTransceiver();
+                    if (thing.getStatus() != ThingStatus.ONLINE) {
+                        initTransceiver();
+                    }
                 }
 
-            }, 1, TimeUnit.SECONDS);
+            }, 0, 60, TimeUnit.SECONDS);
         }
     }
 
-    private void initTransceiver() {
-
-        transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT));
+    private synchronized void initTransceiver() {
 
         try {
-            transceiver.Initialize();
+            if (transceiver == null) {
+                transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this);
+            }
+
+            if (transceiver != null) {
+                transceiver.ShutDown();
+
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "opening serial port...");
+                transceiver.Initialize();
+
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "starting rx thread...");
+                transceiver.StartReceiving(scheduler);
+
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
+                        "trying to get bridge base id...");
+                logger.debug("request base id");
+                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
+                        new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
+
+                            @Override
+                            public void responseReceived(RDBaseIdResponse response) {
+
+                                logger.debug("received response for base id");
+
+                                if (response.isValid() && response.isOK()) {
+                                    baseId = response.getBaseId().clone();
+                                    updateProperty(PROPERTY_Base_ID, Helper.bytesToHexString(response.getBaseId()));
+                                    updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
+                                            Integer.toString(response.getRemainingWriteCycles()));
+                                    transceiver.setFilteredDeviceId(baseId);
+
+                                    updateStatus(ThingStatus.ONLINE);
+                                } else {
+                                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                                            "Could not get BaseId");
+                                }
+                            }
+                        });
+
+                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION,
+                        new ResponseListenerIgnoringTimeouts<RDVersionResponse>() {
+
+                            @Override
+                            public void responseReceived(RDVersionResponse response) {
+
+                                if (response.isValid() && response.isOK()) {
+                                    updateProperty(PROPERTY_APP_VERSION, response.getAPPVersion());
+                                    updateProperty(PROPERTY_API_VERSION, response.getAPIVersion());
+                                    updateProperty(PROPERTY_CHIP_ID, response.getChipID());
+                                    updateProperty(PROPERTY_DESCRIPTION, response.getDescription());
+                                }
+                            }
+                        });
+            }
+
+        } catch (NoSuchPortException e) {
+            logger.debug("error during bridge init occured", e);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port could not be found");
+        } catch (PortInUseException e) {
+            logger.debug("error during bridge init occured", e);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port already in use");
         } catch (Exception e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, e.getMessage());
+            logger.debug("error during bridge init occured", e);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port could not be initialized");
             return;
         }
-
-        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
-                "starting receiving and sending threads...");
-        transceiver.StartSendingAndReading(scheduler);
-
-        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "trying to get bridge base id...");
-        logger.debug("request base id");
-        transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
-                new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
-
-                    @Override
-                    public void responseReceived(RDBaseIdResponse response) {
-
-                        logger.debug("received response for base id");
-
-                        if (response.isValid() && response.isOK()) {
-                            baseId = response.getBaseId().clone();
-                            updateProperty(PROPERTY_Base_ID, Helper.bytesToHexString(response.getBaseId()));
-                            updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
-                                    Integer.toString(response.getRemainingWriteCycles()));
-                            transceiver.setFilteredDeviceId(baseId);
-
-                            updateStatus(ThingStatus.ONLINE);
-                        } else {
-                            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                                    "Could not get BaseId");
-                        }
-                    }
-                });
 
         /*
          * transceiver.sendESP3Packet(ESP3PacketFactory.CO_WR_SUBTEL(true),
@@ -196,51 +227,33 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
          * });
          */
 
-        transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION,
-                new ResponseListenerIgnoringTimeouts<RDVersionResponse>() {
-
-                    @Override
-                    public void responseReceived(RDVersionResponse response) {
-
-                        if (response.isValid() && response.isOK()) {
-                            updateProperty(PROPERTY_APP_VERSION, response.getAPPVersion());
-                            updateProperty(PROPERTY_API_VERSION, response.getAPIVersion());
-                            updateProperty(PROPERTY_CHIP_ID, response.getChipID());
-                            updateProperty(PROPERTY_DESCRIPTION, response.getDescription());
-                        }
-                    }
-                });
-
     }
 
     @Override
-    public void dispose() {
+    public synchronized void dispose() {
         if (transceiver != null) {
             transceiver.ShutDown();
+            transceiver = null;
         }
+
+        if (connectorTask != null && !connectorTask.isDone()) {
+            connectorTask.cancel(true);
+            connectorTask = null;
+        }
+
         super.dispose();
     }
 
     @Override
-    public void handleRemoval() {
-        if (transceiver != null) {
-            transceiver.ShutDown();
-        }
-        updateStatus(ThingStatus.REMOVED);
-    }
-
-    @Override
     public Collection<ConfigStatusMessage> getConfigStatus() {
-        Collection<ConfigStatusMessage> configStatusMessages;
+        Collection<ConfigStatusMessage> configStatusMessages = new LinkedList<ConfigStatusMessage>();
 
         // The serial port must be provided
         final String bridgePort = (String) getThing().getConfiguration().get(PORT);
         if (bridgePort == null || bridgePort.isEmpty()) {
-            configStatusMessages = Collections.singletonList(ConfigStatusMessage.Builder.error(PORT)
+            configStatusMessages.add(ConfigStatusMessage.Builder.error(PORT)
                     .withMessageKeySuffix(OpenOceanConfigStatusMessage.PORT_MISSING.getMessageKey()).withArguments(PORT)
                     .build());
-        } else {
-            configStatusMessages = Collections.emptyList();
         }
 
         return configStatusMessages;
@@ -286,8 +299,12 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
         sendingThings[id] = null;
     }
 
-    public <T extends Response> void sendMessage(ESP3Packet message, ResponseListener<T> response) {
-        transceiver.sendESP3Packet(message, response);
+    public <T extends Response> void sendMessage(ESP3Packet message, ResponseListener<T> responseListener) {
+        try {
+            transceiver.sendESP3Packet(message, responseListener);
+        } catch (IOException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+        }
     }
 
     public void addPacketListener(ESP3PacketListener listener) {
@@ -300,5 +317,13 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler {
 
     public void stopDiscovery() {
         transceiver.stopDiscovery();
+    }
+
+    @Override
+    public void ErrorOccured(Throwable exception) {
+        transceiver.ShutDown();
+        transceiver = null;
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, exception.getMessage());
+
     }
 }
