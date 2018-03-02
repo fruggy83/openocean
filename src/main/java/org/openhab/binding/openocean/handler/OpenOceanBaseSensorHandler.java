@@ -95,6 +95,10 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
         if (eep.isValid()) {
 
             receivingEEPType.GetChannelIds().stream().filter(id -> getLinkedChannels().containsKey(id)).forEach(id -> {
+                if (id == null) {
+                    return;
+                }
+
                 Channel channel = getLinkedChannels().get(id);
 
                 Configuration config = channel.getConfiguration();

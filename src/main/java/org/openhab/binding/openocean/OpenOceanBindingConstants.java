@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
@@ -48,6 +49,7 @@ public class OpenOceanBindingConstants {
             THING_TYPE_TEMPERATURESENSOR);
 
     public final static String CHANNELTYPE_ROCKERSWITCH = "rockerSwitch";
+    @NonNull
     public final static ChannelTypeUID CHANNEL_TYPE_ROCKERSWITCH = new ChannelTypeUID(BINDING_ID,
             CHANNELTYPE_ROCKERSWITCH);
 
@@ -83,6 +85,7 @@ public class OpenOceanBindingConstants {
 
     // item types
     public final static String DIMMER = "Dimmer";
+    @NonNull
     public final static String SWITCH = "Switch";
     public final static String BLIND = "Rollershutter";
     public final static String STRING = "String";
@@ -143,6 +146,7 @@ public class OpenOceanBindingConstants {
             });
 
     // List of all repeater mode states
+    @NonNull
     public final static String REPEATERMODE_OFF = "OFF";
     public final static String REPEATERMODE_LEVEL_1 = "LEVEL1";
     public final static String REPEATERMODE_LEVEL_2 = "LEVEL2";
@@ -153,11 +157,17 @@ public class OpenOceanBindingConstants {
     public static final String NEXTDEVICEID = "nextDeviceId";
 
     // Bridge properties
+    @NonNull
     public static final String PROPERTY_Base_ID = "Base ID";
+    @NonNull
     public static final String PROPERTY_REMAINING_WRITE_CYCLES_Base_ID = "Remaining Base ID Write Cycles";
+    @NonNull
     public static final String PROPERTY_APP_VERSION = "APP Version";
+    @NonNull
     public static final String PROPERTY_API_VERSION = "API Version";
+    @NonNull
     public static final String PROPERTY_CHIP_ID = "Chip ID";
+    @NonNull
     public static final String PROPERTY_DESCRIPTION = "Description";
 
     // Thing properties
@@ -166,6 +176,7 @@ public class OpenOceanBindingConstants {
     // Thing config parameter
     public static final String PARAMETER_SENDERIDOFFSET = "senderIdOffset";
     public static final String PARAMETER_RECEIVINGEEPID = "receivingEEPId";
+    @NonNull
     public static final String PARAMETER_EEPID = "eepId";
 
     // Channel config parameter
@@ -178,9 +189,11 @@ public class OpenOceanBindingConstants {
     public static final String DOWN_PRESSED = "DOWN_PRESSED";
     public static final String DOWN_RELEASED = "DOWN_RELEASED";
 
+    @NonNull
     public static final ProfileTypeUID RockerSwitchEventsToOnOffProfileTypeUID = new ProfileTypeUID(BINDING_ID,
             "rockerSwitchToOnOff");
 
+    @NonNull
     public static final Set<ProfileTypeUID> SUPPORTED_PROFILETYPES_UIDS = ImmutableSet
             .of(RockerSwitchEventsToOnOffProfileTypeUID);
 

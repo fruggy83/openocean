@@ -13,6 +13,7 @@ EnOcean messages are mainly send as broadcast messages without an explicit recei
 ## Supported Things
 
 This binding is developed on and tested with the following things
+
  * USB300 and EnOceanPi gateways as OpenHab bridges
  * The following Eltako actuators:
     * FSR14 (light switch)
@@ -31,9 +32,11 @@ However because of the standardized EnOcean protocol it is more important which 
 Most of the EnOcean devices can be automatically created and configured as an OpenHab thing through the discovery service. The EnOcean protocol defines a so called "teach-in" process to announce the abilities and services of an EnOcean device and pair devices. To pair an EnOcean device with its OpenHab thing representation, you have to differentiate between sensors and actuators.
 
 ### Sensors
+
 To pair a sensor with its thing, you first have to start the discovery scan for this binding in PaperUI. Then press the "teach-in" button of the sensor. The sensor sends a teach-in message which contains the information about the EEP and the device Id of the sensor. If the EEP is known by this binding the thing representation of the device is created. The corresponding channels are created dynamically, too. 
 
-### Actuators 
+### Actuators
+ 
 If the actuator supports UTE teach-ins, the corresponding thing can be created and paired automatically. First you have to start the discovery scan for this binding in PaperUI. Then press the teach-in button of the actuator. 
 
 If the actuator does not support UTE teach-ins, you have to create, configure and choose the right EEP of the thing manually. It is important to link the teach-in channel of this thing. Afterwards you have to activate the pairing mode of the actuator. Then switch on the teach-in item(/channel) to send a teach-in message to the actuator. If the pairing was successful, you can control the actuator and unlink the teach-in channel.   
@@ -44,10 +47,12 @@ If the actuator does not support UTE teach-ins, you have to create, configure an
 Things can and should by configured through PaperUI. Following the most important config parameters:
 
 Bridge
+
  * Serial port: The serial port to which the EnOcean gateway is connected to
  * Next device id: The device Id which should be taken for the next created actuator without an explicit device Id
  
 Things
+
  * Thing Id: EnOcean Id of the device. 4 byte hex string (abcdef00).
  * Bridge: Must be provided
  * Sender Id: Is used to generate the unique EnOcean device Id for sending messages (added to the base Id of the gateway). If you leave it empty, the next free Id will be determined automatically (see "next device id" of bridge). The resulting device Id can be seen through the properties.
@@ -58,6 +63,8 @@ Things
 The channels of a thing are determined automatically based on the choosen EEP. The following channels are supported: (Light) Switch, Dimmer, Rollershutter, Temperature, Handle state.
 
 ## Credits
+
 Many thanks to:
+
  * The NodOn support for their hints about the ADT and UTE teach in messages.
  * The fhem project for the inspiration and their EnOcean addon

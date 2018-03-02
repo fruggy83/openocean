@@ -10,6 +10,8 @@ package org.openhab.binding.openocean.internal.transceiver;
 
 import java.util.Arrays;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  *
  * @author Daniel Weber - Initial contribution
@@ -74,7 +76,12 @@ public class Helper {
     private static final char[] hexArray = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
             'f' };
 
+    @NonNull
     public static String bytesToHexString(int... bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
+        }
+
         char[] hexChars = new char[bytes.length * 2];
         int v;
         for (int j = 0; j < bytes.length; j++) {

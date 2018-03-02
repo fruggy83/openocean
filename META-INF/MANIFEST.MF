@@ -14,6 +14,7 @@ Export-Package:
 Import-Package: 
  com.google.common.collect,
  gnu.io,
+ org.apache.commons.io,
  org.eclipse.jdt.annotation;resolution:=optional,
  org.eclipse.smarthome.config.core,
  org.eclipse.smarthome.config.core.status,
@@ -30,7 +31,8 @@ Import-Package:
  org.eclipse.smarthome.core.types,
  org.openhab.binding.openocean,
  org.openhab.binding.openocean.handler,
- org.osgi.framework;version="1.8.0",
+ org.openhab.binding.openocean.profiles,
+ org.osgi.framework,
  org.osgi.service.component.annotations;resolution:=optional,
  org.slf4j
 Service-Component: OSGI-INF/*.xml

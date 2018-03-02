@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+<thing:thing-descriptions bindingId="openocean" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-    <!-- OpenOcean Bridge -->
-    <bridge-type id="bridge">
-        <label>OpenOcean Bridge</label>
-        <description>The OpenOcean bridge connects to an ESP3 device.</description>
+	<!-- OpenOcean Bridge -->
+	<bridge-type id="bridge">
+		<label>OpenOcean Bridge</label>
+		<description>The OpenOcean bridge connects to an ESP3 device.</description>
 
-        <channels>
-            <channel id="repeater" typeId="repeaterMode"/>
-        </channels>         
+		<channels>
+			<channel id="repeater" typeId="repeaterMode" />
+		</channels>
 
-        <properties>
-            <property name="Base ID"></property>
-            <property name="Remaining Base ID Write Cycles"></property>
-            <property name="APP Version"></property>
-            <property name="API Version"></property>
-            <property name="Chip ID"></property>
-            <property name="Description"></property>
-        </properties>
-                    
-        <config-description>
-            <parameter name="port" type="text">
-                <context>serial-port</context>
-                <label>Serial port</label>
-                <description>Serial port of the connected enocean transceiver</description>
-                <required>true</required>                
-            </parameter>
-            <parameter name="nextDeviceId" type="integer">
-                <advanced>true</advanced>
-                <label>Next device Id</label>
-                <description>Defines the next device Id, if empty, the next device id is automatically determined</description>
-            </parameter>
-        </config-description>   
-        
-    </bridge-type>
+		<properties>
+			<property name="Base ID"></property>
+			<property name="Remaining Base ID Write Cycles"></property>
+			<property name="APP Version"></property>
+			<property name="API Version"></property>
+			<property name="Chip ID"></property>
+			<property name="Description"></property>
+		</properties>
+
+		<config-description>
+			<parameter name="port" type="text">
+				<context>serial-port</context>
+				<label>Serial port</label>
+				<description>Serial port of the connected enocean transceiver</description>
+				<required>true</required>
+			</parameter>
+			<parameter name="nextDeviceId" type="integer">
+				<advanced>true</advanced>
+				<label>Next device Id</label>
+				<description>Defines the next device Id, if empty, the next device id is automatically determined</description>
+			</parameter>
+		</config-description>
+
+	</bridge-type>
 
 </thing:thing-descriptions>

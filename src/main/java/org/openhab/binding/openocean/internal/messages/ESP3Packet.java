@@ -11,6 +11,7 @@ package org.openhab.binding.openocean.internal.messages;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 
+import org.openhab.binding.openocean.internal.OpenOceanException;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
@@ -136,28 +137,32 @@ public abstract class ESP3Packet {
         return optionalPayload;
     }
 
-    public byte[] serialize() {
-        int optionalLength = optionalPayload != null ? optionalPayload.length : 0;
+    public byte[] serialize() throws OpenOceanException {
+        try {
+            int optionalLength = optionalPayload != null ? optionalPayload.length : 0;
 
-        byte[] result = new byte[ENOCEAN_SYNC_BYTE_LENGTH + ENOCEAN_HEADER_LENGTH + ENOCEAN_CRC3_HEADER_LENGTH
-                + payload.length + optionalLength + ENOCEAN_CRC8_DATA_LENGTH];
+            byte[] result = new byte[ENOCEAN_SYNC_BYTE_LENGTH + ENOCEAN_HEADER_LENGTH + ENOCEAN_CRC3_HEADER_LENGTH
+                    + payload.length + optionalLength + ENOCEAN_CRC8_DATA_LENGTH];
 
-        result[0] = Helper.ENOCEAN_SYNC_BYTE;
-        result[1] = (byte) ((payload.length >> 8) & 0xff);
-        result[2] = (byte) (payload.length & 0xff);
-        result[3] = (byte) (optionalLength & 0xff);
-        result[4] = packetType.value;
-        result[5] = Helper.calcCRC8(result, ENOCEAN_SYNC_BYTE_LENGTH, ENOCEAN_HEADER_LENGTH);
-        for (int i = 0; i < payload.length; i++) {
-            result[6 + i] = (byte) (payload[i] & 0xff);
-        }
-        if (optionalPayload != null) {
-            for (int i = 0; i < optionalPayload.length; i++) {
-                result[6 + payload.length + i] = (byte) (optionalPayload[i] & 0xff);
+            result[0] = Helper.ENOCEAN_SYNC_BYTE;
+            result[1] = (byte) ((payload.length >> 8) & 0xff);
+            result[2] = (byte) (payload.length & 0xff);
+            result[3] = (byte) (optionalLength & 0xff);
+            result[4] = packetType.value;
+            result[5] = Helper.calcCRC8(result, ENOCEAN_SYNC_BYTE_LENGTH, ENOCEAN_HEADER_LENGTH);
+            for (int i = 0; i < payload.length; i++) {
+                result[6 + i] = (byte) (payload[i] & 0xff);
             }
-        }
-        result[6 + payload.length + optionalLength] = Helper.calcCRC8(result, 6, payload.length + optionalLength);
+            if (optionalPayload != null) {
+                for (int i = 0; i < optionalPayload.length; i++) {
+                    result[6 + payload.length + i] = (byte) (optionalPayload[i] & 0xff);
+                }
+            }
+            result[6 + payload.length + optionalLength] = Helper.calcCRC8(result, 6, payload.length + optionalLength);
 
-        return result;
+            return result;
+        } catch (Exception e) {
+            throw new OpenOceanException(e.getMessage());
+        }
     }
 }

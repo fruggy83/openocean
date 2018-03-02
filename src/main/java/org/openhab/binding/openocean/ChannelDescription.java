@@ -8,6 +8,7 @@
  */
 package org.openhab.binding.openocean;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 
 /**
@@ -17,15 +18,20 @@ import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 public class ChannelDescription {
     public final ChannelTypeUID ChannelTypeUID;
     public final String ItemType;
+    @NonNull
     public final String Label;
 
     public ChannelDescription(ChannelTypeUID channelTypeUID, String itemType) {
-        this(channelTypeUID, itemType, null);
+        this(channelTypeUID, itemType, "");
     }
 
     public ChannelDescription(ChannelTypeUID channelTypeUID, String itemType, String label) {
         ChannelTypeUID = channelTypeUID;
         ItemType = itemType;
-        Label = label;
+        if (label != null) {
+            Label = label;
+        } else {
+            Label = "";
+        }
     }
 }

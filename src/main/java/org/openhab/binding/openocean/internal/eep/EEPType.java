@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_01;
@@ -340,6 +341,7 @@ public enum EEPType {
         return thingTypeUID;
     }
 
+    @NonNull
     public String getId() {
         if (command == -1) {
             return String.format("%02X_%02X_%02X", rorg.getValue(), func, type);
@@ -350,12 +352,19 @@ public enum EEPType {
         }
     }
 
+    @NonNull
     public Configuration getChannelConfig(String channelId) {
+        Configuration c = null;
+
         if (channelIdsWithConfig != null) {
-            return channelIdsWithConfig.get(channelId);
+            c = channelIdsWithConfig.get(channelId);
         }
 
-        return null;
+        if (c != null) {
+            return c;
+        }
+
+        return new Configuration();
     }
 
     public static EEPType getType(String receivingEEPId) {

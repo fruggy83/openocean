@@ -11,12 +11,12 @@ package org.openhab.binding.openocean.handler;
 import static org.openhab.binding.openocean.OpenOceanBindingConstants.ChannelId2ChannelDescription;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
@@ -112,7 +112,8 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
 
     protected void updateChannels(EEPType eep, boolean removeUnsupportedChannels) {
 
-        List<Channel> channelList = new LinkedList<Channel>(this.getThing().getChannels());
+        @NonNull
+        List<@NonNull Channel> channelList = new LinkedList<@NonNull Channel>(this.getThing().getChannels());
         boolean channelListChanged = false;
 
         if (removeUnsupportedChannels) {
@@ -150,13 +151,18 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
         channelState = new Hashtable<>();
 
         for (Channel c : this.getThing().getChannels()) {
-            if (isLinked(c.getUID().getId())) {
+            String id = c.getUID().getId();
+            if (id == null) {
+                continue;
+            }
+
+            if (isLinked(id)) {
                 {
-                    linkedChannels.put(c.getUID().getId(), c);
-                    channelState.put(c.getUID().getId(), UnDefType.UNDEF);
+                    linkedChannels.put(id, c);
+                    channelState.put(id, UnDefType.UNDEF);
                 }
             } else if (c.getKind() == ChannelKind.TRIGGER) {
-                linkedChannels.put(c.getUID().getId(), c);
+                linkedChannels.put(id, c);
             }
         }
 
@@ -167,12 +173,13 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
     public void channelLinked(ChannelUID channelUID) {
         super.channelLinked(channelUID);
 
-        if (linkedChannels == null) {
+        String id = channelUID.getId();
+        if (linkedChannels == null || id == null) {
             return;
         }
 
-        linkedChannels.putIfAbsent(channelUID.getId(), thing.getChannel(channelUID.getId()));
-        channelState.putIfAbsent(channelUID.getId(), UnDefType.UNDEF);
+        linkedChannels.putIfAbsent(id, thing.getChannel(id));
+        channelState.putIfAbsent(id, UnDefType.UNDEF);
     }
 
     @Override
@@ -230,7 +237,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
          * return configStatusMessages;
          */
 
-        return Collections.emptyList();
+        return new LinkedList<ConfigStatusMessage>();
     }
 
     @Override

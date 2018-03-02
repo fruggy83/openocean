@@ -26,9 +26,11 @@ import com.google.common.collect.ImmutableSet;
  */
 public class OpenOceanProfileTypes {
 
+    @NonNull
     public static final TriggerProfileType RockerSwitchToOnOffType = new TriggerProfileType() {
 
         @Override
+        @NonNull
         public Collection<@NonNull String> getSupportedItemTypes() {
             return Collections.singleton(SWITCH);
         }
@@ -44,6 +46,7 @@ public class OpenOceanProfileTypes {
         }
 
         @Override
+        @NonNull
         public Collection<@NonNull ChannelTypeUID> getSupportedChannelTypeUIDs() {
             return ImmutableSet.of(CHANNEL_TYPE_ROCKERSWITCH);
         }

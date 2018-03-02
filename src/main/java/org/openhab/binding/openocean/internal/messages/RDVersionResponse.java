@@ -8,6 +8,7 @@
  */
 package org.openhab.binding.openocean.internal.messages;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
@@ -16,10 +17,10 @@ import org.openhab.binding.openocean.internal.transceiver.Helper;
  */
 public class RDVersionResponse extends Response {
 
-    protected String appVersion;
-    protected String apiVersion;
-    protected String chipId;
-    protected String description;
+    protected String appVersion = "";
+    protected String apiVersion = "";
+    protected String chipId = "";
+    protected String description = "";
 
     public RDVersionResponse(Response response) {
         this(response.getPayload().length, 0, response.getPayload());
@@ -54,18 +55,22 @@ public class RDVersionResponse extends Response {
         }
     }
 
+    @NonNull
     public String getAPPVersion() {
         return appVersion;
     }
 
+    @NonNull
     public String getAPIVersion() {
         return apiVersion;
     }
 
+    @NonNull
     public String getChipID() {
         return chipId;
     }
 
+    @NonNull
     public String getDescription() {
         return description;
     }

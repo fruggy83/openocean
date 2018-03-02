@@ -10,6 +10,7 @@ package org.openhab.binding.openocean.internal.messages;
 
 import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.core.library.types.StringType;
 
 /**
@@ -52,6 +53,7 @@ public class RDRepeaterResponse extends Response {
         }
     }
 
+    @NonNull
     public StringType getRepeaterLevel() {
         return StringType.valueOf(repeaterLevel);
     }
