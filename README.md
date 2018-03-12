@@ -25,7 +25,7 @@ This binding is developed on and tested with the following things
  * Hoppe SecuSignal window handles
  * Rocker switches (NodOn, Eltako FT55 etc)
 
-However because of the standardized EnOcean protocol it is more important which EEP this binding supports: F6-02, F6-10, D5-00, A5-10, A5-38 (switching and dimming), A5-37 (more to follow). Hence if your device supports one of these EEPs the chances are good that your device is also supported by this binding.
+However because of the standardized EnOcean protocol it is more important which EEP this binding supports: F6-02, F6-10, D5-00, A5-10, A5-38 (switching and dimming), A5-37 (use generic things). Hence if your device supports one of these EEPs the chances are good that your device is also supported by this binding.
 
 ## Discovery
 
@@ -39,7 +39,7 @@ To pair a sensor with its thing, you first have to start the discovery scan for 
  
 If the actuator supports UTE teach-ins, the corresponding thing can be created and paired automatically. First you have to start the discovery scan for this binding in PaperUI. Then press the teach-in button of the actuator. 
 
-If the actuator does not support UTE teach-ins, you have to create, configure and choose the right EEP of the thing manually. It is important to link the teach-in channel of this thing. Afterwards you have to activate the pairing mode of the actuator. Then switch on the teach-in item(/channel) to send a teach-in message to the actuator. If the pairing was successful, you can control the actuator and unlink the teach-in channel.   
+If the actuator does not support UTE teach-ins, you have to create, configure and choose the right EEP of the thing manually. It is important to link the teach-in channel of this thing. Afterwards you have to activate the pairing mode of the actuator. Then switch on the teach-in item(/channel) to send a teach-in message to the actuator. If the pairing was successful, you can control the actuator and unlink the teach-in channel.
 
 
 ## Thing Configuration
@@ -58,9 +58,48 @@ Things
  * Sender Id: Is used to generate the unique EnOcean device Id for sending messages (added to the base Id of the gateway). If you leave it empty, the next free Id will be determined automatically (see "next device id" of bridge). The resulting device Id can be seen through the properties.
  * (Sending/receiving) EEP: Set the EEP which should be used to send and receive message to or from the device.
  
+## Generic Things
+  If an Enocean device uses an unsupported EEP or _A5-3F-7F_, you have to create a generice thing. Generic things support all generic channels like switch, number, string etc. However you have to specify how to convert the Enocean messages from the thing into Openhab state updates and how to convert the Openhab commands into Enocean messages. These conversion functions can be defined with the help of transformation functions like MAP or JavaScript.
+
+For an inbound transformation (Enocean message => Openhab state) you get the channel id and the Enocean data seperated by a pipe.
+
+```
+ChannelId|EnoceanData(Hex)=OpenhabState|Value
+genericLightSwitch|70=OnOffType|ON
+genericLightSwitch|50=OnOffType|OFF
+```
+Outbound transformation (Openhab command => Enocean message):
+
+```
+ChannelId|OpenhabCommand=EnoceanData(Hex)
+genericLightSwitch|ON=01000009
+genericLightSwitch|OFF=01000008
+```
 ## Channels
 
-The channels of a thing are determined automatically based on the choosen EEP. The following channels are supported: (Light) Switch, Dimmer, Rollershutter, Temperature, Handle state.
+The channels of a thing are determined automatically based on the choosen EEP. The following channels are supported: (Light) Switch, Dimmer, Rollershutter, Temperature, Handle state and many more.
+
+## Profiles
+
+The (sensor) rocker switches use _system:rawrocker_ channels. So they trigger _DIR1[/2]_\__PRESSED_ and DIR1[/2]_\__RELEASED_ events. You can use these events in your rules
+
+```
+rule "Sonos ON"
+when
+    Channel 'openocean:rockerSwitch:4326d3ef:ffffffff:rockerswitchB' triggered DIR1_PRESSED
+then
+    Sonos_Bad_Control.sendCommand("PLAY")
+end
+
+rule "Sonos OFF"
+when
+    Channel 'openocean:rockerSwitch:4326d3ef:ffffffff:rockerswitchB' triggered DIR2_PRESSED
+then
+    Sonos_Bad_Control.sendCommand("PAUSE")
+end
+```
+
+or link them directly to your items. The following items are supported by profiles: switch, dimmer, player.
 
 ## Credits
 

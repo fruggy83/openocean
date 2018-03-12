@@ -6,18 +6,17 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.openocean.internal.eep;
+package org.openhab.binding.openocean.internal.eep.Generic;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
+import static org.openhab.binding.openocean.OpenOceanBindingConstants.PARAMETER_EEPID;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.HSBType;
@@ -35,6 +34,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelTransformationConfig;
+import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 
@@ -43,20 +43,6 @@ import org.openhab.binding.openocean.internal.transceiver.Helper;
  * @author Daniel Weber - Initial contribution
  */
 public class GenericEEP extends EEP {
-
-    final Set<String> supportedChannelIds = Collections.unmodifiableSet(new HashSet<String>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            add(CHANNEL_GENERIC_LIGHT_SWITCHING);
-            add(CHANNEL_GENERIC_GENERAL_SWITCHING);
-            add(CHANNEL_GENERIC_DIMMER);
-            add(CHANNEL_GENERIC_ROLLERSHUTTER);
-            add(CHANNEL_TEMPERATURE);
-            add(CHANNEL_SETPOINT);
-        }
-    });
 
     final List<Class<? extends State>> supportedStates = Collections
             .unmodifiableList(new LinkedList<Class<? extends State>>() {
@@ -79,42 +65,12 @@ public class GenericEEP extends EEP {
                 }
             });
 
-    EEPType eepType = null;
-
     public GenericEEP() {
         super();
     }
 
     public GenericEEP(ERP1Message packet) {
-
-        switch (packet.getRORG()) {
-            case _1BS:
-                eepType = EEPType.Generic1BS;
-            case _4BS:
-                eepType = EEPType.Generic4BS;
-            case RPS:
-                break;
-            case Unknown:
-                break;
-            case VLD:
-                break;
-            default:
-                break;
-        }
-
-        setData(packet.getPayload(RORGLength, packet.getRORG().getDataLength()));
-        setSenderId(packet.getPayload(RORGLength + packet.getRORG().getDataLength(), SenderIdLength));
-        setStatus(packet.getPayload(RORGLength + packet.getRORG().getDataLength() + SenderIdLength, 1)[0]);
-    }
-
-    @Override
-    public Set<String> getSupportedChannels() {
-        return supportedChannelIds;
-    }
-
-    @Override
-    protected EEPType getEEPType() {
-        return eepType;
+        super(packet);
     }
 
     @Override
@@ -122,12 +78,14 @@ public class GenericEEP extends EEP {
         if (config != null) {
             OpenOceanChannelTransformationConfig transformationInfo = config
                     .as(OpenOceanChannelTransformationConfig.class);
-            String c = Transformation.transform(transformationInfo.transformationType,
-                    transformationInfo.transformationFuntion, command.toString());
 
-            if (c != command.toString()) {
+            String input = channelId + "|" + command.toString();
+            String output = Transformation.transform(transformationInfo.transformationType,
+                    transformationInfo.transformationFuntion, input);
+
+            if (output != null && !output.isEmpty() && !input.equals(output)) {
                 try {
-                    setData(Helper.hexStringToBytes(c));
+                    setData(Helper.hexStringToBytes(output));
                 } catch (Exception e) {
                     logger.debug("Command {} could not transformed", command.toString());
                 }
@@ -139,34 +97,43 @@ public class GenericEEP extends EEP {
     protected State convertToStateImpl(String channelId, State currentState, Configuration config) {
         if (config != null) {
 
-            String payload = Helper.bytesToHexString(getERP1Message().getPayload());
             OpenOceanChannelTransformationConfig transformationInfo = config
                     .as(OpenOceanChannelTransformationConfig.class);
-            String c = Transformation.transform(transformationInfo.transformationType,
-                    transformationInfo.transformationFuntion, channelId + "|" + payload);
 
-            if (c != null && !c.isEmpty()) {
-                String[] parts = c.split("\\|");
+            String payload = Helper.bytesToHexString(bytes);
+            String input = channelId + "|" + payload;
+            String output = Transformation.transform(transformationInfo.transformationType,
+                    transformationInfo.transformationFuntion, input);
 
-                Class<? extends State> state = supportedStates.stream().filter(s -> s.getName() == parts[0]).findFirst()
-                        .get();
+            if (output != null && !output.isEmpty() && !input.equals(output)) {
+                String[] parts = output.split("\\|");
 
-                if (state != null) {
-                    if (state.isEnum()) {
+                if (parts.length == 2) {
+                    Class<? extends State> state = supportedStates.stream().filter(s -> s.getName().contains(parts[0]))
+                            .findFirst().orElse(null);
 
-                        for (State s : state.getEnumConstants()) {
-                            if (s.toString().equalsIgnoreCase(parts[1])) {
-                                return s;
+                    if (state != null) {
+                        if (state.isEnum()) {
+
+                            for (State s : state.getEnumConstants()) {
+                                if (s.toString().equalsIgnoreCase(parts[1])) {
+                                    return s;
+                                }
+                            }
+                            logger.debug("Could not find value '{}' for state '{}'", parts[1], parts[0]);
+                        } else {
+                            try {
+                                return state.getConstructor(String.class).newInstance(parts[1]);
+                            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                                logger.debug("Could not create state '{}' with value '{}'", parts[0], parts[1]);
                             }
                         }
                     } else {
-                        try {
-                            return state.getConstructor(String.class).newInstance(parts[1]);
-                        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                                | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                            return UnDefType.UNDEF;
-                        }
+                        logger.debug("State '{}' not found", parts[0]);
                     }
+                } else {
+                    logger.debug("Transformation result malformed: {}", output);
                 }
             }
         }
@@ -174,4 +141,22 @@ public class GenericEEP extends EEP {
         return UnDefType.UNDEF;
     }
 
+    @Override
+    protected int getDataLength() {
+        if (packet != null) {
+            return packet.getPayload().length - SenderIdLength - RORGLength - StatusLength;
+        } else {
+            return bytes.length;
+        }
+    }
+
+    @Override
+    protected boolean validateData(int[] bytes) {
+        return true;
+    }
+
+    @Override
+    public void addConfigPropertiesTo(DiscoveryResultBuilder discoveredThingResultBuilder) {
+        discoveredThingResultBuilder.withProperty(PARAMETER_EEPID, getEEPType().getId());
+    }
 }

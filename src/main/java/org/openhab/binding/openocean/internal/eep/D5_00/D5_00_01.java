@@ -14,7 +14,7 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.OpenClosedType;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
-import org.openhab.binding.openocean.internal.eep._1BSMessage;
+import org.openhab.binding.openocean.internal.eep.Base._1BSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
 /**

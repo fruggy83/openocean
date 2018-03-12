@@ -78,14 +78,17 @@ import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_23;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Dimming;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Switching;
 import org.openhab.binding.openocean.internal.eep.A5_3F.A5_3F_7F_EltakoFSB;
-import org.openhab.binding.openocean.internal.eep.A5_3F.A5_3F_7F_Universal;
+import org.openhab.binding.openocean.internal.eep.Base.PTM200Message;
+import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_09;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0A;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
+import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_02;
-import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_03;
-import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_04;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
+import org.openhab.binding.openocean.internal.eep.Generic.Generic4BS;
+import org.openhab.binding.openocean.internal.eep.Generic.GenericRPS;
+import org.openhab.binding.openocean.internal.eep.Generic.GenericVLD;
 import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
 
 /**
@@ -94,23 +97,26 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
  */
 public enum EEPType {
     Undef(RORG.Unknown, 0, 0, false, null, null, 0),
-    Generic1BS(RORG._1BS, 0, 0, false, null, null),
-    Generic4BS(RORG._4BS, 0, 0, false, null, null),
-    Generic(RORG.Unknown, 0, 0, false, GenericEEP.class, null, CHANNEL_GENERIC_ROLLERSHUTTER,
-            CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER),
     UTEResponse(RORG.UTE, 0, 0, false, UTEResponse.class, null),
-    RockerSwitch2RockerStyle1(RORG.RPS, 0x02, 0x02, false, F6_02_02.class, THING_TYPE_ROCKERSWITCH,
+    GenericRPS(RORG.RPS, 0xFF, 0xFF, false, GenericRPS.class, THING_TYPE_GENERICTHING, CHANNEL_GENERIC_LIGHT_SWITCHING,
+            CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_DIMMER, CHANNEL_GENERIC_NUMBER, CHANNEL_GENERIC_STRING,
+            CHANNEL_GENERIC_COLOR, CHANNEL_TEACHINCMD),
+    Generic4BS(RORG._4BS, 0xFF, 0xFF, false, Generic4BS.class, THING_TYPE_GENERICTHING, CHANNEL_GENERIC_LIGHT_SWITCHING,
+            CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_DIMMER, CHANNEL_GENERIC_NUMBER, CHANNEL_GENERIC_STRING,
+            CHANNEL_GENERIC_COLOR),
+    GenericVLD(RORG.VLD, 0xFF, 0xFF, false, GenericVLD.class, THING_TYPE_GENERICTHING, CHANNEL_GENERIC_LIGHT_SWITCHING,
+            CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_DIMMER, CHANNEL_GENERIC_NUMBER, CHANNEL_GENERIC_STRING,
+            CHANNEL_GENERIC_COLOR),
+    PTM200(RORG.RPS, 0x00, 0x00, false, PTM200Message.class, null, CHANNEL_LIGHT_SWITCHING, CHANNEL_RECEIVINGSTATE),
+    RockerSwitch2RockerStyle1(RORG.RPS, 0x02, 0x01, false, F6_02_01.class, THING_TYPE_ROCKERSWITCH,
             CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_GENERALSWITCH_CHANNELA,
             CHANNEL_GENERALSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
-    RockerSwitch2RockerStyle2(RORG.RPS, 0x02, 0x03, false, F6_02_03.class, THING_TYPE_ROCKERSWITCH,
+    RockerSwitch2RockerStyle2(RORG.RPS, 0x02, 0x02, false, F6_02_02.class, THING_TYPE_ROCKERSWITCH,
             CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_GENERALSWITCH_CHANNELA,
             CHANNEL_GENERALSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
-    RockerSwitch2RockerStyle3(RORG.RPS, 0x02, 0x04, false, F6_02_04.class, THING_TYPE_ROCKERSWITCH,
-            CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_GENERALSWITCH_CHANNELA,
-            CHANNEL_GENERALSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
+    // RockerSwitch2RockerStyle3(RORG.RPS, 0x02, 0x04, false, F6_02_04.class, THING_TYPE_ROCKERSWITCH,
     MechanicalHandle00(RORG.RPS, 0x10, 0x00, false, F6_10_00.class, THING_TYPE_MECHANICALHANDLE,
             CHANNEL_WINDOWHANDLESTATE, CHANNEL_CONTACT, CHANNEL_RECEIVINGSTATE),
-    PTM200(RORG.RPS, 0x00, 0x00, false, PTM200Message.class, null, CHANNEL_LIGHT_SWITCHING, CHANNEL_RECEIVINGSTATE),
     ContactAndSwitch(RORG._1BS, 0x00, 0x01, false, D5_00_01.class, THING_TYPE_CONTACTANDSWITCH, CHANNEL_CONTACT,
             CHANNEL_RECEIVINGSTATE),
     TemperatureSensor_A5_02_01(RORG._4BS, 0x02, 0x01, false, A5_02_01.class, THING_TYPE_TEMPERATURESENSOR,
@@ -233,9 +239,9 @@ public enum EEPType {
             CHANNEL_LIGHT_SWITCHING, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
     CentralCommandDimming(RORG._4BS, 0x38, 0x08, false, A5_38_08_Dimming.class, THING_TYPE_CENTRALCOMMAND, 0x02,
             CHANNEL_DIMMER, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
-    UniversalCommand(RORG._4BS, 0x3f, 0x7f, false, A5_3F_7F_Universal.class, THING_TYPE_UNIVERSALACTUATOR,
-            CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER, CHANNEL_TEACHINCMD,
-            CHANNEL_RECEIVINGSTATE),
+    // UniversalCommand(RORG._4BS, 0x3f, 0x7f, false, A5_3F_7F_Universal.class, THING_TYPE_UNIVERSALACTUATOR,
+    // CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER, CHANNEL_TEACHINCMD,
+    // CHANNEL_RECEIVINGSTATE),
     EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, "EltakoFSB", A5_3F_7F_EltakoFSB.class, THING_TYPE_UNIVERSALACTUATOR, 0,
             new Hashtable<String, Configuration>() {
                 private static final long serialVersionUID = 1L;

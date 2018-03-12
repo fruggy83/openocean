@@ -22,7 +22,7 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.openhab.binding.openocean.handler.OpenOceanBridgeHandler;
 import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.eep.EEPFactory;
-import org.openhab.binding.openocean.internal.eep.UTEResponse;
+import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;

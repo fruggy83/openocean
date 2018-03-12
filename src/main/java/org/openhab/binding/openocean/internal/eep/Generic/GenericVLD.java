@@ -6,22 +6,21 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.openocean.internal.eep.F6_02;
+package org.openhab.binding.openocean.internal.eep.Generic;
 
-import org.openhab.binding.openocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
 /**
  *
  * @author Daniel Weber - Initial contribution
  */
-public class F6_02_03 extends _RPSMessage {
+public class GenericVLD extends GenericEEP {
 
-    public F6_02_03() {
+    public GenericVLD() {
         super();
     }
 
-    public F6_02_03(ERP1Message packet) {
+    public GenericVLD(ERP1Message packet) {
         super(packet);
     }
 }

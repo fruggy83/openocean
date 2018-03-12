@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.openocean.internal.eep;
+package org.openhab.binding.openocean.internal.eep.Generic;
 
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
@@ -14,28 +14,13 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  *
  * @author Daniel Weber - Initial contribution
  */
-public abstract class _VLDMessage extends EEP {
+public class Generic4BS extends GenericEEP {
 
-    public _VLDMessage() {
+    public Generic4BS() {
         super();
     }
 
-    public _VLDMessage(ERP1Message packet) {
+    public Generic4BS(ERP1Message packet) {
         super(packet);
     }
-
-    @Override
-    protected int getDataLength() {
-        if (packet != null) {
-            return packet.getPayload().length - SenderIdLength - RORGLength - StatusLength;
-        } else {
-            return bytes.length;
-        }
-    }
-
-    @Override
-    protected boolean validateData(int[] bytes) {
-        return true;
-    }
-
 }

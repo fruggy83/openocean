@@ -17,7 +17,7 @@ import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
-import org.openhab.binding.openocean.internal.eep._4BSMessage;
+import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
 /**

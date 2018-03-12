@@ -22,7 +22,7 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class F6_02_02 extends _RPSMessage {
+public class F6_02_01 extends _RPSMessage {
 
     final int AI = 0;
     final int A0 = 1;
@@ -32,11 +32,11 @@ public class F6_02_02 extends _RPSMessage {
 
     int secondByte = -1;
 
-    public F6_02_02() {
+    public F6_02_01() {
         super();
     }
 
-    public F6_02_02(ERP1Message packet) {
+    public F6_02_01(ERP1Message packet) {
         super(packet);
     }
 
@@ -49,21 +49,21 @@ public class F6_02_02 extends _RPSMessage {
             switch (channelId) {
                 case CHANNEL_GENERALSWITCH_CHANNELA:
                     if ((OnOffType) command == OnOffType.ON) {
-                        setData((AI << 5) | PRESSED);
-                        secondByte = (AI << 5);
-                    } else {
                         setData((A0 << 5) | PRESSED);
                         secondByte = (A0 << 5);
+                    } else {
+                        setData((AI << 5) | PRESSED);
+                        secondByte = (AI << 5);
                     }
                     break;
 
                 case CHANNEL_GENERALSWITCH_CHANNELB:
                     if ((OnOffType) command == OnOffType.ON) {
-                        setData((BI << 5) | PRESSED);
-                        secondByte = (BI << 5);
-                    } else {
                         setData((B0 << 5) | PRESSED);
                         secondByte = (B0 << 5);
+                    } else {
+                        setData((BI << 5) | PRESSED);
+                        secondByte = (BI << 5);
                     }
                     break;
             }
@@ -80,20 +80,20 @@ public class F6_02_02 extends _RPSMessage {
 
             switch (channelId) {
                 case CHANNEL_ROCKERSWITCH_CHANNELA:
-                    if ((bytes[0] >> 5) == AI) {
+                    if ((bytes[0] >> 5) == A0) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR1_PRESSED
                                 : CommonTriggerEvents.DIR1_RELEASED;
-                    } else if ((bytes[0] >> 5) == A0) {
+                    } else if ((bytes[0] >> 5) == AI) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR2_PRESSED
                                 : CommonTriggerEvents.DIR2_RELEASED;
                     }
                     return null;
 
                 case CHANNEL_ROCKERSWITCH_CHANNELB:
-                    if ((bytes[0] >> 5) == BI) {
+                    if ((bytes[0] >> 5) == B0) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR1_PRESSED
                                 : CommonTriggerEvents.DIR1_RELEASED;
-                    } else if ((bytes[0] >> 5) == B0) {
+                    } else if ((bytes[0] >> 5) == BI) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR2_PRESSED
                                 : CommonTriggerEvents.DIR2_RELEASED;
                     }

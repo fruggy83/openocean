@@ -18,7 +18,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
-import org.openhab.binding.openocean.internal.eep._VLDMessage;
+import org.openhab.binding.openocean.internal.eep.Base._VLDMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 

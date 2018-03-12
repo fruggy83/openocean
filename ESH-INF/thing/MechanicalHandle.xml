@@ -9,7 +9,7 @@
 			<bridge-type-ref id="bridge" />
 		</supported-bridge-type-refs>
 
-		<label>Mechanical Handle</label>
+		<label>F6-10 - Mechanical Handle</label>
 		<description>Mechanical Handle</description>
 
 		<config-description>

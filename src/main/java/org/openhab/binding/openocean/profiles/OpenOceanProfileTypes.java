@@ -8,17 +8,11 @@
  */
 package org.openhab.binding.openocean.profiles;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
-
-import java.util.Collection;
-import java.util.Collections;
-
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.smarthome.core.library.CoreItemFactory;
+import org.eclipse.smarthome.core.thing.DefaultSystemChannelTypeProvider;
+import org.eclipse.smarthome.core.thing.profiles.ProfileTypeBuilder;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
 import org.eclipse.smarthome.core.thing.profiles.TriggerProfileType;
-import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  *
@@ -26,30 +20,11 @@ import com.google.common.collect.ImmutableSet;
  */
 public class OpenOceanProfileTypes {
 
-    @NonNull
-    public static final TriggerProfileType RockerSwitchToOnOffType = new TriggerProfileType() {
+    public static final ProfileTypeUID RockerSwitchToPlayPause = new ProfileTypeUID(ProfileTypeUID.SYSTEM_SCOPE,
+            "rockerswitch-to-play-pause");
 
-        @Override
-        @NonNull
-        public Collection<@NonNull String> getSupportedItemTypes() {
-            return Collections.singleton(SWITCH);
-        }
-
-        @Override
-        public String getLabel() {
-            return "Rockerswitch to OnOff";
-        }
-
-        @Override
-        public @NonNull ProfileTypeUID getUID() {
-            return RockerSwitchEventsToOnOffProfileTypeUID;
-        }
-
-        @Override
-        @NonNull
-        public Collection<@NonNull ChannelTypeUID> getSupportedChannelTypeUIDs() {
-            return ImmutableSet.of(CHANNEL_TYPE_ROCKERSWITCH);
-        }
-
-    };
+    public static final TriggerProfileType RockerSwitchToPlayPauseType = ProfileTypeBuilder
+            .newTrigger(RockerSwitchToPlayPause, "Rocker switch to Play/Pause")
+            .withSupportedItemTypes(CoreItemFactory.PLAYER)
+            .withSupportedChannelTypeUIDs(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID()).build();
 }

@@ -113,9 +113,11 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
                         }
                         break;
                     case TRIGGER:
-                        String event = eep.convertToEvent(id, config);
+                        String lastEvent = lastEvents.get(id);
+                        String event = eep.convertToEvent(id, lastEvent, config);
                         if (event != null) {
                             triggerChannel(channel.getUID(), event);
+                            lastEvents.put(id, event);
                         }
                         break;
                 }

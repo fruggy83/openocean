@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
 public abstract class EEP {
 
     public static final int Zero = 0x00;
-    static final int SenderIdLength = 4;
-    static final int StatusLength = 1;
-    static final int RORGLength = 1;
+    protected static final int SenderIdLength = 4;
+    protected static final int StatusLength = 1;
+    protected static final int RORGLength = 1;
 
     protected int[] bytes;
     protected int[] optionalData;
@@ -93,12 +93,12 @@ public abstract class EEP {
         return convertToStateImpl(channelId, currentState, config);
     }
 
-    public String convertToEvent(String channelId, Configuration config) {
+    public String convertToEvent(String channelId, String lastEvent, Configuration config) {
         if (!getSupportedChannels().contains(channelId)) {
             throw new IllegalArgumentException("Channel " + channelId + " is not supported");
         }
 
-        return convertToEventImpl(channelId, config);
+        return convertToEventImpl(channelId, lastEvent, config);
     }
 
     public EEP setData(int... bytes) {
@@ -196,7 +196,7 @@ public abstract class EEP {
         return UnDefType.UNDEF;
     }
 
-    protected String convertToEventImpl(String channelId, Configuration config) {
+    protected String convertToEventImpl(String channelId, String lastEvent, Configuration config) {
         return null;
     }
 

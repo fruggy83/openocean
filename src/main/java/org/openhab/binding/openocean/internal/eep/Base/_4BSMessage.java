@@ -6,10 +6,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.openocean.internal.eep;
+package org.openhab.binding.openocean.internal.eep.Base;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelTeachInConfig;
+import org.openhab.binding.openocean.internal.eep.EEP;
+import org.openhab.binding.openocean.internal.eep.EEPType;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 

@@ -8,7 +8,7 @@
  */
 package org.openhab.binding.openocean.internal.eep.F6_02;
 
-import org.openhab.binding.openocean.internal.eep._RPSMessage;
+import org.openhab.binding.openocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
 /**

@@ -11,11 +11,14 @@ package org.openhab.binding.openocean.handler;
 import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
@@ -36,12 +39,14 @@ import com.google.common.collect.Sets;
 public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_UNIVERSALACTUATOR,
-            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH);
+            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING);
 
     protected int[] senderId;
     protected int[] destinationId;
 
     protected EEPType sendingEEPType = null;
+
+    private ScheduledFuture<?> refreshJob;
 
     public OpenOceanBaseActuatorHandler(Thing thing) {
         super(thing);
@@ -72,6 +77,16 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
                 sendingEEPType = EEPType.getType(config.getSendingEEPId());
                 updateChannels(sendingEEPType, true);
 
+                if (sendingEEPType.getSupportsRefresh()) {
+                    refreshJob = scheduler.scheduleWithFixedDelay(() -> {
+                        try {
+                            refreshStates();
+                        } catch (Exception e) {
+
+                        }
+                    }, 30, 300, TimeUnit.SECONDS);
+                }
+
                 destinationId = Helper.hexStringToBytes(thing.getUID().getId());
 
             } catch (Exception e) {
@@ -95,8 +110,9 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
         String thingId = this.getThing().getThingTypeUID().getId();
         String rsid = THING_TYPE_ROCKERSWITCH.getId();
+        String gtId = THING_TYPE_GENERICTHING.getId();
 
-        if (senderId == -1 && thingId.equals(rsid)) {
+        if (senderId == -1 && (thingId.equals(rsid) || thingId.equals(gtId))) {
             return true;
         }
 
@@ -124,6 +140,17 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
         bridgeHandler.addSender(senderId, thing);
 
         return true;
+    }
+
+    private void refreshStates() {
+
+        logger.debug("polling channels");
+        if (thing.getStatus().equals(ThingStatus.ONLINE)) {
+            for (Channel channel : getLinkedChannels().values()) {
+                handleCommand(channel.getUID(), RefreshType.REFRESH);
+            }
+        }
+
     }
 
     @Override
@@ -181,5 +208,13 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
         }
 
         super.handleRemoval();
+    }
+
+    @Override
+    public void dispose() {
+        if (refreshJob != null && !refreshJob.isCancelled()) {
+            refreshJob.cancel(true);
+            refreshJob = null;
+        }
     }
 }

@@ -12,7 +12,7 @@
 		<label>F6-02 - Rocker Switch</label>
 		<description>Rocker Switch</description>
 
-		<properties>
+        <properties>
 			<property name="enoceanId"></property>
 		</properties>
 		<config-description>
@@ -20,9 +20,8 @@
 				<label>EEP</label>
 				<description>EEP which is used by panel</description>
 				<options>
-					<option value="F6_02_02">F6-02-02/01</option>
-					<option value="F6_02_03">F6-02-03</option>
-					<option value="F6_02_04">F6-02-04</option>
+					<option value="F6_02_01">F6-02-01 (upper rocker => DIR1)</option>
+					<option value="F6_02_02">F6-02-02 (upper rocker => DIR2)</option>
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>

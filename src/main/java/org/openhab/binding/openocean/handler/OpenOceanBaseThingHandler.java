@@ -59,6 +59,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
     private Hashtable<String, Channel> linkedChannels = null;
 
     protected Hashtable<String, State> channelState = null;
+    protected Hashtable<String, String> lastEvents = null;
 
     public OpenOceanBaseThingHandler(Thing thing) {
         super(thing);
@@ -129,7 +130,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
             ChannelDescription t = ChannelId2ChannelDescription.get(id);
             Channel channel = ChannelBuilder.create(new ChannelUID(this.getThing().getUID(), id), t.ItemType)
                     .withConfiguration(eep.getChannelConfig(id)).withType(t.ChannelTypeUID)
-                    .withKind(t.ItemType == null ? ChannelKind.TRIGGER : ChannelKind.STATE).withLabel(t.Label).build();
+                    .withKind(t.IsStateChannel ? ChannelKind.STATE : ChannelKind.TRIGGER).withLabel(t.Label).build();
 
             channelList.add(channel);
             channelListChanged = true;
@@ -149,6 +150,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
 
         linkedChannels = new Hashtable<>();
         channelState = new Hashtable<>();
+        lastEvents = new Hashtable<>();
 
         for (Channel c : this.getThing().getChannels()) {
             String id = c.getUID().getId();
@@ -163,6 +165,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
                 }
             } else if (c.getKind() == ChannelKind.TRIGGER) {
                 linkedChannels.put(id, c);
+                lastEvents.put(id, "");
             }
         }
 
@@ -180,18 +183,21 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
 
         linkedChannels.putIfAbsent(id, thing.getChannel(id));
         channelState.putIfAbsent(id, UnDefType.UNDEF);
+        lastEvents.putIfAbsent(id, "");
     }
 
     @Override
     public void channelUnlinked(ChannelUID channelUID) {
         super.channelUnlinked(channelUID);
 
-        if (linkedChannels == null) {
+        String id = channelUID.getId();
+        if (linkedChannels == null || id == null) {
             return;
         }
 
-        linkedChannels.remove(channelUID.getId());
-        channelState.remove(channelUID.getId());
+        linkedChannels.remove(id);
+        channelState.remove(id);
+        lastEvents.remove(id);
     }
 
     protected synchronized OpenOceanBridgeHandler getBridgeHandler() {

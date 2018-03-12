@@ -11,9 +11,9 @@ package org.openhab.binding.openocean.internal.messages;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 
-import org.openhab.binding.openocean.internal.eep.UTEResponse;
-import org.openhab.binding.openocean.internal.eep._1BSMessage;
-import org.openhab.binding.openocean.internal.eep._4BSMessage;
+import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
+import org.openhab.binding.openocean.internal.eep.Base._1BSMessage;
+import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 
 /**
  *

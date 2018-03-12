@@ -20,12 +20,13 @@ public class ChannelDescription {
     public final String ItemType;
     @NonNull
     public final String Label;
+    public final boolean IsStateChannel;
 
     public ChannelDescription(ChannelTypeUID channelTypeUID, String itemType) {
-        this(channelTypeUID, itemType, "");
+        this(channelTypeUID, itemType, "", true);
     }
 
-    public ChannelDescription(ChannelTypeUID channelTypeUID, String itemType, String label) {
+    public ChannelDescription(ChannelTypeUID channelTypeUID, String itemType, String label, boolean isStateChannel) {
         ChannelTypeUID = channelTypeUID;
         ItemType = itemType;
         if (label != null) {
@@ -33,5 +34,7 @@ public class ChannelDescription {
         } else {
             Label = "";
         }
+
+        IsStateChannel = isStateChannel;
     }
 }

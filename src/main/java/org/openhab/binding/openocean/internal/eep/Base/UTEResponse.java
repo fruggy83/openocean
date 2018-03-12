@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.openocean.internal.eep;
+package org.openhab.binding.openocean.internal.eep.Base;
 
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 

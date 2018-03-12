@@ -10,8 +10,10 @@ package org.openhab.binding.openocean.internal.eep;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
+import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
-import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_02;
+import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
 import org.slf4j.Logger;
@@ -58,7 +60,7 @@ public class EEPFactory {
 
         switch (msg.getRORG()) {
             case RPS:
-                return new F6_02_02(msg);
+                return new F6_02_01(msg);
             case _1BS:
                 return new D5_00_01(msg);
             case _4BS: {
@@ -76,8 +78,8 @@ public class EEPFactory {
 
                 EEPType eepType = EEPType.getType(RORG._4BS, func, type);
                 if (eepType == null) {
-                    logger.debug("Received unsupported EEP teach in");
-                    return null;
+                    logger.debug("Received unsupported EEP teach in, fallback to generic thing");
+                    eepType = EEPType.Generic4BS;
                 }
 
                 return buildEEP(eepType, msg);
@@ -91,8 +93,15 @@ public class EEPFactory {
 
                 EEPType eepType = EEPType.getType(RORG.getRORG(rorg), func, type);
                 if (eepType == null) {
-                    logger.info("Received unsupported EEP teach in");
-                    return null;
+                    logger.info("Received unsupported EEP teach in, fallback to generic thing");
+                    RORG r = RORG.getRORG(rorg);
+                    if (r == RORG._4BS) {
+                        eepType = EEPType.Generic4BS;
+                    } else if (r == RORG.VLD) {
+                        eepType = EEPType.GenericVLD;
+                    } else {
+                        return null;
+                    }
                 }
 
                 return buildEEP(eepType, msg);

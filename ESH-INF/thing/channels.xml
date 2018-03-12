@@ -28,55 +28,12 @@
 		</tags>
 	</channel-type>
 
-	<!-- Light Switch Channel with transformation configuration -->
-	<channel-type id="genericLightSwitch">
-		<item-type>Switch</item-type>
-		<label>Switch</label>
-		<description>The switch channel allows to switch the light on and off.</description>
-		<category>Light</category>
-		<tags>
-			<tag>Lighting</tag>
-		</tags>
-		<config-description>
-			<parameter name="transformationType" type="text">
-				<label>Type of transformation</label>
-				<description>e.g. "MAP"</description>
-				<required>true</required>
-			</parameter>
-			<parameter name="transformationFuntion" type="text">
-				<label>Function of transformation type</label>
-				<description>e.g. for transformation type map => filename of mapping file</description>
-				<required>true</required>
-			</parameter>
-		</config-description>
-	</channel-type>
-
 	<!-- General Switch Channel -->
 	<channel-type id="generalSwitch">
 		<item-type>Switch</item-type>
 		<label>Switch</label>
 		<description>The switch channel allows to switch something on and off.</description>
 		<category>Switch</category>
-	</channel-type>
-
-	<!-- General Switch Channel with transformation configuration -->
-	<channel-type id="genericGeneralSwitch">
-		<item-type>Switch</item-type>
-		<label>Switch</label>
-		<description>The switch channel allows to switch something on and off.</description>
-		<category>Switch</category>
-		<config-description>
-			<parameter name="transformationType" type="text">
-				<label>Type of transformation</label>
-				<description>e.g. "MAP"</description>
-				<required>true</required>
-			</parameter>
-			<parameter name="transformationFuntion" type="text">
-				<label>Function of transformation type</label>
-				<description>e.g. for transformation type map => filename of mapping file</description>
-				<required>true</required>
-			</parameter>
-		</config-description>
 	</channel-type>
 
 	<!-- Rollershutter Channel -->
@@ -93,56 +50,12 @@
 		</config-description>
 	</channel-type>
 
-	<!-- Rollershutter Channel with transformation configuration -->
-	<channel-type id="genericRollershutter">
-		<item-type>Rollershutter</item-type>
-		<label>Rollershutter</label>
-		<description>Rollershutter</description>
-		<category>Blinds</category>
-		<config-description>
-			<parameter name="transformationType" type="text">
-				<label>Type of transformation</label>
-				<description>e.g. "MAP"</description>
-				<required>true</required>
-			</parameter>
-			<parameter name="transformationFuntion" type="text">
-				<label>Function of transformation type</label>
-				<description>e.g. for transformation type map => filename of mapping file</description>
-				<required>true</required>
-			</parameter>
-			<parameter name="shutTime" type="integer">
-				<label>Shut time</label>
-				<description>Time to completely close the rollershutter</description>
-			</parameter>
-		</config-description>
-	</channel-type>
-
 	<!-- Dimmer Channel -->
 	<channel-type id="dimmer">
 		<item-type>Dimmer</item-type>
 		<label>Dimmer</label>
 		<description>Dimmer</description>
 		<category>DimmableLight</category>
-	</channel-type>
-
-	<!-- Dimmer Channel with transformation configuration -->
-	<channel-type id="genericDimmer">
-		<item-type>Dimmer</item-type>
-		<label>Dimmer</label>
-		<description>Dimmer</description>
-		<category>DimmableLight</category>
-		<config-description>
-			<parameter name="transformationType" type="text">
-				<label>Type of transformation</label>
-				<description>e.g. "MAP"</description>
-				<required>true</required>
-			</parameter>
-			<parameter name="transformationFuntion" type="text">
-				<label>Function of transformation type</label>
-				<description>e.g. for transformation type map => filename of mapping file</description>
-				<required>true</required>
-			</parameter>
-		</config-description>
 	</channel-type>
 
 	<channel-type id="temperature">
@@ -229,19 +142,6 @@
 		<label>Total Usage</label>
 		<description>Used energy in Kilowatt hours</description>
 		<state pattern="%d kWh" readOnly="true"></state>
-	</channel-type>
-
-	<channel-type id="rockerSwitch">
-		<kind>trigger</kind>
-		<label>Rockerswitch</label>
-		<event>
-			<options>
-				<option value="UP_PRESSED">State 0 pressed</option>
-				<option value="UP_RELEASED">State 0 released</option>
-				<option value="DOWN_PRESSED">State I pressed</option>
-				<option value="DOWN_RELEASED">State I released</option>
-			</options>
-		</event>
 	</channel-type>
 
 	<!-- Teach in Channel -->

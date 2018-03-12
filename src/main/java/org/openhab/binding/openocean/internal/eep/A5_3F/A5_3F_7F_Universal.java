@@ -13,7 +13,7 @@ import org.eclipse.smarthome.core.transform.actions.Transformation;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelTransformationConfig;
-import org.openhab.binding.openocean.internal.eep._4BSMessage;
+import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 
@@ -22,6 +22,8 @@ import org.openhab.binding.openocean.internal.transceiver.Helper;
  * @author Daniel Weber - Initial contribution
  */
 public class A5_3F_7F_Universal extends _4BSMessage {
+
+    // This class is currently not used => instead use Generic4BS
 
     public A5_3F_7F_Universal() {
         super();

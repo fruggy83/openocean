@@ -8,9 +8,8 @@
  */
 package org.openhab.binding.openocean.profiles;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
-
-import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.PlayPauseType;
+import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.thing.profiles.ProfileCallback;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
 import org.eclipse.smarthome.core.thing.profiles.TriggerProfile;
@@ -20,17 +19,17 @@ import org.eclipse.smarthome.core.types.State;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class RockerSwitchToOnOffProfile implements TriggerProfile {
+public class RockerSwitchToPlayPauseProfile implements TriggerProfile {
 
     private final ProfileCallback callback;
 
-    RockerSwitchToOnOffProfile(ProfileCallback callback) {
+    RockerSwitchToPlayPauseProfile(ProfileCallback callback) {
         this.callback = callback;
     }
 
     @Override
     public ProfileTypeUID getProfileTypeUID() {
-        return RockerSwitchEventsToOnOffProfileTypeUID;
+        return OpenOceanProfileTypes.RockerSwitchToPlayPause;
     }
 
     @Override
@@ -41,10 +40,10 @@ public class RockerSwitchToOnOffProfile implements TriggerProfile {
 
     @Override
     public void onTriggerFromHandler(String event) {
-        if (event.equalsIgnoreCase(UP_PRESSED)) {
-            callback.sendCommand(OnOffType.ON);
-        } else if (event.equalsIgnoreCase(DOWN_PRESSED)) {
-            callback.sendCommand(OnOffType.OFF);
+        if (event.equalsIgnoreCase(CommonTriggerEvents.DIR1_PRESSED)) {
+            callback.sendCommand(PlayPauseType.PLAY);
+        } else if (event.equalsIgnoreCase(CommonTriggerEvents.DIR2_PRESSED)) {
+            callback.sendCommand(PlayPauseType.PAUSE);
         }
     }
 
