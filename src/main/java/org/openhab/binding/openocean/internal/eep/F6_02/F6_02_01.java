@@ -31,6 +31,7 @@ public class F6_02_01 extends _RPSMessage {
     final int PRESSED = 16;
 
     int secondByte = -1;
+    int secondStatus = -1;
 
     public F6_02_01() {
         super();
@@ -50,23 +51,22 @@ public class F6_02_01 extends _RPSMessage {
                 case CHANNEL_GENERALSWITCH_CHANNELA:
                     if ((OnOffType) command == OnOffType.ON) {
                         setData((A0 << 5) | PRESSED);
-                        secondByte = (A0 << 5);
                     } else {
                         setData((AI << 5) | PRESSED);
-                        secondByte = (AI << 5);
                     }
                     break;
 
                 case CHANNEL_GENERALSWITCH_CHANNELB:
                     if ((OnOffType) command == OnOffType.ON) {
                         setData((B0 << 5) | PRESSED);
-                        secondByte = (B0 << 5);
                     } else {
                         setData((BI << 5) | PRESSED);
-                        secondByte = (BI << 5);
                     }
                     break;
             }
+
+            secondByte = 0;
+            secondStatus = _RPSMessage.T21Flag;
         }
     }
 
@@ -114,7 +114,9 @@ public class F6_02_01 extends _RPSMessage {
     public boolean PrepareNextMessage() {
         if (secondByte != -1) {
             setData(secondByte);
+            setStatus(secondStatus);
             secondByte = -1;
+            secondStatus = -1;
             return true;
         }
 
