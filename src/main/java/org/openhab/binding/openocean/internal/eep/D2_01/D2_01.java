@@ -92,7 +92,7 @@ public abstract class D2_01 extends _VLDMessage {
                     factor = 1;
                     break;
                 default:
-                    factor = 0;
+                    return UnDefType.UNDEF;
             }
 
             return new DecimalType(
@@ -114,7 +114,7 @@ public abstract class D2_01 extends _VLDMessage {
                     factor /= 1000;
                     break;
                 default:
-                    factor = 0;
+                    return UnDefType.UNDEF;
             }
 
             return new DecimalType(
