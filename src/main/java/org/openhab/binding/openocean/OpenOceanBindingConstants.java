@@ -84,6 +84,7 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_GENERIC_NUMBER = "genericNumber";
     public final static String CHANNEL_GENERIC_STRING = "genericString";
     public final static String CHANNEL_GENERIC_COLOR = "genericColor";
+    public final static String CHANNEL_GENERIC_TEACHINCMD = "genericTeachInCMD";
 
     public static final Map<String, ChannelDescription> ChannelId2ChannelDescription = Collections
             .unmodifiableMap(new HashMap<String, ChannelDescription>() {
@@ -144,7 +145,9 @@ public class OpenOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_GENERIC_STRING), CoreItemFactory.STRING));
                     put(CHANNEL_GENERIC_COLOR, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_GENERIC_COLOR), CoreItemFactory.COLOR));
-
+                    put(CHANNEL_GENERIC_TEACHINCMD,
+                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_GENERIC_TEACHINCMD),
+                                    CoreItemFactory.SWITCH, "Teach in", true));
                 }
             });
 

@@ -61,4 +61,13 @@
         <config-description-ref uri="openocean:genericChannel:config" />
     </channel-type>
 
+    <!-- generic Teach in Channel -->
+    <channel-type id="genericTeachInCMD" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Teach In</label>
+        <description>The teach in channel allows to send a teach in msg.</description>
+        <category>Switch</category>
+         <config-description-ref uri="openocean:genericChannel:config" />
+    </channel-type>
+
 </thing:thing-descriptions>

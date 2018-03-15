@@ -30,6 +30,7 @@ Import-Package:
  org.eclipse.smarthome.core.transform,
  org.eclipse.smarthome.core.transform.actions,
  org.eclipse.smarthome.core.types,
+ org.eclipse.smarthome.model.script.engine.action,
  org.openhab.binding.openocean,
  org.openhab.binding.openocean.handler,
  org.openhab.binding.openocean.profiles,
