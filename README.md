@@ -101,6 +101,20 @@ end
 
 or link them directly to your items. The following items are supported by profiles: switch, dimmer, player.
 
+## Installation notes
+
+The following steps describe the setup of this binding for a raspberry pi with openhabian and an enocean pi gateway.
+
+ * Download and unzip zip file from precompiled folder into your openhab2-addons folder (/srv/openhab2-addons)
+ * ssh into your openhabian
+ * Run openhabian-config (``sudo openhabian-config``)
+    * 10 Apply Improvements => 14 Fix permissions (adds openhab to tty group, needed for access to enocean pi)
+    * 30 System settings => 35 serial port => disable serial console (1) and add common serial ports to openHAB JVM (3)
+ * open karaf  shell (``ssh -p 8101 openhab@localhost``, std psw habopen)
+    * install gnu.io (``feature:install openhab-transport-serial``)
+    * install openocean (``bundle:install org.openhab.binding.openocean``)
+    * ``logout`` and have fun
+
 ## Credits
 
 Many thanks to:
