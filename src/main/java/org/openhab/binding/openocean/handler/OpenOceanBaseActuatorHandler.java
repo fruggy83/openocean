@@ -39,12 +39,14 @@ import com.google.common.collect.Sets;
 public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_UNIVERSALACTUATOR,
-            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING);
+            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING,
+            THING_TYPE_ELTAKOFSB);
 
     protected int[] senderId;
     protected int[] destinationId;
 
     protected EEPType sendingEEPType = null;
+    protected boolean broadcastMessages = true;
 
     private ScheduledFuture<?> refreshJob;
 
@@ -73,21 +75,29 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
         if (super.validateConfig()) {
             OpenOceanActuatorConfig config = thing.getConfiguration().as(OpenOceanActuatorConfig.class);
 
+            this.broadcastMessages = config.broadcastMessages;
+
             try {
                 sendingEEPType = EEPType.getType(config.getSendingEEPId());
                 updateChannels(sendingEEPType, true);
 
                 if (sendingEEPType.getSupportsRefresh()) {
-                    refreshJob = scheduler.scheduleWithFixedDelay(() -> {
-                        try {
-                            refreshStates();
-                        } catch (Exception e) {
+                    if (config.pollingInterval > 0) {
+                        refreshJob = scheduler.scheduleWithFixedDelay(() -> {
+                            try {
+                                refreshStates();
+                            } catch (Exception e) {
 
-                        }
-                    }, 30, 300, TimeUnit.SECONDS);
+                            }
+                        }, 30, config.pollingInterval, TimeUnit.SECONDS);
+                    }
                 }
 
-                destinationId = Helper.hexStringToBytes(thing.getUID().getId());
+                if (this.broadcastMessages) {
+                    destinationId = new int[] { 0xff, 0xff, 0xff, 0xff };
+                } else {
+                    destinationId = Helper.hexStringToBytes(thing.getUID().getId());
+                }
 
             } catch (Exception e) {
                 configurationErrorDescription = "Sending EEP is not supported";

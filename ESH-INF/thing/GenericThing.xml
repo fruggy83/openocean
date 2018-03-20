@@ -29,6 +29,10 @@
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
 			</parameter>
+			<parameter name="broadcastMessages" type="boolean">
+                 <label>Send broadcast messages</label>
+                 <default>true</default>
+            </parameter>
 		</config-description>
 
 	</thing-type>

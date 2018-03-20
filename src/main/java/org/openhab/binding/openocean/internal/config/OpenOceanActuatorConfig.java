@@ -21,6 +21,10 @@ public class OpenOceanActuatorConfig extends OpenOceanBaseConfig {
 
     public String sendingEEPId;
 
+    public int pollingInterval;
+
+    public boolean broadcastMessages;
+
     public String getSendingEEPId() {
         if (sendingEEPId == null || sendingEEPId.isEmpty()) {
             return super.getReceivingEEPId();

@@ -15,7 +15,6 @@ import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
-import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
@@ -123,10 +122,4 @@ public class F6_02_01 extends _RPSMessage {
 
         return false;
     }
-
-    @Override
-    public EEP setDestinationId(int[] destinationId) {
-        return super.setDestinationId(new int[] { 0xff, 0xff, 0xff, 0xff });
-    }
-
 }

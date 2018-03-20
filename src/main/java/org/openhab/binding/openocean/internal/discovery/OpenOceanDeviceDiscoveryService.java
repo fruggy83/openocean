@@ -103,6 +103,11 @@ public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
         if (discoveryServiceCallback.getExistingThing(thingUID) == null) {
 
             int deviceId = 0;
+            boolean broadcastMessages = true;
+
+            if (msg.getRORG() == RORG.UTE && (msg.getPayload(1, 1)[0] & UTEResponse.CommunicationType_MASK) == 1) {
+                broadcastMessages = false;
+            }
 
             // if ute => send response if needed
             if (msg.getRORG() == RORG.UTE && (msg.getPayload(1, 1)[0] & UTEResponse.ResponseNeeded_MASK) == 0) {
@@ -124,6 +129,7 @@ public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
                     .withBridge(bridgeHandler.getThing().getUID());
 
             eep.addConfigPropertiesTo(discoveryResultBuilder);
+            discoveryResultBuilder.withProperty(PARAMETER_BROADCASTMESSAGES, broadcastMessages);
 
             if (deviceId > 0) {
                 // advance config with new device id

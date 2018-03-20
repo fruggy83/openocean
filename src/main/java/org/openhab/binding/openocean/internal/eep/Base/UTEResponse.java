@@ -17,6 +17,7 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
 public class UTEResponse extends _VLDMessage {
 
     public static final int TeachIn_MASK = 0x3f;
+    public static final int CommunicationType_MASK = 0x80;
     public static final int ResponseNeeded_MASK = 0x40;
     public static final int TeachIn_NotSpecified = 0x20;
 

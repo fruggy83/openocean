@@ -27,6 +27,10 @@
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
 			</parameter>
+			<parameter name="broadcastMessages" type="boolean">
+                 <label>Send broadcast messages</label>
+                 <default>true</default>
+            </parameter>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP for receiving states</label>
 				<options>
