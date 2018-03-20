@@ -97,10 +97,12 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
 
     @Override
     public void serialEvent(SerialPortEvent event) {
-        try {
-            logger.trace("RXTX library CPU load workaround, sleep forever");
-            Thread.sleep(Long.MAX_VALUE);
-        } catch (InterruptedException e) {
+
+        if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+
+            synchronized (this) {
+                this.notify();
+            }
         }
     }
 }

@@ -177,6 +177,10 @@ public abstract class OpenOceanTransceiver {
             readingTask.cancel(true);
         }
 
+        synchronized (this) {
+            this.notify();
+        }
+
         readingTask = null;
         listeners.clear();
         teachInListener = null;
@@ -198,8 +202,16 @@ public abstract class OpenOceanTransceiver {
 
         logger.debug("Listening on port: {}", path);
 
-        while (!readingTask.isCancelled()) {
+        while (readingTask != null && !readingTask.isCancelled()) {
             try {
+
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
 
                 if (readingTask.isCancelled()) {
                     return;
