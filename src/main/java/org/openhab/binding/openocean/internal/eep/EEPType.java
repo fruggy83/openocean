@@ -42,6 +42,9 @@ import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_1A;
 import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_1B;
 import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_20;
 import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_30;
+import org.openhab.binding.openocean.internal.eep.A5_04.A5_04_01;
+import org.openhab.binding.openocean.internal.eep.A5_04.A5_04_02;
+import org.openhab.binding.openocean.internal.eep.A5_04.A5_04_03;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_01;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_02;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_03;
@@ -169,6 +172,12 @@ public enum EEPType {
             CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
     TemperatureSensor_A5_02_30(RORG._4BS, 0x02, 0x30, false, A5_02_30.class, THING_TYPE_TEMPERATURESENSOR,
             CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+    HumidityTemperatureSensor_A5_04_01(RORG._4BS, 0x04, 0x01, false, A5_04_01.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
+    HumidityTemperatureSensor_A5_04_02(RORG._4BS, 0x04, 0x02, false, A5_04_02.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
+    HumidityTemperatureSensor_A5_04_03(RORG._4BS, 0x04, 0x03, false, A5_04_03.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
     RoomPanel_A5_10_01(RORG._4BS, 0x10, 0x01, false, A5_10_01.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
             CHANNEL_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
     RoomPanel_A5_10_02(RORG._4BS, 0x10, 0x02, false, A5_10_02.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,

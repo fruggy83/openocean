@@ -45,13 +45,16 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_CONTACTANDSWITCH = new ThingTypeUID(BINDING_ID, "contactSwitch");
     public final static ThingTypeUID THING_TYPE_MEASUREMENTSWITCH = new ThingTypeUID(BINDING_ID, "measurementSwitch");
     public final static ThingTypeUID THING_TYPE_TEMPERATURESENSOR = new ThingTypeUID(BINDING_ID, "temperatureSensor");
+    public final static ThingTypeUID THING_TYPE_HUMIDITYTEMPERATURESENSOR = new ThingTypeUID(BINDING_ID,
+            "humidityTemperatureSensor");
     public final static ThingTypeUID THING_TYPE_GENERICTHING = new ThingTypeUID(BINDING_ID, "genericThing");
     public final static ThingTypeUID THING_TYPE_ELTAKOFSB = new ThingTypeUID(BINDING_ID, "eltakoFSB");
 
     public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_ROCKERSWITCH,
             THING_TYPE_UNIVERSALACTUATOR, THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROOMOPERATINGPANEL,
             THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_MEASUREMENTSWITCH,
-            THING_TYPE_TEMPERATURESENSOR, THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
+            THING_TYPE_TEMPERATURESENSOR, THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_GENERICTHING,
+            THING_TYPE_ELTAKOFSB);
 
     // List of all Channel IDs
     public final static String REPEATERMODE = "repeater";
@@ -60,6 +63,7 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_DIMMER = "dimmer";
     public final static String CHANNEL_ROLLERSHUTTER = "rollershutter";
     public final static String CHANNEL_TEMPERATURE = "temperature";
+    public final static String CHANNEL_HUMIDITY = "humidity";
     public final static String CHANNEL_SETPOINT = "setPoint";
     public final static String CHANNEL_FANSPEEDSTAGE = "fanSpeedStage";
     public final static String CHANNEL_OCCUPANCY = "occupancy";
@@ -101,6 +105,8 @@ public class OpenOceanBindingConstants {
                     put(CHANNEL_ROLLERSHUTTER, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_ROLLERSHUTTER), CoreItemFactory.ROLLERSHUTTER));
                     put(CHANNEL_TEMPERATURE, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TEMPERATURE),
+                            CoreItemFactory.NUMBER));
+                    put(CHANNEL_HUMIDITY, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_HUMIDITY),
                             CoreItemFactory.NUMBER));
                     put(CHANNEL_FANSPEEDSTAGE, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_FANSPEEDSTAGE), CoreItemFactory.STRING));

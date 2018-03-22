@@ -143,7 +143,8 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
         try {
             if (transceiver == null) {
-                transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this);
+                transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this,
+                        scheduler);
             }
 
             if (transceiver != null) {

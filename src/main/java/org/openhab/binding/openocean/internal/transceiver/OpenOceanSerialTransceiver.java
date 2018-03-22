@@ -10,6 +10,7 @@ package org.openhab.binding.openocean.internal.transceiver;
 
 import java.io.IOException;
 import java.util.TooManyListenersException;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -35,8 +36,9 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanSerialTransceiver.class);
 
-    public OpenOceanSerialTransceiver(String path, TransceiverErrorListener errorListener) {
-        super(path, errorListener);
+    public OpenOceanSerialTransceiver(String path, TransceiverErrorListener errorListener,
+            ScheduledExecutorService scheduler) {
+        super(path, errorListener, scheduler);
     }
 
     @Override

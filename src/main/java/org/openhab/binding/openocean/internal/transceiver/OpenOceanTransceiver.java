@@ -42,6 +42,7 @@ public abstract class OpenOceanTransceiver {
 
     // Thread management
     private Future<?> readingTask;
+    private Future<?> timeOut;
 
     protected String path;
 
@@ -56,6 +57,11 @@ public abstract class OpenOceanTransceiver {
 
     private class RequestQueue {
         private Queue<Request> queue = new LinkedBlockingQueue<>();
+        private ScheduledExecutorService scheduler;
+
+        public RequestQueue(ScheduledExecutorService scheduler) {
+            this.scheduler = scheduler;
+        }
 
         public synchronized void enqueRequest(Request request) throws IOException {
             boolean wasEmpty = queue.isEmpty();
@@ -70,6 +76,9 @@ public abstract class OpenOceanTransceiver {
         }
 
         public synchronized void sendNext() throws IOException {
+            // if (timeOut != null) {
+            // timeOut.cancel(true);
+            // }
             queue.poll();
             send();
         }
@@ -95,28 +104,23 @@ public abstract class OpenOceanTransceiver {
                                 logger.debug("{}", Helper.bytesToHexString(i));
                             }
 
+                            /*
+                             * timeOut = scheduler.schedule(() -> {
+                             * try {
+                             * sendNext();
+                             * } catch (IOException e) {
+                             * errorListener.ErrorOccured(e);
+                             * return;
+                             * }
+                             * }, 2000, TimeUnit.MILLISECONDS);
+                             */
+
                             outputStream.write(b);
                             outputStream.flush();
 
-                            /*
-                             * if (currentRequest.ResponseListener != null) {
-                             * logger.trace("awaiting response");
-                             * currentRequest.wait(2000);
-                             *
-                             * if (currentRequest.ResponsePacket == null) {
-                             * logger.debug("response timeout");
-                             * currentRequest.ResponseListener.responseTimeOut();
-                             * } else {
-                             * logger.trace("response received");
-                             * currentRequest.ResponseListener.handleResponse(currentRequest.ResponsePacket);
-                             * }
-                             *
-                             * logger.trace("handled request");
-                             * } else {
-                             * logger.trace("request without listener");
-                             * }
-                             */
                         }
+                    } else {
+                        sendNext();
                     }
                 } catch (OpenOceanException e) {
                     logger.error("exception while sending data {}", e);
@@ -144,10 +148,11 @@ public abstract class OpenOceanTransceiver {
         ReadingData
     }
 
-    public OpenOceanTransceiver(String path, TransceiverErrorListener errorListener) {
+    public OpenOceanTransceiver(String path, TransceiverErrorListener errorListener,
+            ScheduledExecutorService scheduler) {
         this.path = path;
 
-        requestQueue = new RequestQueue();
+        requestQueue = new RequestQueue(scheduler);
         listeners = new HashMap<Long, List<ESP3PacketListener>>();
         teachInListener = null;
         this.errorListener = errorListener;
@@ -353,6 +358,10 @@ public abstract class OpenOceanTransceiver {
 
     public void sendESP3Packet(ESP3Packet packet, ResponseListener<? extends Response> responseCallback)
             throws IOException {
+
+        if (packet == null) {
+            return;
+        }
 
         logger.debug("new request arrived");
         Request r = new Request();
