@@ -59,8 +59,8 @@ public abstract class A5_04 extends _4BSMessage {
 
         if (channelId.equals(CHANNEL_TEMPERATURE)) {
             double scaledTemp = getScaledTemperatureMin()
-                    - (((getUnscaledTemperatureMin() - getUnscaledTemperatureValue())
-                            * (getScaledTemperatureMin() - getScaledTemperatureMax())) / getUnscaledTemperatureMin());
+                    + ((getUnscaledTemperatureValue() * (getScaledTemperatureMax() - getScaledTemperatureMin()))
+                            / (getUnscaledTemperatureMax() - getUnscaledTemperatureMin()));
             return new DecimalType(scaledTemp);
         } else if (channelId.equals(CHANNEL_HUMIDITY)) {
             return new DecimalType((getUnscaledHumidityValue() * 100.0) / getUnscaledHumidityMax());
