@@ -123,12 +123,13 @@ on Ubuntu 16.04.
 * ssh into your Ubuntu machine
 * Download precompiled binding into your openhab2-addons folder and adjust permissions
   * ``cd /usr/share/openhab2/addons/``
-  * ``sudo wget https://github.com/fruggy83/openocean/raw/master/precompiled/org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar .``
+  * ``sudo wget https://github.com/fruggy83/openocean/raw/master/precompiled/org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
   * ``sudo chown openhab:openhab org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
   * ``sudo chmod 644 org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
-* Run openhabian-config (``sudo openhabian-config``)
-   * 10 Apply Improvements => 14 Fix permissions (adds openhab to tty group, needed for access to enocean pi)
-   * 30 System settings => 35 serial port => disable serial console (1) and add common serial ports to openHAB JVM (3)
+* Additional openHAB configuration (https://docs.openhab.org/installation/linux.html#recommended-additional-setup-steps)
+  * ``sudo adduser openhab dialout``
+  * ``sudo adduser openhab tty``
+  * ``/etc/default/openhab2:`` ``EXTRA_JAVA_OPTS="-Dgnu.io.rxtx.SerialPorts=/dev/ttyUSB0:/dev/ttyS0:/dev/ttyS2:/dev/ttyACM0:/dev/ttyAMA0"``
 * open karaf shell (``ssh -p 8101 openhab@localhost``, std psw habopen)
    * install gnu.io (``feature:install openhab-transport-serial``)
    * install openocean (``bundle:install org.openhab.binding.openocean``)
