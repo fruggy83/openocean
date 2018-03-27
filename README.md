@@ -5,7 +5,7 @@ The OpenOcean binding connects OpenHab to the EnOcean ecosystem.
 The binding uses an EnOcean gateway to retrieve sensor data and control actuators. For _bidirectional_ actuators it is even possible to update the OpenHab item state if the actuator gets modified outside of OpenHab.
 This binding has been developed on an USB300 gateway and was also tested with an EnOceanPi. As this binding implements a full EnOcean stack, we have full control over these gateways. This binding can enable the repeater function (level 1 or 2) of these gateways and retrieve detailed information about them.   
 
-##Concepts/Configuration
+## Concepts/Configuration
 First of all you have to configure an EnOcean Transceiver (Gateway). This device has to be added manually to OpenHab and is represented by an _OpenOcean bridge_. You just have to set the right serial port. If everything is running fine you should see the _base id_ of your gateway in the properties of your bridge.
 
 EnOcean messages are mainly send as broadcast messages without an explicit receiver address. However each message contains a unique sender address (EnOcean Id) to determine from which device this message was sent. To receive messages from an EnOcean device you have to determine its EnOcean Id and add an appropriate thing to OpenHab. **The thing Id has to be set to the EnOcean Id**. If the device is an actuator which you want to control, you have to generate an unique sender id and announce it to the actuator (_teach-in_). This sender id is made up of the base id of the EnOcean gateway and a number between 1 and 127. This number can be set manually or determined by the binding.
