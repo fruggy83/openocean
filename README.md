@@ -126,8 +126,7 @@ on Ubuntu 16.04.
   * ``sudo wget https://github.com/fruggy83/openocean/raw/master/precompiled/org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
   * ``sudo chown openhab:openhab org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
   * ``sudo chmod 644 org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
-* Additional openHAB configuration (https://docs.openhab.org/installation/linux.html#recommended-additional-setup-steps)
-  * ``sudo adduser openhab dialout``
+* Additional openHAB configuration (see [openHAB documentation](https://docs.openhab.org/installation/linux.html#recommended-additional-setup-steps))
   * ``sudo adduser openhab tty``
   * ``/etc/default/openhab2:`` ``EXTRA_JAVA_OPTS="-Dgnu.io.rxtx.SerialPorts=/dev/ttyUSB0:/dev/ttyS0:/dev/ttyS2:/dev/ttyACM0:/dev/ttyAMA0"``
 * open karaf shell (``ssh -p 8101 openhab@localhost``, std psw habopen)
