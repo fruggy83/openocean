@@ -195,9 +195,11 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
             return;
         }
 
-        linkedChannels.remove(id);
-        channelState.remove(id);
-        lastEvents.remove(id);
+        if (!isLinked(id)) {
+            linkedChannels.remove(id);
+            channelState.remove(id);
+            lastEvents.remove(id);
+        }
     }
 
     protected synchronized OpenOceanBridgeHandler getBridgeHandler() {
