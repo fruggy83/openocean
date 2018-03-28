@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<thing:thing-descriptions bindingId="openocean"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
@@ -12,7 +13,7 @@
 		<description>Electronic switches and dimmers with energy measurement and local control (EEP: D2-01)</description>
 
 		<properties>
-			<property name="enoceanId"></property>
+			<property name="enoceanId" />
 		</properties>
 		<config-description>
 			<parameter name="senderIdOffset" type="integer">
@@ -21,9 +22,9 @@
 				<required>true</required>
 			</parameter>
 			<parameter name="pollingInterval" type="integer" min="0" unit="s">
-			     <label>Polling interval</label>
-			     <description>Time in seconds after a refresh is triggerd, 0 to disable</description>
-			     <default>300</default>
+				<label>Polling interval</label>
+				<description>Time in seconds after a refresh is triggerd, 0 to disable</description>
+				<default>300</default>
 			</parameter>
 			<parameter name="eepId" type="text">
 				<label>EEP for sending commands</label>
@@ -35,9 +36,9 @@
 				<required>true</required>
 			</parameter>
 			<parameter name="broadcastMessages" type="boolean">
-                 <label>Send broadcast messages</label>
-                 <default>false</default>
-            </parameter>
+				<label>Send broadcast messages</label>
+				<default>false</default>
+			</parameter>
 		</config-description>
 
 	</thing-type>

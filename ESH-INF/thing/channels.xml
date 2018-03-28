@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<thing:thing-descriptions bindingId="openocean"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
@@ -63,7 +64,7 @@
 		<label>Temperature</label>
 		<description>Current temperature in degree Celsius</description>
 		<category>Temperature</category>
-		<state pattern="%.1f °C" readOnly="true"></state>
+		<state pattern="%.1f °C" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="humidity">
@@ -71,7 +72,7 @@
 		<label>Humidity</label>
 		<description>Relative humidity level in percentages</description>
 		<category>Humidity</category>
-		<state min="0" max="100" step="1" pattern="%d %%" readOnly="true"></state>
+		<state min="0" max="100" step="1" pattern="%d %%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="barometer">
@@ -79,14 +80,14 @@
 		<label>Humidity</label>
 		<description>Relative humidity level in percentages</description>
 		<category>Humidity</category>
-		<state min="0" max="100" step="1" pattern="%d %%" readOnly="true"></state>
+		<state min="0" max="100" step="1" pattern="%d %%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="setPoint">
 		<item-type>Number</item-type>
 		<label>Set point</label>
 		<description>linear set point</description>
-		<state readOnly="true" min="0" max="255"></state>
+		<state readOnly="true" min="0" max="255" />
 	</channel-type>
 
 	<channel-type id="fanSpeedStage">
@@ -134,14 +135,14 @@
 		<item-type>Number</item-type>
 		<label>Instant Power</label>
 		<description>Instant power consumption in Watts</description>
-		<state pattern="%d W" readOnly="true"></state>
+		<state pattern="%d W" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="totalusage">
 		<item-type>Number</item-type>
 		<label>Total Usage</label>
 		<description>Used energy in Kilowatt hours</description>
-		<state pattern="%d kWh" readOnly="true"></state>
+		<state pattern="%d kWh" readOnly="true" />
 	</channel-type>
 
 	<!-- Teach in Channel -->

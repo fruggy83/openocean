@@ -94,7 +94,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
                                 if (response.isValid() && response.isOK()) {
                                     updateState(channelUID, response.getRepeaterLevel());
                                 } else {
-                                    updateState(channelUID, StringType.valueOf(REPEATERMODE_OFF));
+                                    updateState(channelUID, new StringType(REPEATERMODE_OFF));
                                 }
                             }
                         });

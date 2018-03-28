@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<thing:thing-descriptions bindingId="openocean"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
@@ -13,12 +14,12 @@
 		</channels>
 
 		<properties>
-			<property name="Base ID"></property>
-			<property name="Remaining Base ID Write Cycles"></property>
-			<property name="APP Version"></property>
-			<property name="API Version"></property>
-			<property name="Chip ID"></property>
-			<property name="Description"></property>
+			<property name="Base ID" />
+			<property name="Remaining Base ID Write Cycles" />
+			<property name="APP Version" />
+			<property name="API Version" />
+			<property name="Chip ID" />
+			<property name="Description" />
 		</properties>
 
 		<config-description>
