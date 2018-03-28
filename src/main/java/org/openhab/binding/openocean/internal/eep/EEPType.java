@@ -89,6 +89,7 @@ import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_02;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
+import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_01;
 import org.openhab.binding.openocean.internal.eep.Generic.Generic4BS;
 import org.openhab.binding.openocean.internal.eep.Generic.GenericRPS;
 import org.openhab.binding.openocean.internal.eep.Generic.GenericVLD;
@@ -119,6 +120,8 @@ public enum EEPType {
             CHANNEL_GENERALSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
     // RockerSwitch2RockerStyle3(RORG.RPS, 0x02, 0x04, false, F6_02_04.class, THING_TYPE_ROCKERSWITCH,
     MechanicalHandle00(RORG.RPS, 0x10, 0x00, false, F6_10_00.class, THING_TYPE_MECHANICALHANDLE,
+            CHANNEL_WINDOWHANDLESTATE, CHANNEL_CONTACT, CHANNEL_RECEIVINGSTATE),
+    MechanicalHandle01(RORG.RPS, 0x10, 0x01, false, F6_10_01.class, THING_TYPE_MECHANICALHANDLE,
             CHANNEL_WINDOWHANDLESTATE, CHANNEL_CONTACT, CHANNEL_RECEIVINGSTATE),
     ContactAndSwitch(RORG._1BS, 0x00, 0x01, false, D5_00_01.class, THING_TYPE_CONTACTANDSWITCH, CHANNEL_CONTACT,
             CHANNEL_RECEIVINGSTATE),

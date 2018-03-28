@@ -14,6 +14,8 @@ import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
+import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
+import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_01;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
 import org.slf4j.Logger;
@@ -60,7 +62,31 @@ public class EEPFactory {
 
         switch (msg.getRORG()) {
             case RPS:
-                return new F6_02_01(msg);
+                try {
+                    EEP result = new F6_02_01(msg);
+                    if (result.isValid()) { // check if highest bit is not set
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
+
+                try {
+                    EEP result = new F6_10_00(msg);
+                    if (result.isValid()) {
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
+
+                try {
+                    EEP result = new F6_10_01(msg);
+                    if (result.isValid()) {
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
+
+                return null;
             case _1BS:
                 return new D5_00_01(msg);
             case _4BS: {
@@ -112,6 +138,7 @@ public class EEPFactory {
         }
 
         return null;
+
     }
 
     public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, int[] senderId) {

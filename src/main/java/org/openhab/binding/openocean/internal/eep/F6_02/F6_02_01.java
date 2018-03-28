@@ -122,4 +122,9 @@ public class F6_02_01 extends _RPSMessage {
 
         return false;
     }
+
+    @Override
+    protected boolean validateData(int[] bytes) {
+        return super.validateData(bytes) && !getBit(bytes[0], 7);
+    }
 }

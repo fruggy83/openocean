@@ -22,18 +22,18 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class F6_10_00 extends _RPSMessage {
+public class F6_10_01 extends _RPSMessage {
 
-    public final int Closed = 0xF0; // 1111xxxx
-    public final int Open1 = 0xE0; // 1110xxxx
-    public final int Open2 = 0xC0; // 1100xxxx
-    public final int Tilted = 0xD0; // 1101xxxx
+    public final int Closed = 0x0F; // xxxx1111
+    public final int Open1 = 0x0E; // xxxx1110
+    public final int Open2 = 0x0C; // xxxx1100
+    public final int Tilted = 0x0D; // xxxx1101
 
-    public F6_10_00() {
+    public F6_10_01() {
         super();
     }
 
-    public F6_10_00(ERP1Message packet) {
+    public F6_10_01(ERP1Message packet) {
         super(packet);
     }
 
@@ -44,7 +44,7 @@ public class F6_10_00 extends _RPSMessage {
             return UnDefType.UNDEF;
         }
 
-        int data = bytes[0] & 0xF0;
+        int data = bytes[0] & 0x0F;
 
         // todo localization
         switch (channelId) {
@@ -72,6 +72,6 @@ public class F6_10_00 extends _RPSMessage {
 
     @Override
     protected boolean validateData(int[] bytes) {
-        return super.validateData(bytes) && getBit(bytes[0], 7) && getBit(bytes[0], 6);
+        return super.validateData(bytes) && getBit(bytes[0], 6) && getBit(bytes[0], 3) && getBit(bytes[0], 2);
     }
 }
