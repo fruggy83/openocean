@@ -142,3 +142,4 @@ Many thanks to:
 
  * The NodOn support for their hints about the ADT and UTE teach in messages.
  * The fhem project for the inspiration and their EnOcean addon
+ * [leifbladt](https://github.com/leifbladt) for his work on the installation notes
