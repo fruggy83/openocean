@@ -8,7 +8,7 @@
  */
 package org.openhab.binding.openocean.profiles;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.SUPPORTED_PROFILETYPES_UIDS;
+import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -48,6 +48,8 @@ public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, 
 
         if (profileTypeUID.equals(OpenOceanProfileTypes.RockerSwitchToPlayPause)) {
             return new RockerSwitchToPlayPauseProfile(callback);
+        } else if (profileTypeUID.equals(OpenOceanProfileTypes.RockerSwitchToOnOff)) {
+            return new RockerSwitchToOnOffProfile(callback, profileContext);
         }
 
         return null;
@@ -67,9 +69,12 @@ public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, 
             return null;
         }
 
-        if (DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID().equals(channelType.getUID())) {
+        if (DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID().equals(channelType.getUID())
+                || VirtualRockerSwitchChannelType.equals(channelType.getUID())) {
             if (CoreItemFactory.PLAYER.equalsIgnoreCase(itemType)) {
                 return OpenOceanProfileTypes.RockerSwitchToPlayPause;
+            } else if (CoreItemFactory.SWITCH.equalsIgnoreCase(itemType)) {
+                return OpenOceanProfileTypes.RockerSwitchToOnOff;
             }
         }
 
@@ -84,7 +89,8 @@ public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, 
 
     @Override
     public Collection<@NonNull ProfileType> getProfileTypes(@Nullable Locale locale) {
-        return ImmutableSet.of(OpenOceanProfileTypes.RockerSwitchToPlayPauseType);
+        return ImmutableSet.of(OpenOceanProfileTypes.RockerSwitchToPlayPauseType,
+                OpenOceanProfileTypes.RockerSwitchToOnOffType);
     }
 
     @Reference

@@ -11,10 +11,7 @@ package org.openhab.binding.openocean.internal.eep.F6_02;
 import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.openocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
@@ -30,44 +27,12 @@ public class F6_02_02 extends _RPSMessage {
     final int B0 = 3;
     final int PRESSED = 16;
 
-    int secondByte = -1;
-    int secondStatus = -1;
-
     public F6_02_02() {
         super();
     }
 
     public F6_02_02(ERP1Message packet) {
         super(packet);
-    }
-
-    @Override
-    protected void convertFromCommandImpl(Command command, String channelId, State currentState, Configuration config) {
-
-        if (command instanceof OnOffType) {
-            setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-
-            switch (channelId) {
-                case CHANNEL_GENERALSWITCH_CHANNELA:
-                    if ((OnOffType) command == OnOffType.ON) {
-                        setData((AI << 5) | PRESSED);
-                    } else {
-                        setData((A0 << 5) | PRESSED);
-                    }
-                    break;
-
-                case CHANNEL_GENERALSWITCH_CHANNELB:
-                    if ((OnOffType) command == OnOffType.ON) {
-                        setData((BI << 5) | PRESSED);
-                    } else {
-                        setData((B0 << 5) | PRESSED);
-                    }
-                    break;
-            }
-
-            secondByte = 0;
-            secondStatus = _RPSMessage.T21Flag;
-        }
     }
 
     @Override
@@ -110,16 +75,4 @@ public class F6_02_02 extends _RPSMessage {
         return null;
     }
 
-    @Override
-    public boolean PrepareNextMessage() {
-        if (secondByte != -1) {
-            setData(secondByte);
-            setStatus(secondStatus);
-            secondByte = -1;
-            secondStatus = -1;
-            return true;
-        }
-
-        return false;
-    }
 }

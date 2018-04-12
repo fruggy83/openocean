@@ -132,10 +132,6 @@ public abstract class EEP {
         return this;
     }
 
-    public boolean PrepareNextMessage() {
-        return false;
-    }
-
     public final ERP1Message getERP1Message() {
         if (isValid()) {
 

@@ -11,7 +11,7 @@
 		</supported-bridge-type-refs>
 
 		<label>F6-02 - Rocker Switch</label>
-		<description>Rocker Switch</description>
+		<description>Represents a physical Rocker Switch</description>
 
 		<properties>
 			<property name="enoceanId" />
@@ -19,21 +19,13 @@
 		<config-description>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
-				<description>EEP which is used by panel</description>
+				<description>EEP which is used by rocker switch</description>
 				<options>
 					<option value="F6_02_01">F6-02-01 (upper rocker => DIR1)</option>
 					<option value="F6_02_02">F6-02-02 (upper rocker => DIR2)</option>
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
-			</parameter>
-			<parameter name="senderIdOffset" type="integer">
-				<label>Sender Id</label>
-				<description>If you want to send On/Off commands with this rocker switch an Id offset must be provided ([1;127]).</description>
-			</parameter>
-			<parameter name="broadcastMessages" type="boolean">
-				<label>Send broadcast messages</label>
-				<default>true</default>
 			</parameter>
 		</config-description>
 	</thing-type>

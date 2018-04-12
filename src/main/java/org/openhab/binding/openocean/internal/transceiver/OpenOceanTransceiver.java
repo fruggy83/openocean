@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TooManyListenersException;
@@ -132,7 +130,7 @@ public abstract class OpenOceanTransceiver {
     RequestQueue requestQueue;
     Request currentRequest = null;
 
-    protected Map<Long, List<ESP3PacketListener>> listeners;
+    protected Map<Long, ESP3PacketListener> listeners;
     protected ESP3PacketListener teachInListener;
 
     // Input and output streams, must be created by transceiver implementations
@@ -153,7 +151,7 @@ public abstract class OpenOceanTransceiver {
         this.path = path;
 
         requestQueue = new RequestQueue(scheduler);
-        listeners = new HashMap<Long, List<ESP3PacketListener>>();
+        listeners = new HashMap<Long, ESP3PacketListener>();
         teachInListener = null;
         this.errorListener = errorListener;
     }
@@ -293,6 +291,7 @@ public abstract class OpenOceanTransceiver {
                                         if (packet.getPacketType() == ESPPacketType.RESPONSE) {
                                             logger.trace("publish response");
 
+
                                             if (currentRequest != null) {
                                                 if (currentRequest.ResponseListener != null) {
 
@@ -393,11 +392,9 @@ public abstract class OpenOceanTransceiver {
                 }
 
                 long s = Long.parseLong(Helper.bytesToHexString(senderId), 16);
-                List<ESP3PacketListener> list = listeners.get(s);
-                if (list != null) {
-                    for (ESP3PacketListener listener : list) {
-                        listener.espPacketReceived(msg);
-                    }
+                ESP3PacketListener listener = listeners.get(s);
+                if (listener != null) {
+                    listener.espPacketReceived(msg);
                 }
             }
         } catch (Exception e) {
@@ -406,9 +403,12 @@ public abstract class OpenOceanTransceiver {
     }
 
     public void addPacketListener(ESP3PacketListener listener) {
-        listeners.putIfAbsent(listener.getSenderIdToListenTo(), new LinkedList<ESP3PacketListener>());
-        listeners.get(listener.getSenderIdToListenTo()).add(listener);
+        listeners.putIfAbsent(listener.getSenderIdToListenTo(), listener);
         logger.debug("Listener added: {}", listener.getSenderIdToListenTo());
+    }
+
+    public void removePacketListener(ESP3PacketListener listener) {
+        listeners.remove(listener.getSenderIdToListenTo());
     }
 
     public void startDiscovery(ESP3PacketListener teachInListener) {

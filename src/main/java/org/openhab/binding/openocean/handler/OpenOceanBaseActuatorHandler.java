@@ -39,8 +39,8 @@ import com.google.common.collect.Sets;
 public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_UNIVERSALACTUATOR,
-            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING,
-            THING_TYPE_ELTAKOFSB);
+            THING_TYPE_CENTRALCOMMAND, THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH,
+            THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
 
     protected int[] senderId;
     protected int[] destinationId;
@@ -119,10 +119,9 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
         int senderId = cfg.senderIdOffset;
 
         String thingId = this.getThing().getThingTypeUID().getId();
-        String rsid = THING_TYPE_ROCKERSWITCH.getId();
         String gtId = THING_TYPE_GENERICTHING.getId();
 
-        if (senderId == -1 && (thingId.equals(rsid) || thingId.equals(gtId))) {
+        if (senderId == -1 && thingId.equals(gtId)) {
             return true;
         }
 
@@ -198,12 +197,6 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
                     .convertFromCommand(channelId, command, currentState, config).getERP1Message();
 
             getBridgeHandler().sendMessage(msg, null);
-
-            // is mainly used by rocker switches => first message push, second release
-            while (eep.PrepareNextMessage()) {
-                getBridgeHandler().sendMessage(eep.getERP1Message(), null);
-            }
-
         }
     }
 

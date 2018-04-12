@@ -47,10 +47,4 @@ public abstract class _RPSMessage extends EEP {
 
         return this;
     }
-
-    @Override
-    public boolean PrepareNextMessage() {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }

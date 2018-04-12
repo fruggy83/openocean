@@ -87,6 +87,7 @@ import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_09;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0A;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
+import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01_Virtual;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_02;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_01;
@@ -113,11 +114,11 @@ public enum EEPType {
             CHANNEL_GENERIC_COLOR, CHANNEL_GENERIC_TEACHINCMD),
     PTM200(RORG.RPS, 0x00, 0x00, false, PTM200Message.class, null, CHANNEL_LIGHT_SWITCHING, CHANNEL_RECEIVINGSTATE),
     RockerSwitch2RockerStyle1(RORG.RPS, 0x02, 0x01, false, F6_02_01.class, THING_TYPE_ROCKERSWITCH,
-            CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_GENERALSWITCH_CHANNELA,
-            CHANNEL_GENERALSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
+            CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
     RockerSwitch2RockerStyle2(RORG.RPS, 0x02, 0x02, false, F6_02_02.class, THING_TYPE_ROCKERSWITCH,
-            CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_GENERALSWITCH_CHANNELA,
-            CHANNEL_GENERALSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
+            CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
+    VirtualRockerSwitch(RORG.RPS, 0x02, 0x01, false, "Virtual", F6_02_01_Virtual.class, THING_TYPE_VIRTUALROCKERSWITCH,
+            CHANNEL_VIRTUALROCKERSWITCH_CHANNEL),
     // RockerSwitch2RockerStyle3(RORG.RPS, 0x02, 0x04, false, F6_02_04.class, THING_TYPE_ROCKERSWITCH,
     MechanicalHandle00(RORG.RPS, 0x10, 0x00, false, F6_10_00.class, THING_TYPE_MECHANICALHANDLE,
             CHANNEL_WINDOWHANDLESTATE, CHANNEL_CONTACT, CHANNEL_RECEIVINGSTATE),

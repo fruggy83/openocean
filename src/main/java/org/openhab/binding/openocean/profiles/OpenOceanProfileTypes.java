@@ -8,6 +8,8 @@
  */
 package org.openhab.binding.openocean.profiles;
 
+import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
+
 import org.eclipse.smarthome.core.library.CoreItemFactory;
 import org.eclipse.smarthome.core.thing.DefaultSystemChannelTypeProvider;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeBuilder;
@@ -23,8 +25,16 @@ public class OpenOceanProfileTypes {
     public static final ProfileTypeUID RockerSwitchToPlayPause = new ProfileTypeUID(ProfileTypeUID.SYSTEM_SCOPE,
             "rockerswitch-to-play-pause");
 
+    public static final ProfileTypeUID RockerSwitchToOnOff = new ProfileTypeUID(BINDING_ID, "rockerswitch-to-on-off");
+
     public static final TriggerProfileType RockerSwitchToPlayPauseType = ProfileTypeBuilder
             .newTrigger(RockerSwitchToPlayPause, "Rocker switch to Play/Pause")
             .withSupportedItemTypes(CoreItemFactory.PLAYER)
             .withSupportedChannelTypeUIDs(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID()).build();
+
+    public static final TriggerProfileType RockerSwitchToOnOffType = ProfileTypeBuilder
+            .newTrigger(RockerSwitchToOnOff, "Rocker switch to/from On/Off")
+            .withSupportedItemTypes(CoreItemFactory.SWITCH).withSupportedChannelTypeUIDs(
+                    DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), VirtualRockerSwitchChannelType)
+            .build();
 }

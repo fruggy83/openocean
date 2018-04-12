@@ -39,7 +39,7 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_ROOMOPERATINGPANEL,
             THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_TEMPERATURESENSOR,
-            THING_TYPE_HUMIDITYTEMPERATURESENSOR);
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_ROCKERSWITCH);
 
     protected EEPType receivingEEPType = null;
 
@@ -53,9 +53,13 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
     boolean validateConfig() {
         OpenOceanBaseConfig cfg = getConfigAs(OpenOceanBaseConfig.class);
         try {
-            receivingEEPType = EEPType.getType(cfg.getReceivingEEPId());
-            updateChannels(receivingEEPType, true);
+            if (cfg.getReceivingEEPId() != null && !cfg.getReceivingEEPId().isEmpty()) {
 
+                receivingEEPType = EEPType.getType(cfg.getReceivingEEPId());
+                updateChannels(receivingEEPType, true);
+            } else {
+                receivingEEPType = null;
+            }
         } catch (Exception e) {
             configurationErrorDescription = "Receiving EEP is not supported";
             return false;
@@ -63,7 +67,9 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
 
         enoceanId = thing.getUID().getId();
         if (validateEnoceanId(enoceanId)) {
-            getBridgeHandler().addPacketListener(this);
+            if (receivingEEPType != null) {
+                getBridgeHandler().addPacketListener(this);
+            }
             return true;
         }
 
@@ -77,6 +83,15 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
     }
 
     @Override
+    public void handleRemoval() {
+
+        if (getBridgeHandler() != null) {
+            getBridgeHandler().removePacketListener(this);
+        }
+        super.handleRemoval();
+    }
+
+    @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
 
     }
@@ -87,6 +102,10 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
 
     @Override
     public void espPacketReceived(ESP3Packet packet) {
+
+        if (receivingEEPType == null) {
+            return;
+        }
 
         EEP eep = EEPFactory.buildEEP(receivingEEPTyp(), (ERP1Message) packet);
 

@@ -312,6 +312,10 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
         transceiver.addPacketListener(listener);
     }
 
+    public void removePacketListener(ESP3PacketListener listener) {
+        transceiver.removePacketListener(listener);
+    }
+
     public void startDiscovery(ESP3PacketListener teachInListener) {
         transceiver.startDiscovery(teachInListener);
     }

@@ -38,6 +38,8 @@ public class OpenOceanBindingConstants {
 
     // List of all Thing Type UIDs
     public final static ThingTypeUID THING_TYPE_ROCKERSWITCH = new ThingTypeUID(BINDING_ID, "rockerSwitch");
+    public final static ThingTypeUID THING_TYPE_VIRTUALROCKERSWITCH = new ThingTypeUID(BINDING_ID,
+            "virtualRockerSwitch");
     public final static ThingTypeUID THING_TYPE_UNIVERSALACTUATOR = new ThingTypeUID(BINDING_ID, "universalCommand");
     public final static ThingTypeUID THING_TYPE_CENTRALCOMMAND = new ThingTypeUID(BINDING_ID, "centralCommand");
     public final static ThingTypeUID THING_TYPE_ROOMOPERATINGPANEL = new ThingTypeUID(BINDING_ID, "roomOperatingPanel");
@@ -51,10 +53,10 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_ELTAKOFSB = new ThingTypeUID(BINDING_ID, "eltakoFSB");
 
     public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_ROCKERSWITCH,
-            THING_TYPE_UNIVERSALACTUATOR, THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROOMOPERATINGPANEL,
-            THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_MEASUREMENTSWITCH,
-            THING_TYPE_TEMPERATURESENSOR, THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_GENERICTHING,
-            THING_TYPE_ELTAKOFSB);
+            THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_UNIVERSALACTUATOR, THING_TYPE_CENTRALCOMMAND,
+            THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH,
+            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR, THING_TYPE_HUMIDITYTEMPERATURESENSOR,
+            THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
 
     // List of all Channel IDs
     public final static String REPEATERMODE = "repeater";
@@ -68,14 +70,11 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_FANSPEEDSTAGE = "fanSpeedStage";
     public final static String CHANNEL_OCCUPANCY = "occupancy";
 
-    public final static String CHANNEL_ROCKERSWITCH_CHANNELA = "rockerswitchA"; // this channel is used to react on
-                                                                                // trigger events
-    public final static String CHANNEL_ROCKERSWITCH_CHANNELB = "rockerswitchB"; // this channel is used to react on
-                                                                                // trigger events
-    public final static String CHANNEL_GENERALSWITCH_CHANNELA = "generalSwitchA"; // this channel is used to emit an
-                                                                                  // enocean telegram
-    public final static String CHANNEL_GENERALSWITCH_CHANNELB = "generalSwitchB"; // this channel is used to emit an
-                                                                                  // enocean telegram
+    public final static String CHANNEL_ROCKERSWITCH_CHANNELA = "rockerswitchA";
+    public final static String CHANNEL_ROCKERSWITCH_CHANNELB = "rockerswitchB";
+
+    public final static String CHANNEL_VIRTUALROCKERSWITCH_CHANNEL = "virtualRockerswitch";
+
     public final static String CHANNEL_WINDOWHANDLESTATE = "windowHandleState";
     public final static String CHANNEL_CONTACT = "contact";
     public final static String CHANNEL_TEACHINCMD = "teachInCMD";
@@ -90,6 +89,9 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_GENERIC_STRING = "genericString";
     public final static String CHANNEL_GENERIC_COLOR = "genericColor";
     public final static String CHANNEL_GENERIC_TEACHINCMD = "genericTeachInCMD";
+
+    public final static ChannelTypeUID VirtualRockerSwitchChannelType = new ChannelTypeUID(BINDING_ID,
+            "virtualRockerswitch");
 
     public static final Map<String, ChannelDescription> ChannelId2ChannelDescription = Collections
             .unmodifiableMap(new HashMap<String, ChannelDescription>() {
@@ -121,17 +123,15 @@ public class OpenOceanBindingConstants {
                     put(CHANNEL_TEACHINCMD, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TEACHINCMD),
                             CoreItemFactory.SWITCH));
                     put(CHANNEL_ROCKERSWITCH_CHANNELA,
-                            new ChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), null,
-                                    "Rockerswitch channel A (Sensor)", false));
+                            new ChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), "",
+                                    "Rockerswitch channel A", false));
                     put(CHANNEL_ROCKERSWITCH_CHANNELB,
-                            new ChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), null,
-                                    "Rockerswitch channel B (Sensor)", false));
-                    put(CHANNEL_GENERALSWITCH_CHANNELA,
-                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_GENERALSWITCH_CHANNELA),
-                                    CoreItemFactory.SWITCH, "Switch channel A (Actuator)", true));
-                    put(CHANNEL_GENERALSWITCH_CHANNELB,
-                            new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_GENERALSWITCH_CHANNELB),
-                                    CoreItemFactory.SWITCH, "Switch channel B (Actuator)", true));
+                            new ChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), "",
+                                    "Rockerswitch channel B", false));
+
+                    put(CHANNEL_VIRTUALROCKERSWITCH_CHANNEL,
+                            new ChannelDescription(VirtualRockerSwitchChannelType, "", "Rockerswitch channel", true));
+
                     put(CHANNEL_INSTANTPOWER, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER), CoreItemFactory.NUMBER));
                     put(CHANNEL_TOTALUSAGE, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TOTALUSAGE),
@@ -200,6 +200,6 @@ public class OpenOceanBindingConstants {
 
     @NonNull
     public static final Set<ProfileTypeUID> SUPPORTED_PROFILETYPES_UIDS = ImmutableSet
-            .of(OpenOceanProfileTypes.RockerSwitchToPlayPause);
+            .of(OpenOceanProfileTypes.RockerSwitchToPlayPause, OpenOceanProfileTypes.RockerSwitchToOnOff);
 
 }
