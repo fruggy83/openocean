@@ -25,7 +25,7 @@
 				<options>
 					<option value="F6_FF_FF">Generic RPS (F6)</option>
 					<option value="A5_FF_FF">Generic 4BS (A5)</option>
-					<option value="D2_FF_FF">Generic VLD (D2)</option>
+					<!-- <option value="D2_FF_FF">Generic VLD (D2)</option> -->
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
@@ -33,6 +33,10 @@
 			<parameter name="broadcastMessages" type="boolean">
 				<label>Send broadcast messages</label>
 				<default>true</default>
+			</parameter>
+			<parameter name="suppressRepeating" type="boolean">
+				<label>Suppress repeating of messages</label>
+				<default>false</default>
 			</parameter>
 		</config-description>
 

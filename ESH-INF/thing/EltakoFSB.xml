@@ -42,6 +42,10 @@
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
 			</parameter>
+			<parameter name="suppressRepeating" type="boolean">
+				<label>Suppress repeating of messages</label>
+				<default>false</default>
+			</parameter>
 		</config-description>
 
 	</thing-type>

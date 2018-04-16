@@ -76,7 +76,7 @@ public abstract class _4BSMessage extends EEP {
 
         } else {
             try {
-                int[] msg = Helper.hexStringToBytes(c.teachInMSG);
+                int[] msg = Helper.hexStringTo4Bytes(c.teachInMSG);
                 setData(msg);
             } catch (Exception e) {
             }

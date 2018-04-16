@@ -44,7 +44,7 @@ public class A5_3F_7F_Universal extends _4BSMessage {
                         transformationInfo.transformationFuntion, command.toString());
 
                 if (c != command.toString()) {
-                    setData(Helper.hexStringToBytes(c));
+                    setData(Helper.hexStringTo4Bytes(c));
                 }
 
             } catch (Exception e) {

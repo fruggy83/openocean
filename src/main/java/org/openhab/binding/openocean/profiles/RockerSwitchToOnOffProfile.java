@@ -68,7 +68,7 @@ public class RockerSwitchToOnOffProfile implements TriggerProfile, StateProfile 
 
     @Override
     public void onCommandFromItem(Command command) {
-        if (switchMode == SwitchMode.Unkown || duration == -1) {
+        if (switchMode == SwitchMode.Unkown) {
             return;
         }
 
@@ -78,25 +78,33 @@ public class RockerSwitchToOnOffProfile implements TriggerProfile, StateProfile 
             if (switchMode == SwitchMode.RockerSwitch) {
                 if (c == OnOffType.ON) {
                     callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR1_PRESSED));
+                    if (duration > 0) {
+                        context.getExecutorService().schedule(
+                                () -> callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR1_RELEASED)),
+                                duration, TimeUnit.MILLISECONDS);
+                    }
+                } else {
+                    callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_PRESSED));
+                    if (duration > 0) {
+                        context.getExecutorService().schedule(
+                                () -> callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_RELEASED)),
+                                duration, TimeUnit.MILLISECONDS);
+                    }
+                }
+            } else if (switchMode == SwitchMode.ToggleDir1) {
+                callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR1_PRESSED));
+                if (duration > 0) {
                     context.getExecutorService().schedule(
                             () -> callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR1_RELEASED)),
                             duration, TimeUnit.MILLISECONDS);
-                } else {
-                    callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_PRESSED));
+                }
+            } else if (switchMode == SwitchMode.ToggleDir2) {
+                callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_PRESSED));
+                if (duration > 0) {
                     context.getExecutorService().schedule(
                             () -> callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_RELEASED)),
                             duration, TimeUnit.MILLISECONDS);
                 }
-            } else if (switchMode == SwitchMode.ToggleDir1) {
-                callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR1_PRESSED));
-                context.getExecutorService().schedule(
-                        () -> callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR1_RELEASED)), duration,
-                        TimeUnit.MILLISECONDS);
-            } else if (switchMode == SwitchMode.ToggleDir2) {
-                callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_PRESSED));
-                context.getExecutorService().schedule(
-                        () -> callback.handleCommand(StringType.valueOf(CommonTriggerEvents.DIR2_RELEASED)), duration,
-                        TimeUnit.MILLISECONDS);
             }
         }
     }

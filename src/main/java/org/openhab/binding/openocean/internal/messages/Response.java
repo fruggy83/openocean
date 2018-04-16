@@ -24,7 +24,10 @@ public class Response extends ESP3Packet {
         RET_OPERATION_DENIED(0x04),
         RET_LOCK_SET(0x05),
         RET_BUFFER_TO_SMALL(0x06),
-        RET_NO_FREE_BUFFER(0x07);
+        RET_NO_FREE_BUFFER(0x07),
+        RET_FLASH_HW_ERROR(0x82),
+        RET_BASEID_OUT_OF_RANGE(0x90),
+        RET_BASEID_MAX_REACHED(0x91);
 
         private int value;
 

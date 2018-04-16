@@ -22,6 +22,10 @@ public class ESP3PacketFactory {
     public final static ESP3Packet CO_RD_IDBASE = new CCMessage(1, 0, new int[] { 8 });
     public final static ESP3Packet CO_RD_REPEATER = new CCMessage(1, 0, new int[] { 10 });
 
+    public static ESP3Packet CO_WR_IDBASE(int[] newId) {
+        return new CCMessage(5, 0, new int[] { 7, newId[0], newId[1], newId[2], newId[3] });
+    }
+
     public static ESP3Packet CO_WR_REPEATER(StringType level) {
         switch (level.toString()) {
             case OpenOceanBindingConstants.REPEATERMODE_OFF:

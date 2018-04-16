@@ -25,6 +25,8 @@ public class OpenOceanActuatorConfig extends OpenOceanBaseConfig {
 
     public boolean broadcastMessages;
 
+    public boolean suppressRepeating;
+
     public String getSendingEEPId() {
         if (sendingEEPId == null || sendingEEPId.isEmpty()) {
             return super.getReceivingEEPId();

@@ -93,6 +93,16 @@ public class Helper {
     }
 
     public static int[] hexStringToBytes(String hex) {
+        if (hex.length() < 3) {
+            int[] result = new int[1];
+            result[0] = (Integer.parseInt(hex, 16) & 0xff);
+            return result;
+        } else {
+            return hexStringTo4Bytes(hex);
+        }
+    }
+
+    public static int[] hexStringTo4Bytes(String hex) {
         long id = Long.parseLong(hex, 16);
 
         int[] result = new int[4];

@@ -59,7 +59,8 @@ public class OpenOceanBindingConstants {
             THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
 
     // List of all Channel IDs
-    public final static String REPEATERMODE = "repeater";
+    public final static String CHANNEL_REPEATERMODE = "repeater";
+    public final static String CHANNEL_SETBASEID = "setBaseId";
     public final static String CHANNEL_LIGHT_SWITCHING = "lightSwitch";
     public final static String CHANNEL_GENERAL_SWITCHING = "generalSwitch";
     public final static String CHANNEL_DIMMER = "dimmer";
@@ -73,7 +74,8 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_ROCKERSWITCH_CHANNELA = "rockerswitchA";
     public final static String CHANNEL_ROCKERSWITCH_CHANNELB = "rockerswitchB";
 
-    public final static String CHANNEL_VIRTUALROCKERSWITCH_CHANNEL = "virtualRockerswitch";
+    public final static String CHANNEL_VIRTUALROCKERSWITCH_CHANNELA = "virtualRockerswitchA";
+    public final static String CHANNEL_VIRTUALROCKERSWITCH_CHANNELB = "virtualRockerswitchB";
 
     public final static String CHANNEL_WINDOWHANDLESTATE = "windowHandleState";
     public final static String CHANNEL_CONTACT = "contact";
@@ -129,8 +131,10 @@ public class OpenOceanBindingConstants {
                             new ChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), "",
                                     "Rockerswitch channel B", false));
 
-                    put(CHANNEL_VIRTUALROCKERSWITCH_CHANNEL,
-                            new ChannelDescription(VirtualRockerSwitchChannelType, "", "Rockerswitch channel", true));
+                    put(CHANNEL_VIRTUALROCKERSWITCH_CHANNELA,
+                            new ChannelDescription(VirtualRockerSwitchChannelType, "", "Rockerswitch channel A", true));
+                    put(CHANNEL_VIRTUALROCKERSWITCH_CHANNELB,
+                            new ChannelDescription(VirtualRockerSwitchChannelType, "", "Rockerswitch channel B", true));
 
                     put(CHANNEL_INSTANTPOWER, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER), CoreItemFactory.NUMBER));

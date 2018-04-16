@@ -36,6 +36,10 @@
 				<label>Send broadcast messages</label>
 				<default>true</default>
 			</parameter>
+			<parameter name="suppressRepeating" type="boolean">
+				<label>Suppress repeating of messages</label>
+				<default>false</default>
+			</parameter>
 		</config-description>
 	</thing-type>
 

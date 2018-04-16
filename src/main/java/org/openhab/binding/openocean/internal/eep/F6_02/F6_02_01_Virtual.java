@@ -8,6 +8,8 @@
  */
 package org.openhab.binding.openocean.internal.eep.F6_02;
 
+import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
+
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
@@ -49,29 +51,28 @@ public class F6_02_01_Virtual extends _RPSMessage {
                 return;
             }
 
-            // switch (channelId) {
-            // case CHANNEL_VIRTUALROCKERSWITCH_CHANNEL:
-            if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
-                setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-                setData((A0 << 5) | PRESSED);
-            } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
-                setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-                setData((AI << 5) | PRESSED);
-            }
-            // break;
+            switch (channelId) {
+                case CHANNEL_VIRTUALROCKERSWITCH_CHANNELA:
+                    if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
+                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
+                        setData((A0 << 5) | PRESSED);
+                    } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
+                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
+                        setData((AI << 5) | PRESSED);
+                    }
+                    break;
 
-            /*
-             * case CHANNEL_VIRTUALROCKERSWITCH_CHANNELB:
-             * if ((OpenOceanRockerSwitchCommand) command == OpenOceanRockerSwitchCommand.DIR1_PRESS) {
-             * setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-             * setData((B0 << 5) | PRESSED);
-             * } else if ((OpenOceanRockerSwitchCommand) command == OpenOceanRockerSwitchCommand.DIR2_PRESS) {
-             * setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-             * setData((BI << 5) | PRESSED);
-             * }
-             * break;
-             */
-            // }
+                case CHANNEL_VIRTUALROCKERSWITCH_CHANNELB:
+                    if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
+                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
+                        setData((B0 << 5) | PRESSED);
+                    } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
+                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
+                        setData((BI << 5) | PRESSED);
+                    }
+                    break;
+
+            }
         }
 
     }

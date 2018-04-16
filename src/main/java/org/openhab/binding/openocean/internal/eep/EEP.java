@@ -44,6 +44,8 @@ public abstract class EEP {
 
     protected int[] destinationId;
 
+    protected boolean suppressRepeating;
+
     protected Logger logger = LoggerFactory.getLogger(EEP.class);
 
     private EEPType eepType = null;
@@ -132,6 +134,11 @@ public abstract class EEP {
         return this;
     }
 
+    public EEP setSuppressRepeating(boolean suppressRepeating) {
+        this.suppressRepeating = suppressRepeating;
+        return this;
+    }
+
     public final ERP1Message getERP1Message() {
         if (isValid()) {
 
@@ -146,7 +153,8 @@ public abstract class EEP {
             ERP1Message message = new ERP1Message(payLoad.length - optionalDataLength, optionalDataLength, payLoad);
 
             message.setPayload(Helper.concatAll(new int[] { getEEPType().getRORG().getValue() }, bytes, senderId,
-                    new int[] { status }));
+                    new int[] { status | (suppressRepeating ? 0b1111 : 0) })); // set repeater count to max if
+                                                                               // suppressRepeating
 
             message.setOptionalPayload(optionalData);
 

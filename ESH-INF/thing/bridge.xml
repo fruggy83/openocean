@@ -11,6 +11,7 @@
 
 		<channels>
 			<channel id="repeater" typeId="repeaterMode" />
+			<channel typeId="setBaseId" id="setBaseId"></channel>
 		</channels>
 
 		<properties>

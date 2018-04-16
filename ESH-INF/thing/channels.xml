@@ -18,6 +18,12 @@
 		</state>
 	</channel-type>
 
+	<channel-type id="setBaseId" advanced="true">
+		<item-type>String</item-type>
+		<label>Set base Id</label>
+		<description>Set base id of EnOcean gateway. Use this with care! Must be between 0xFF800000 and 0xFFFFFF80</description>
+	</channel-type>
+
 	<!-- Light Switch Channel -->
 	<channel-type id="lightSwitch">
 		<item-type>Switch</item-type>

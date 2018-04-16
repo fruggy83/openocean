@@ -47,6 +47,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
     protected EEPType sendingEEPType = null;
     protected boolean broadcastMessages = true;
+    protected boolean suppressRepeating = false;
 
     private ScheduledFuture<?> refreshJob;
 
@@ -76,6 +77,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
             OpenOceanActuatorConfig config = thing.getConfiguration().as(OpenOceanActuatorConfig.class);
 
             this.broadcastMessages = config.broadcastMessages;
+            this.suppressRepeating = config.suppressRepeating;
 
             try {
                 sendingEEPType = EEPType.getType(config.getSendingEEPId());
@@ -96,7 +98,7 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
                 if (this.broadcastMessages) {
                     destinationId = new int[] { 0xff, 0xff, 0xff, 0xff };
                 } else {
-                    destinationId = Helper.hexStringToBytes(thing.getUID().getId());
+                    destinationId = Helper.hexStringTo4Bytes(thing.getUID().getId());
                 }
 
             } catch (Exception e) {
@@ -194,7 +196,8 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
             State currentState = channelState.get(channelId);
 
             ESP3Packet msg = eep.setSenderId(senderId).setDestinationId(destinationId)
-                    .convertFromCommand(channelId, command, currentState, config).getERP1Message();
+                    .convertFromCommand(channelId, command, currentState, config)
+                    .setSuppressRepeating(suppressRepeating).getERP1Message();
 
             getBridgeHandler().sendMessage(msg, null);
         }

@@ -39,6 +39,7 @@ import org.openhab.binding.openocean.internal.messages.RDBaseIdResponse;
 import org.openhab.binding.openocean.internal.messages.RDRepeaterResponse;
 import org.openhab.binding.openocean.internal.messages.RDVersionResponse;
 import org.openhab.binding.openocean.internal.messages.Response;
+import org.openhab.binding.openocean.internal.messages.Response.ResponseType;
 import org.openhab.binding.openocean.internal.transceiver.ESP3PacketListener;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanSerialTransceiver;
@@ -84,7 +85,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
             return;
         }
 
-        if (channelUID.getId().equals(REPEATERMODE)) {
+        if (channelUID.getId().equals(CHANNEL_REPEATERMODE)) {
             if (command instanceof RefreshType) {
                 sendMessage(ESP3PacketFactory.CO_RD_REPEATER,
                         new ResponseListenerIgnoringTimeouts<RDRepeaterResponse>() {
@@ -110,6 +111,36 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
                             }
 
                         });
+            }
+        } else if (channelUID.getId().equals(CHANNEL_SETBASEID)) {
+            if (command instanceof StringType) {
+                try {
+
+                    int[] id = Helper.hexStringTo4Bytes(((StringType) command).toFullString());
+
+                    sendMessage(ESP3PacketFactory.CO_WR_IDBASE(id),
+                            new ResponseListenerIgnoringTimeouts<BaseResponse>() {
+
+                                @Override
+                                public void responseReceived(BaseResponse response) {
+
+                                    if (response.isOK()) {
+                                        updateState(channelUID, new StringType("New Id successfully set"));
+                                    } else if (response.getResponseType() == ResponseType.RET_FLASH_HW_ERROR) {
+                                        updateState(channelUID,
+                                                new StringType("The write/erase/verify process failed"));
+                                    } else if (response.getResponseType() == ResponseType.RET_BASEID_OUT_OF_RANGE) {
+                                        updateState(channelUID, new StringType("Base id out of range"));
+                                    } else if (response.getResponseType() == ResponseType.RET_BASEID_MAX_REACHED) {
+                                        updateState(channelUID, new StringType("No more change possible"));
+                                    }
+                                }
+
+                            });
+
+                } catch (Exception e) {
+                    updateState(channelUID, new StringType("Id could not be parsed"));
+                }
             }
         }
     }
