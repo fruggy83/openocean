@@ -21,9 +21,9 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class A5_38_08_Switching extends _4BSMessage {
 
-    static final int CommandId = 0x01;
-    static final int SwitchOff = 0x00;
-    static final int SwitchOn = 0x01;
+    static final byte CommandId = 0x01;
+    static final byte SwitchOff = 0x00;
+    static final byte SwitchOn = 0x01;
 
     public A5_38_08_Switching() {
         super();
@@ -34,14 +34,13 @@ public class A5_38_08_Switching extends _4BSMessage {
     }
 
     @Override
-    protected void convertFromCommandImpl(Command outputCommand, String channelId, State currentState, Configuration config) {
-
-        int teachInBit = TeachInBit; // (getIsTeachIn() ? Zero : TeachInBit);
+    protected void convertFromCommandImpl(Command outputCommand, String channelId, State currentState,
+            Configuration config) {
 
         if ((OnOffType) outputCommand == OnOffType.ON) {
-            setData(CommandId, Zero, Zero, (teachInBit | SwitchOn));
+            setData(CommandId, Zero, Zero, (byte) (TeachInBit | SwitchOn));
         } else {
-            setData(CommandId, Zero, Zero, (teachInBit | SwitchOff));
+            setData(CommandId, Zero, Zero, (byte) (TeachInBit | SwitchOff));
         }
     }
 }

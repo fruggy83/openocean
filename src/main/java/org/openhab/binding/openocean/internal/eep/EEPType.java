@@ -45,6 +45,10 @@ import org.openhab.binding.openocean.internal.eep.A5_02.A5_02_30;
 import org.openhab.binding.openocean.internal.eep.A5_04.A5_04_01;
 import org.openhab.binding.openocean.internal.eep.A5_04.A5_04_02;
 import org.openhab.binding.openocean.internal.eep.A5_04.A5_04_03;
+import org.openhab.binding.openocean.internal.eep.A5_08.A5_08_01;
+import org.openhab.binding.openocean.internal.eep.A5_08.A5_08_01_FXBH;
+import org.openhab.binding.openocean.internal.eep.A5_08.A5_08_02;
+import org.openhab.binding.openocean.internal.eep.A5_08.A5_08_03;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_01;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_02;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_03;
@@ -102,7 +106,9 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
  */
 public enum EEPType {
     Undef(RORG.Unknown, 0, 0, false, null, null, 0),
+
     UTEResponse(RORG.UTE, 0, 0, false, UTEResponse.class, null),
+
     GenericRPS(RORG.RPS, 0xFF, 0xFF, false, GenericRPS.class, THING_TYPE_GENERICTHING, CHANNEL_GENERIC_LIGHT_SWITCHING,
             CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_DIMMER, CHANNEL_GENERIC_NUMBER, CHANNEL_GENERIC_STRING,
             CHANNEL_GENERIC_COLOR, CHANNEL_GENERIC_TEACHINCMD),
@@ -112,20 +118,24 @@ public enum EEPType {
     GenericVLD(RORG.VLD, 0xFF, 0xFF, false, GenericVLD.class, THING_TYPE_GENERICTHING, CHANNEL_GENERIC_LIGHT_SWITCHING,
             CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_DIMMER, CHANNEL_GENERIC_NUMBER, CHANNEL_GENERIC_STRING,
             CHANNEL_GENERIC_COLOR, CHANNEL_GENERIC_TEACHINCMD),
+
     PTM200(RORG.RPS, 0x00, 0x00, false, PTM200Message.class, null, CHANNEL_LIGHT_SWITCHING, CHANNEL_RECEIVINGSTATE),
+
     RockerSwitch2RockerStyle1(RORG.RPS, 0x02, 0x01, false, F6_02_01.class, THING_TYPE_ROCKERSWITCH,
             CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
     RockerSwitch2RockerStyle2(RORG.RPS, 0x02, 0x02, false, F6_02_02.class, THING_TYPE_ROCKERSWITCH,
             CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
-    VirtualRockerSwitch(RORG.RPS, 0x02, 0x01, false, "Virtual", F6_02_01_Virtual.class, THING_TYPE_VIRTUALROCKERSWITCH,
-            CHANNEL_VIRTUALROCKERSWITCH_CHANNELA, CHANNEL_VIRTUALROCKERSWITCH_CHANNELB),
-    // RockerSwitch2RockerStyle3(RORG.RPS, 0x02, 0x04, false, F6_02_04.class, THING_TYPE_ROCKERSWITCH,
+    VirtualRockerSwitch(RORG.RPS, 0x02, 0x01, false, "Virtual", 0, F6_02_01_Virtual.class,
+            THING_TYPE_VIRTUALROCKERSWITCH, CHANNEL_VIRTUALROCKERSWITCH_CHANNELA, CHANNEL_VIRTUALROCKERSWITCH_CHANNELB),
+
     MechanicalHandle00(RORG.RPS, 0x10, 0x00, false, F6_10_00.class, THING_TYPE_MECHANICALHANDLE,
             CHANNEL_WINDOWHANDLESTATE, CHANNEL_CONTACT, CHANNEL_RECEIVINGSTATE),
     MechanicalHandle01(RORG.RPS, 0x10, 0x01, false, F6_10_01.class, THING_TYPE_MECHANICALHANDLE,
             CHANNEL_WINDOWHANDLESTATE, CHANNEL_CONTACT, CHANNEL_RECEIVINGSTATE),
+
     ContactAndSwitch(RORG._1BS, 0x00, 0x01, false, D5_00_01.class, THING_TYPE_CONTACTANDSWITCH, CHANNEL_CONTACT,
             CHANNEL_RECEIVINGSTATE),
+
     TemperatureSensor_A5_02_01(RORG._4BS, 0x02, 0x01, false, A5_02_01.class, THING_TYPE_TEMPERATURESENSOR,
             CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
     TemperatureSensor_A5_02_02(RORG._4BS, 0x02, 0x02, false, A5_02_02.class, THING_TYPE_TEMPERATURESENSOR,
@@ -176,12 +186,27 @@ public enum EEPType {
             CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
     TemperatureSensor_A5_02_30(RORG._4BS, 0x02, 0x30, false, A5_02_30.class, THING_TYPE_TEMPERATURESENSOR,
             CHANNEL_TEMPERATURE, CHANNEL_RECEIVINGSTATE),
+
     HumidityTemperatureSensor_A5_04_01(RORG._4BS, 0x04, 0x01, false, A5_04_01.class,
             THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
     HumidityTemperatureSensor_A5_04_02(RORG._4BS, 0x04, 0x02, false, A5_04_02.class,
             THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
     HumidityTemperatureSensor_A5_04_03(RORG._4BS, 0x04, 0x03, false, A5_04_03.class,
             THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
+
+    LightTemperatureOccupancySensor_A5_08_01(RORG._4BS, 0x08, 0x01, false, A5_08_01.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_MOTIONDETECTION, CHANNEL_ILLUMINATION,
+            CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
+    LightTemperatureOccupancySensor_A5_08_02(RORG._4BS, 0x08, 0x02, false, A5_08_02.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_MOTIONDETECTION, CHANNEL_ILLUMINATION,
+            CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
+    LightTemperatureOccupancySensor_A5_08_03(RORG._4BS, 0x08, 0x03, false, A5_08_03.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_TEMPERATURE, CHANNEL_MOTIONDETECTION, CHANNEL_ILLUMINATION,
+            CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
+    FXBH_A5_08_01(RORG._4BS, 0x08, 0x01, false, "FXBH", EltakoId, A5_08_01_FXBH.class,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, CHANNEL_MOTIONDETECTION, CHANNEL_ILLUMINATION,
+            CHANNEL_RECEIVINGSTATE),
+
     RoomPanel_A5_10_01(RORG._4BS, 0x10, 0x01, false, A5_10_01.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
             CHANNEL_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
     RoomPanel_A5_10_02(RORG._4BS, 0x10, 0x02, false, A5_10_02.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
@@ -248,14 +273,16 @@ public enum EEPType {
             CHANNEL_SETPOINT, CHANNEL_RECEIVINGSTATE),
     RoomPanel_A5_10_23(RORG._4BS, 0x10, 0x23, false, A5_10_23.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
             CHANNEL_SETPOINT, CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
+
     CentralCommandSwitching(RORG._4BS, 0x38, 0x08, false, A5_38_08_Switching.class, THING_TYPE_CENTRALCOMMAND, 0x01,
             CHANNEL_LIGHT_SWITCHING, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
     CentralCommandDimming(RORG._4BS, 0x38, 0x08, false, A5_38_08_Dimming.class, THING_TYPE_CENTRALCOMMAND, 0x02,
             CHANNEL_DIMMER, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
+
     // UniversalCommand(RORG._4BS, 0x3f, 0x7f, false, A5_3F_7F_Universal.class, THING_TYPE_UNIVERSALACTUATOR,
     // CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER, CHANNEL_TEACHINCMD,
     // CHANNEL_RECEIVINGSTATE),
-    EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, "EltakoFSB", A5_3F_7F_EltakoFSB.class, THING_TYPE_UNIVERSALACTUATOR, 0,
+    EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, "EltakoFSB", 0, A5_3F_7F_EltakoFSB.class, THING_TYPE_UNIVERSALACTUATOR, 0,
             new Hashtable<String, Configuration>() {
                 private static final long serialVersionUID = 1L;
                 {
@@ -268,6 +295,7 @@ public enum EEPType {
                     put(CHANNEL_RECEIVINGSTATE, new Configuration());
                 }
             }),
+
     SwitchWithEnergyMeasurment_09(RORG.VLD, 0x01, 0x09, true, D2_01_09.class, THING_TYPE_MEASUREMENTSWITCH,
             CHANNEL_GENERAL_SWITCHING, CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_RECEIVINGSTATE),
     SwitchWithEnergyMeasurment_0A(RORG.VLD, 0x01, 0x0A, true, D2_01_0A.class, THING_TYPE_MEASUREMENTSWITCH,
@@ -280,6 +308,7 @@ public enum EEPType {
     private Class<? extends EEP> eepClass;
 
     private String manufactorSuffix;
+    private int manufactorId;
 
     private ThingTypeUID thingTypeUID;
 
@@ -292,17 +321,17 @@ public enum EEPType {
         this(rorg, func, type, supportsRefresh, eepClass, thingTypeUID, -1, channelIds);
     }
 
-    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix,
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix, int manufId,
             Class<? extends EEP> eepClass, ThingTypeUID thingTypeUID, String... channelIds) {
-        this(rorg, func, type, supportsRefresh, manufactorSuffix, eepClass, thingTypeUID, 0, channelIds);
+        this(rorg, func, type, supportsRefresh, manufactorSuffix, manufId, eepClass, thingTypeUID, 0, channelIds);
     }
 
     EEPType(RORG rorg, int func, int type, boolean supportsRefresh, Class<? extends EEP> eepClass,
             ThingTypeUID thingTypeUID, int command, String... channelIds) {
-        this(rorg, func, type, supportsRefresh, "", eepClass, thingTypeUID, command, channelIds);
+        this(rorg, func, type, supportsRefresh, "", 0, eepClass, thingTypeUID, command, channelIds);
     }
 
-    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix,
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix, int manufId,
             Class<? extends EEP> eepClass, ThingTypeUID thingTypeUID, int command, String... channelIds) {
         this.rorg = rorg;
         this.func = func;
@@ -311,6 +340,7 @@ public enum EEPType {
         this.thingTypeUID = thingTypeUID;
         this.command = command;
         this.manufactorSuffix = manufactorSuffix;
+        this.manufactorId = manufId;
         this.supportsRefresh = supportsRefresh;
 
         for (String id : channelIds) {
@@ -318,7 +348,7 @@ public enum EEPType {
         }
     }
 
-    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix,
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix, int manufId,
             Class<? extends EEP> eepClass, ThingTypeUID thingTypeUID, int command,
             Hashtable<String, Configuration> channels) {
         this.rorg = rorg;
@@ -329,6 +359,7 @@ public enum EEPType {
         this.command = command;
         this.channelIdsWithConfig = channels;
         this.manufactorSuffix = manufactorSuffix;
+        this.manufactorId = manufId;
         this.supportsRefresh = supportsRefresh;
     }
 
@@ -406,14 +437,18 @@ public enum EEPType {
         throw new IllegalArgumentException(String.format("EEP with class {} could not be found", eepClass));
     }
 
-    public static EEPType getType(RORG rorg, int func, int type) {
+    public static EEPType getType(RORG rorg, int func, int type, int manufId) {
+        EEPType fallback = null;
+
         for (EEPType eep : values()) {
-            if (eep.rorg == rorg && eep.func == func && eep.type == type) {
+            if (eep.rorg == rorg && eep.func == func && eep.type == type && eep.manufactorId == manufId) {
                 return eep;
+            } else if (fallback == null && eep.rorg == rorg && eep.func == func && eep.type == type) {
+                fallback = eep;
             }
         }
 
-        return null;
+        return fallback;
     }
 
 }

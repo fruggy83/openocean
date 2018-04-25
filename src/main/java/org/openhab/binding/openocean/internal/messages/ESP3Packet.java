@@ -26,8 +26,8 @@ public abstract class ESP3Packet {
     private static final int ENOCEAN_CRC8_DATA_LENGTH = 1;
 
     protected ESPPacketType packetType;
-    protected int[] payload;
-    protected int[] optionalPayload = null;
+    protected byte[] payload;
+    protected byte[] optionalPayload = null;
 
     public enum ESPPacketType {
         RADIO_ERP1((byte) 0x01),
@@ -46,7 +46,7 @@ public abstract class ESP3Packet {
             this.value = value;
         }
 
-        public static boolean hasValue(int value) {
+        public static boolean hasValue(byte value) {
             for (ESPPacketType p : ESPPacketType.values()) {
                 if (p.value == value) {
                     return true;
@@ -56,7 +56,7 @@ public abstract class ESP3Packet {
             return false;
         }
 
-        public static ESPPacketType getPacketType(int packetType) {
+        public static ESPPacketType getPacketType(byte packetType) {
             for (ESPPacketType p : ESPPacketType.values()) {
                 if (p.value == packetType) {
                     return p;
@@ -72,7 +72,7 @@ public abstract class ESP3Packet {
 
     }
 
-    public ESP3Packet(int dataLength, int optionalDataLength, int packetType, int[] payload) {
+    public ESP3Packet(int dataLength, int optionalDataLength, byte packetType, byte[] payload) {
 
         if (!ESPPacketType.hasValue(packetType)) {
             throw new InvalidParameterException("Packet type is unknown");
@@ -84,18 +84,18 @@ public abstract class ESP3Packet {
 
         setPacketType(ESPPacketType.getPacketType(packetType));
 
-        this.payload = new int[dataLength];
+        this.payload = new byte[dataLength];
         System.arraycopy(payload, 0, this.payload, 0, dataLength);
 
         if (optionalDataLength > 0) {
-            this.optionalPayload = new int[optionalDataLength];
+            this.optionalPayload = new byte[optionalDataLength];
             System.arraycopy(payload, dataLength, optionalPayload, 0, optionalDataLength);
         } else {
-            this.optionalPayload = new int[0];
+            this.optionalPayload = new byte[0];
         }
     }
 
-    public ESP3Packet(int dataLength, int optionalDataLength, ESPPacketType packetType, int[] payload) {
+    public ESP3Packet(int dataLength, int optionalDataLength, ESPPacketType packetType, byte[] payload) {
         this(dataLength, optionalDataLength, packetType.value, payload);
     }
 
@@ -107,19 +107,19 @@ public abstract class ESP3Packet {
         return this.packetType;
     }
 
-    public void setPayload(int[] data) {
+    public void setPayload(byte[] data) {
         this.payload = Arrays.copyOf(data, data.length);
     }
 
-    public int[] getPayload(int offset, int length) {
+    public byte[] getPayload(int offset, int length) {
         return Arrays.copyOfRange(payload, offset, offset + length);
     }
 
-    public final int[] getPayload() {
+    public final byte[] getPayload() {
         return payload;
     }
 
-    public void setOptionalPayload(int[] optionalData) {
+    public void setOptionalPayload(byte[] optionalData) {
         if (optionalData == null) {
             this.optionalPayload = null;
         } else {
@@ -127,13 +127,13 @@ public abstract class ESP3Packet {
         }
     }
 
-    public int[] getOptionalPayload(int offset, int length) {
-        int[] result = new int[length];
+    public byte[] getOptionalPayload(int offset, int length) {
+        byte[] result = new byte[length];
         System.arraycopy(optionalPayload, offset, result, 0, length);
         return result;
     }
 
-    public final int[] getOptionalPayload() {
+    public final byte[] getOptionalPayload() {
         return optionalPayload;
     }
 
@@ -151,7 +151,7 @@ public abstract class ESP3Packet {
             result[4] = packetType.value;
             result[5] = Helper.calcCRC8(result, ENOCEAN_SYNC_BYTE_LENGTH, ENOCEAN_HEADER_LENGTH);
             for (int i = 0; i < payload.length; i++) {
-                result[6 + i] = (byte) (payload[i] & 0xff);
+                result[6 + i] = payload[i];
             }
             if (optionalPayload != null) {
                 for (int i = 0; i < optionalPayload.length; i++) {

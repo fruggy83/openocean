@@ -9,7 +9,7 @@
 package org.openhab.binding.openocean.internal.messages;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
+import org.eclipse.smarthome.core.util.HexUtils;
 
 /**
  *
@@ -26,7 +26,7 @@ public class RDVersionResponse extends Response {
         this(response.getPayload().length, 0, response.getPayload());
     }
 
-    RDVersionResponse(int dataLength, int optionalDataLength, int[] payload) {
+    RDVersionResponse(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, payload);
 
         if (payload.length < 33) {
@@ -39,9 +39,9 @@ public class RDVersionResponse extends Response {
             apiVersion = String.format("%d.%d.%d.%d", payload[5] & 0xff, payload[6] & 0xff, payload[7] & 0xff,
                     payload[8] & 0xff);
 
-            int[] chip = new int[4];
+            byte[] chip = new byte[4];
             System.arraycopy(payload, 9, chip, 0, 4);
-            chipId = Helper.bytesToHexString(chip);
+            chipId = HexUtils.bytesToHex(chip);
 
             StringBuffer sb = new StringBuffer();
             for (int i = 17; i < payload.length; i++) {

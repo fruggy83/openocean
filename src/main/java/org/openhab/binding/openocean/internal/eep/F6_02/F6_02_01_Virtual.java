@@ -24,11 +24,11 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class F6_02_01_Virtual extends _RPSMessage {
 
-    final int AI = 0;
-    final int A0 = 1;
-    final int BI = 2;
-    final int B0 = 3;
-    final int PRESSED = 16;
+    final byte AI = 0;
+    final byte A0 = 1;
+    final byte BI = 2;
+    final byte B0 = 3;
+    final byte PRESSED = 16;
 
     public F6_02_01_Virtual() {
         super();
@@ -47,28 +47,28 @@ public class F6_02_01_Virtual extends _RPSMessage {
 
             if (s.equals(CommonTriggerEvents.DIR1_RELEASED) || s.equals(CommonTriggerEvents.DIR2_RELEASED)) {
                 setStatus(_RPSMessage.T21Flag);
-                setData(0);
+                setData((byte) 0x00);
                 return;
             }
 
             switch (channelId) {
                 case CHANNEL_VIRTUALROCKERSWITCH_CHANNELA:
                     if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
-                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-                        setData((A0 << 5) | PRESSED);
+                        setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
+                        setData((byte) ((A0 << 5) | PRESSED));
                     } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
-                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-                        setData((AI << 5) | PRESSED);
+                        setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
+                        setData((byte) ((AI << 5) | PRESSED));
                     }
                     break;
 
                 case CHANNEL_VIRTUALROCKERSWITCH_CHANNELB:
                     if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
-                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-                        setData((B0 << 5) | PRESSED);
+                        setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
+                        setData((byte) ((B0 << 5) | PRESSED));
                     } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
-                        setStatus(_RPSMessage.T21Flag | _RPSMessage.NUFlag);
-                        setData((BI << 5) | PRESSED);
+                        setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
+                        setData((byte) ((BI << 5) | PRESSED));
                     }
                     break;
 

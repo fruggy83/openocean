@@ -10,8 +10,6 @@ package org.openhab.binding.openocean.internal.transceiver;
 
 import java.util.Arrays;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 /**
  *
  * @author Daniel Weber - Initial contribution
@@ -51,17 +49,17 @@ public class Helper {
             (byte) 0xc5, (byte) 0xcc, (byte) 0xcb, (byte) 0xe6, (byte) 0xe1, (byte) 0xe8, (byte) 0xef, (byte) 0xfa,
             (byte) 0xfd, (byte) 0xf4, (byte) 0xf3 };
 
-    public static final int ENOCEAN_SYNC_BYTE = 0x55;
+    public static final byte ENOCEAN_SYNC_BYTE = 0x55;
     public static final int ENOCEAN_MAX_DATA = 65790; // 2 byte data length + 1 byte optional data length
     public static final int ENOCEAN_HEADER_LENGTH = 4;
 
-    public static boolean checkCRC8(int data[], int length, int crc8) {
-        int output = 0;
+    public static boolean checkCRC8(byte data[], int length, byte crc8) {
+        byte output = 0;
         for (int i = 0; i < length; i++) {
             int index = (output ^ data[i]) & 0xff;
             output = crc8_table[index];
         }
-        return (output & 0xff) == crc8;
+        return output == crc8;
     }
 
     public static byte calcCRC8(byte data[], int offset, int length) {
@@ -73,70 +71,15 @@ public class Helper {
         return (byte) (output & 0xff);
     }
 
-    private static final char[] hexArray = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
-            'f' };
-
-    @NonNull
-    public static String bytesToHexString(int... bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return "";
-        }
-
-        char[] hexChars = new char[bytes.length * 2];
-        int v;
-        for (int j = 0; j < bytes.length; j++) {
-            v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
-    public static int[] hexStringToBytes(String hex) {
-        if (hex.length() < 3) {
-            int[] result = new int[1];
-            result[0] = (Integer.parseInt(hex, 16) & 0xff);
-            return result;
-        } else {
-            return hexStringTo4Bytes(hex);
-        }
-    }
-
-    public static int[] hexStringTo4Bytes(String hex) {
-        long id = Long.parseLong(hex, 16);
-
-        int[] result = new int[4];
-        result[3] = (int) (id & 0xff);
-        result[2] = (int) ((id >> 8) & 0xff);
-        result[1] = (int) ((id >> 16) & 0xff);
-        result[0] = (int) ((id >> 24) & 0xff);
-
-        return result;
-    }
-
-    public static int[] addOffsetToBaseId(int offset, int[] baseId) {
-        long id = (((long) baseId[0]) << 24) + (baseId[1] << 16) + (baseId[2] << 8) + baseId[3];
-        id += offset;
-
-        int[] result = new int[4];
-
-        result[3] = (int) (id & 0xff);
-        result[2] = (int) ((id >> 8) & 0xff);
-        result[1] = (int) ((id >> 16) & 0xff);
-        result[0] = (int) ((id >> 24) & 0xff);
-
-        return result;
-    }
-
-    public static int[] concatAll(int[] a, int[]... rest) {
+    public static byte[] concatAll(byte[] a, byte[]... rest) {
         int totalLength = a.length;
-        for (int[] b : rest) {
+        for (byte[] b : rest) {
             totalLength += b.length;
         }
 
-        int[] result = Arrays.copyOf(a, totalLength);
+        byte[] result = Arrays.copyOf(a, totalLength);
         int offset = a.length;
-        for (int[] array : rest) {
+        for (byte[] array : rest) {
             System.arraycopy(array, 0, result, offset, array.length);
             offset += array.length;
         }

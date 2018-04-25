@@ -49,6 +49,8 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_TEMPERATURESENSOR = new ThingTypeUID(BINDING_ID, "temperatureSensor");
     public final static ThingTypeUID THING_TYPE_HUMIDITYTEMPERATURESENSOR = new ThingTypeUID(BINDING_ID,
             "humidityTemperatureSensor");
+    public final static ThingTypeUID THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR = new ThingTypeUID(BINDING_ID,
+            "lightTemperatureOccupancySensor");
     public final static ThingTypeUID THING_TYPE_GENERICTHING = new ThingTypeUID(BINDING_ID, "genericThing");
     public final static ThingTypeUID THING_TYPE_ELTAKOFSB = new ThingTypeUID(BINDING_ID, "eltakoFSB");
 
@@ -56,7 +58,7 @@ public class OpenOceanBindingConstants {
             THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_UNIVERSALACTUATOR, THING_TYPE_CENTRALCOMMAND,
             THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH,
             THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR, THING_TYPE_HUMIDITYTEMPERATURESENSOR,
-            THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
+            THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB, THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR);
 
     // List of all Channel IDs
     public final static String CHANNEL_REPEATERMODE = "repeater";
@@ -70,6 +72,8 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_SETPOINT = "setPoint";
     public final static String CHANNEL_FANSPEEDSTAGE = "fanSpeedStage";
     public final static String CHANNEL_OCCUPANCY = "occupancy";
+    public final static String CHANNEL_MOTIONDETECTION = "motionDetection";
+    public final static String CHANNEL_ILLUMINATION = "illumination";
 
     public final static String CHANNEL_ROCKERSWITCH_CHANNELA = "rockerswitchA";
     public final static String CHANNEL_ROCKERSWITCH_CHANNELB = "rockerswitchB";
@@ -116,6 +120,10 @@ public class OpenOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_FANSPEEDSTAGE), CoreItemFactory.STRING));
                     put(CHANNEL_OCCUPANCY, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_OCCUPANCY),
                             CoreItemFactory.SWITCH));
+                    put(CHANNEL_MOTIONDETECTION, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_MOTIONDETECTION), CoreItemFactory.SWITCH));
+                    put(CHANNEL_ILLUMINATION, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_ILLUMINATION), CoreItemFactory.NUMBER));
                     put(CHANNEL_SETPOINT, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_SETPOINT),
                             CoreItemFactory.NUMBER));
                     put(CHANNEL_CONTACT, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_CONTACT),
@@ -205,5 +213,7 @@ public class OpenOceanBindingConstants {
     @NonNull
     public static final Set<ProfileTypeUID> SUPPORTED_PROFILETYPES_UIDS = ImmutableSet
             .of(OpenOceanProfileTypes.RockerSwitchToPlayPause, OpenOceanProfileTypes.RockerSwitchToOnOff);
+
+    public static final int EltakoId = 0x00d;
 
 }

@@ -66,11 +66,11 @@
 	</channel-type>
 
 	<channel-type id="temperature">
-		<item-type>Number</item-type>
+		<item-type>Number:Temperature</item-type>
 		<label>Temperature</label>
 		<description>Current temperature in degree Celsius</description>
 		<category>Temperature</category>
-		<state pattern="%.1f °C" readOnly="true" />
+		<state pattern="%.1f %unit%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="humidity">
@@ -138,17 +138,17 @@
 	</channel-type>
 
 	<channel-type id="instantpower">
-		<item-type>Number</item-type>
+		<item-type>Number:Power</item-type>
 		<label>Instant Power</label>
 		<description>Instant power consumption in Watts</description>
-		<state pattern="%d W" readOnly="true" />
+		<state pattern="%d %unit%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="totalusage">
-		<item-type>Number</item-type>
+		<item-type>Number:Energy</item-type>
 		<label>Total Usage</label>
 		<description>Used energy in Kilowatt hours</description>
-		<state pattern="%d kWh" readOnly="true" />
+		<state pattern="%d %unit%" readOnly="true" />
 	</channel-type>
 
 	<!-- Teach in Channel -->
@@ -199,5 +199,20 @@
 			</parameter>
 		</config-description>
 	</channel-type>
+	
+	<channel-type id="motionDetection">
+        <item-type>Switch</item-type>
+        <label>Motion detected</label>
+        <description>Motion detection sensor state.</description>
+        <category>Switch</category>
+        <state readOnly="true" />
+    </channel-type>
+    
+    <channel-type id="illumination">
+        <item-type>Number:Illuminance</item-type>
+        <label>Lux</label>
+        <description>Illumination in lux</description>
+        <state pattern="%d %unit%" readOnly="true" />
+    </channel-type>
 
 </thing:thing-descriptions>

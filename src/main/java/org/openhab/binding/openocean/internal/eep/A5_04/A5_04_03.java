@@ -37,7 +37,7 @@ public class A5_04_03 extends A5_04 {
 
     @Override
     protected int getUnscaledTemperatureValue() {
-        return getDB_1() + ((getDB_2() & 0b11) << 8);
+        return getDB_1Value() + ((getDB_2Value() & 0b11) << 8);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class A5_04_03 extends A5_04 {
 
     @Override
     protected int getUnscaledHumidityValue() {
-        return getDB_3();
+        return getDB_3Value();
     }
 }

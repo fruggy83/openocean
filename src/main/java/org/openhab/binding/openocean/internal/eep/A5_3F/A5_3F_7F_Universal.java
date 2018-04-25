@@ -12,10 +12,10 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.transform.actions.Transformation;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelTransformationConfig;
 import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
  *
@@ -44,7 +44,7 @@ public class A5_3F_7F_Universal extends _4BSMessage {
                         transformationInfo.transformationFuntion, command.toString());
 
                 if (c != command.toString()) {
-                    setData(Helper.hexStringTo4Bytes(c));
+                    setData(HexUtils.hexToBytes(c));
                 }
 
             } catch (Exception e) {

@@ -25,7 +25,7 @@ public class RDRepeaterResponse extends Response {
         this(response.getPayload().length, 0, response.getPayload());
     }
 
-    RDRepeaterResponse(int dataLength, int optionalDataLength, int[] payload) {
+    RDRepeaterResponse(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, payload);
 
         if (payload == null || payload.length < 3) {

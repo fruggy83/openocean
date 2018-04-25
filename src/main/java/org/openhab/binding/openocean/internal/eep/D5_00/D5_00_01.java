@@ -23,8 +23,8 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class D5_00_01 extends _1BSMessage {
 
-    final int OPEN = 0 | TeachInBit;
-    final int CLOSED = 1 | TeachInBit;
+    final byte OPEN = 0 | TeachInBit;
+    final byte CLOSED = 1 | TeachInBit;
 
     public D5_00_01() {
         super();

@@ -12,15 +12,16 @@ import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.QuantityType;
+import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.eep.Base._VLDMessage;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
  *
@@ -28,14 +29,16 @@ import org.openhab.binding.openocean.internal.transceiver.Helper;
  */
 public abstract class D2_01 extends _VLDMessage {
 
-    protected int cmdMask = 0x0f;
-    protected int outputValueMask = 0x7f;
+    protected final byte cmdMask = 0x0f;
+    protected final byte outputValueMask = 0x7f;
 
-    protected int CMD_ACTUATOR_SET_STATUS = 0x01;
-    protected int CMD_ACTUATOR_STATUS_QUERY = 0x03;
-    protected int CMD_ACTUATOR_STATUS_RESPONE = 0x04;
-    protected int CMD_ACTUATOR_MEASUREMENT_QUERY = 0x06;
-    protected int CMD_ACTUATOR_MEASUREMENT_RESPONE = 0x07;
+    protected final byte CMD_ACTUATOR_SET_STATUS = 0x01;
+    protected final byte CMD_ACTUATOR_STATUS_QUERY = 0x03;
+    protected final byte CMD_ACTUATOR_STATUS_RESPONE = 0x04;
+    protected final byte CMD_ACTUATOR_MEASUREMENT_QUERY = 0x06;
+    protected final byte CMD_ACTUATOR_MEASUREMENT_RESPONE = 0x07;
+
+    protected final byte AllChannels_Mask = 0x1e;
 
     public D2_01() {
         super();
@@ -45,19 +48,19 @@ public abstract class D2_01 extends _VLDMessage {
         super(packet);
     }
 
-    protected int getCMD() {
-        return bytes[0] & cmdMask;
+    protected byte getCMD() {
+        return (byte) (bytes[0] & cmdMask);
     }
 
-    protected void setSwitchingData(OnOffType command, int outputChannel) {
+    protected void setSwitchingData(OnOffType command, byte outputChannel) {
         if (command == OnOffType.ON) {
-            setData(CMD_ACTUATOR_SET_STATUS, outputChannel, 0x01);
+            setData(CMD_ACTUATOR_SET_STATUS, outputChannel, (byte) 0x01);
         } else {
-            setData(CMD_ACTUATOR_SET_STATUS, outputChannel, 0x00);
+            setData(CMD_ACTUATOR_SET_STATUS, outputChannel, (byte) 0x00);
         }
     }
 
-    protected void setSwitchingQueryData(int outputChannel) {
+    protected void setSwitchingQueryData(byte outputChannel) {
         setData(CMD_ACTUATOR_STATUS_QUERY, outputChannel);
     }
 
@@ -69,19 +72,19 @@ public abstract class D2_01 extends _VLDMessage {
         return UnDefType.UNDEF;
     }
 
-    protected void setEnergyMeasurementQueryData(int outputChannel) {
+    protected void setEnergyMeasurementQueryData(byte outputChannel) {
         setData(CMD_ACTUATOR_MEASUREMENT_QUERY, outputChannel);
     }
 
-    protected void setPowerMeasurementQueryData(int outputChannel) {
-        setData(CMD_ACTUATOR_MEASUREMENT_QUERY, 0x20 + outputChannel);
+    protected void setPowerMeasurementQueryData(byte outputChannel) {
+        setData(CMD_ACTUATOR_MEASUREMENT_QUERY, (byte) (0x20 | outputChannel));
     }
 
     protected State getEnergyMeasurementData() {
         if (getCMD() == CMD_ACTUATOR_MEASUREMENT_RESPONE) {
             float factor = 1;
 
-            switch (bytes[1] >> 5) {
+            switch (bytes[1] >>> 5) {
                 case 0:
                     factor /= 3600.0;
                     break;
@@ -95,8 +98,9 @@ public abstract class D2_01 extends _VLDMessage {
                     return UnDefType.UNDEF;
             }
 
-            return new DecimalType(
-                    Long.parseLong(Helper.bytesToHexString(bytes[2], bytes[3], bytes[4], bytes[5]), 16) * factor);
+            float energy = Long.parseLong(HexUtils.bytesToHex(new byte[] { bytes[2], bytes[3], bytes[4], bytes[5] }),
+                    16) * factor;
+            return new QuantityType<>(energy, SmartHomeUnits.KILOWATT_HOUR);
         }
 
         return UnDefType.UNDEF;
@@ -106,7 +110,7 @@ public abstract class D2_01 extends _VLDMessage {
         if (getCMD() == CMD_ACTUATOR_MEASUREMENT_RESPONE) {
             float factor = 1;
 
-            switch (bytes[1] >> 5) {
+            switch (bytes[1] >>> 5) {
                 case 3:
                     factor = 1;
                     break;
@@ -117,8 +121,10 @@ public abstract class D2_01 extends _VLDMessage {
                     return UnDefType.UNDEF;
             }
 
-            return new DecimalType(
-                    Long.parseLong(Helper.bytesToHexString(bytes[2], bytes[3], bytes[4], bytes[5]), 16) * factor);
+            float power = Long.parseLong(HexUtils.bytesToHex(new byte[] { bytes[2], bytes[3], bytes[4], bytes[5] }), 16)
+                    * factor;
+
+            return new QuantityType<>(power, SmartHomeUnits.WATT);
         }
 
         return UnDefType.UNDEF;
@@ -137,14 +143,14 @@ public abstract class D2_01 extends _VLDMessage {
 
         if (channelId.equals(CHANNEL_GENERAL_SWITCHING)) {
             if (command == RefreshType.REFRESH) {
-                setSwitchingQueryData(0x1e);
+                setSwitchingQueryData(AllChannels_Mask);
             } else {
-                setSwitchingData((OnOffType) command, 0x1e);
+                setSwitchingData((OnOffType) command, AllChannels_Mask);
             }
         } else if (channelId.equals(CHANNEL_INSTANTPOWER) && command == RefreshType.REFRESH) {
-            setPowerMeasurementQueryData(0x1e);
+            setPowerMeasurementQueryData(AllChannels_Mask);
         } else if (channelId.equals(CHANNEL_TOTALUSAGE) && command == RefreshType.REFRESH) {
-            setEnergyMeasurementQueryData(0x1e);
+            setEnergyMeasurementQueryData(AllChannels_Mask);
         }
     }
 

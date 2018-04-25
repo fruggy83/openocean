@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.OpenOceanException;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;
@@ -94,12 +95,7 @@ public abstract class OpenOceanTransceiver {
                             byte[] b = currentRequest.RequestPacket.serialize();
 
                             if (logger.isDebugEnabled()) {
-                                int[] i = new int[b.length];
-                                // array copy with conversion byte -> int
-                                for (int j = 0; j < b.length; i[j] = b[j++]) {
-                                    ;
-                                }
-                                logger.debug("{}", Helper.bytesToHexString(i));
+                                logger.debug("{}", HexUtils.bytesToHex(b));
                             }
 
                             /*
@@ -137,7 +133,7 @@ public abstract class OpenOceanTransceiver {
     protected InputStream inputStream;
     protected OutputStream outputStream;
 
-    private int[] filteredDeviceId;
+    private byte[] filteredDeviceId;
     TransceiverErrorListener errorListener;
 
     enum ReadingState {
@@ -194,14 +190,14 @@ public abstract class OpenOceanTransceiver {
 
         byte[] readingBuffer = new byte[Helper.ENOCEAN_MAX_DATA];
         int bytesRead = -1;
-        int _byte;
+        byte _byte;
 
-        int[] dataBuffer = new int[Helper.ENOCEAN_MAX_DATA];
+        byte[] dataBuffer = new byte[Helper.ENOCEAN_MAX_DATA];
         ReadingState state = ReadingState.WaitingForSyncByte;
         int currentPosition = 0;
         int dataLength = -1;
         int optionalLength = -1;
-        int packetType = -1;
+        byte packetType = -1;
 
         logger.debug("Listening on port: {}", path);
 
@@ -226,7 +222,7 @@ public abstract class OpenOceanTransceiver {
                 }
 
                 for (int p = 0; p < bytesRead; p++) {
-                    _byte = (readingBuffer[p] & 0xff);
+                    _byte = readingBuffer[p];
 
                     switch (state) {
                         case WaitingForSyncByte:
@@ -238,12 +234,13 @@ public abstract class OpenOceanTransceiver {
                         case ReadingHeader:
                             if (currentPosition == Helper.ENOCEAN_HEADER_LENGTH) {
                                 if (Helper.checkCRC8(dataBuffer, Helper.ENOCEAN_HEADER_LENGTH, _byte)
-                                        && ((dataBuffer[0] << 8) | dataBuffer[1]) + dataBuffer[2] > 0) {
+                                        && ((dataBuffer[0] & 0xFF) << 8) + (dataBuffer[1] & 0xFF)
+                                                + (dataBuffer[2] & 0xFF) > 0) {
 
                                     state = ReadingState.ReadingData;
 
-                                    dataLength = ((dataBuffer[0] << 8) | dataBuffer[1]);
-                                    optionalLength = dataBuffer[2];
+                                    dataLength = ((dataBuffer[0] & 0xFF << 8) | (dataBuffer[1] & 0xFF));
+                                    optionalLength = dataBuffer[2] & 0xFF;
                                     packetType = dataBuffer[3];
                                     currentPosition = 0;
 
@@ -291,7 +288,6 @@ public abstract class OpenOceanTransceiver {
                                         if (packet.getPacketType() == ESPPacketType.RESPONSE) {
                                             logger.trace("publish response");
 
-
                                             if (currentRequest != null) {
                                                 if (currentRequest.ResponseListener != null) {
 
@@ -313,19 +309,19 @@ public abstract class OpenOceanTransceiver {
                                             ERP1Message msg = (ERP1Message) packet;
 
                                             logger.trace("publish event for: {}",
-                                                    Helper.bytesToHexString(msg.getSenderId()));
+                                                    HexUtils.bytesToHex(msg.getSenderId()));
 
-                                            int[] d = new int[dataLength + optionalLength];
+                                            byte[] d = new byte[dataLength + optionalLength];
                                             System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                            logger.trace("{}", Helper.bytesToHexString(d));
+                                            logger.trace("{}", HexUtils.bytesToHex(d));
 
                                             informListeners(msg);
                                         }
                                     } else {
                                         logger.trace("Unknown ESP3Packet");
-                                        int[] d = new int[dataLength + optionalLength];
+                                        byte[] d = new byte[dataLength + optionalLength];
                                         System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                        logger.trace("{}", Helper.bytesToHexString(d));
+                                        logger.trace("{}", HexUtils.bytesToHex(d));
                                     }
 
                                     requestQueue.sendNext();
@@ -373,7 +369,7 @@ public abstract class OpenOceanTransceiver {
     protected void informListeners(ERP1Message msg) {
 
         try {
-            int[] senderId = msg.getSenderId();
+            byte[] senderId = msg.getSenderId();
 
             if (senderId != null) {
 
@@ -385,13 +381,13 @@ public abstract class OpenOceanTransceiver {
 
                 if (msg.getIsTeachIn()) {
                     if (teachInListener != null) {
-                        logger.info("Received teach in message from {}", Helper.bytesToHexString(msg.getSenderId()));
+                        logger.info("Received teach in message from {}", HexUtils.bytesToHex(msg.getSenderId()));
                         teachInListener.espPacketReceived(msg);
                         return;
                     }
                 }
 
-                long s = Long.parseLong(Helper.bytesToHexString(senderId), 16);
+                long s = Long.parseLong(HexUtils.bytesToHex(senderId), 16);
                 ESP3PacketListener listener = listeners.get(s);
                 if (listener != null) {
                     listener.espPacketReceived(msg);
@@ -419,7 +415,7 @@ public abstract class OpenOceanTransceiver {
         this.teachInListener = null;
     }
 
-    public void setFilteredDeviceId(int[] filteredDeviceId) {
+    public void setFilteredDeviceId(byte[] filteredDeviceId) {
         if (filteredDeviceId != null) {
             System.arraycopy(filteredDeviceId, 0, filteredDeviceId, 0, filteredDeviceId.length);
         }

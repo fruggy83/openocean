@@ -21,11 +21,11 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class F6_02_02 extends _RPSMessage {
 
-    final int AI = 0;
-    final int A0 = 1;
-    final int BI = 2;
-    final int B0 = 3;
-    final int PRESSED = 16;
+    final byte AI = 0;
+    final byte A0 = 1;
+    final byte BI = 2;
+    final byte B0 = 3;
+    final byte PRESSED = 16;
 
     public F6_02_02() {
         super();
@@ -45,20 +45,20 @@ public class F6_02_02 extends _RPSMessage {
 
             switch (channelId) {
                 case CHANNEL_ROCKERSWITCH_CHANNELA:
-                    if ((bytes[0] >> 5) == AI) {
+                    if ((bytes[0] >>> 5) == AI) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR1_PRESSED
                                 : CommonTriggerEvents.DIR1_RELEASED;
-                    } else if ((bytes[0] >> 5) == A0) {
+                    } else if ((bytes[0] >>> 5) == A0) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR2_PRESSED
                                 : CommonTriggerEvents.DIR2_RELEASED;
                     }
                     return null;
 
                 case CHANNEL_ROCKERSWITCH_CHANNELB:
-                    if ((bytes[0] >> 5) == BI) {
+                    if ((bytes[0] >>> 5) == BI) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR1_PRESSED
                                 : CommonTriggerEvents.DIR1_RELEASED;
-                    } else if ((bytes[0] >> 5) == B0) {
+                    } else if ((bytes[0] >>> 5) == B0) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR2_PRESSED
                                 : CommonTriggerEvents.DIR2_RELEASED;
                     }
