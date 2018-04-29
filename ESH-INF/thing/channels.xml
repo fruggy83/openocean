@@ -42,6 +42,22 @@
 		<description>The switch channel allows to switch something on and off.</description>
 		<category>Switch</category>
 	</channel-type>
+	
+	<!-- General Switch Channel -->
+    <channel-type id="generalSwitchA">
+        <item-type>Switch</item-type>
+        <label>Switch Channel A</label>
+        <description>The switch channel allows to switch channel A on and off.</description>
+        <category>Switch</category>
+    </channel-type>
+    
+    <!-- General Switch Channel -->
+    <channel-type id="generalSwitchB">
+        <item-type>Switch</item-type>
+        <label>Switch Channel B</label>
+        <description>The switch channel allows to switch channel B on and off.</description>
+        <category>Switch</category>
+    </channel-type>
 
 	<!-- Rollershutter Channel -->
 	<channel-type id="rollershutter">

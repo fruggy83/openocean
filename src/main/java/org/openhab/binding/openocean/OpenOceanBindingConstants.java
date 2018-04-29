@@ -65,6 +65,10 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_SETBASEID = "setBaseId";
     public final static String CHANNEL_LIGHT_SWITCHING = "lightSwitch";
     public final static String CHANNEL_GENERAL_SWITCHING = "generalSwitch";
+
+    public final static String CHANNEL_GENERAL_SWITCHINGA = "generalSwitchA"; // used for D2-01-12 EEP
+    public final static String CHANNEL_GENERAL_SWITCHINGB = "generalSwitchB"; // used for D2-01-12 EEP
+
     public final static String CHANNEL_DIMMER = "dimmer";
     public final static String CHANNEL_ROLLERSHUTTER = "rollershutter";
     public final static String CHANNEL_TEMPERATURE = "temperature";
@@ -108,6 +112,12 @@ public class OpenOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_LIGHT_SWITCHING), CoreItemFactory.SWITCH));
                     put(CHANNEL_GENERAL_SWITCHING, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_GENERAL_SWITCHING), CoreItemFactory.SWITCH));
+
+                    put(CHANNEL_GENERAL_SWITCHINGA, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_GENERAL_SWITCHINGA), CoreItemFactory.SWITCH));
+                    put(CHANNEL_GENERAL_SWITCHINGB, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_GENERAL_SWITCHINGB), CoreItemFactory.SWITCH));
+
                     put(CHANNEL_DIMMER, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_DIMMER),
                             CoreItemFactory.DIMMER));
                     put(CHANNEL_ROLLERSHUTTER, new ChannelDescription(

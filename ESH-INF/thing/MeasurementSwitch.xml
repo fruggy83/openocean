@@ -31,6 +31,8 @@
 				<options>
 					<option value="D2_01_09">Switching, dimming and energy measurement (EEP: D2_01_09)</option>
 					<option value="D2_01_0A">Switching, dimming and energy measurement (EEP: D2_01_0A)</option>
+					<option value="D2_01_0F">Switching (EEP: D2_01_0F)</option>
+					<option value="D2_01_12">Switching (EEP: D2_01_12)</option>
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>

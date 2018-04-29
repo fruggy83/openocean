@@ -39,6 +39,8 @@ public abstract class D2_01 extends _VLDMessage {
     protected final byte CMD_ACTUATOR_MEASUREMENT_RESPONE = 0x07;
 
     protected final byte AllChannels_Mask = 0x1e;
+    protected final byte ChannelA_Mask = 0x00;
+    protected final byte ChannelB_Mask = 0x01;
 
     public D2_01() {
         super();
@@ -146,6 +148,18 @@ public abstract class D2_01 extends _VLDMessage {
                 setSwitchingQueryData(AllChannels_Mask);
             } else {
                 setSwitchingData((OnOffType) command, AllChannels_Mask);
+            }
+        } else if (channelId.equals(CHANNEL_GENERAL_SWITCHINGA)) {
+            if (command == RefreshType.REFRESH) {
+                setSwitchingQueryData(ChannelA_Mask);
+            } else {
+                setSwitchingData((OnOffType) command, ChannelA_Mask);
+            }
+        } else if (channelId.equals(CHANNEL_GENERAL_SWITCHINGB)) {
+            if (command == RefreshType.REFRESH) {
+                setSwitchingQueryData(ChannelB_Mask);
+            } else {
+                setSwitchingData((OnOffType) command, ChannelB_Mask);
             }
         } else if (channelId.equals(CHANNEL_INSTANTPOWER) && command == RefreshType.REFRESH) {
             setPowerMeasurementQueryData(AllChannels_Mask);
