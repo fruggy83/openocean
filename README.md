@@ -20,6 +20,14 @@ This binding is developed on and tested with the following things
     * FSB14 (rollershutter)
     * FUD14 (dimmer)
     * FSSA-230V (smart plug)
+ * The following Opus actuators:
+    * GN-A-R12V-SR-4 (light)
+    * GN-A-R12V-MF-2 (light)
+    * GN-A-R12V-LZ/UD (dimmer)
+    * GN-A-R12V-JRG-2 (rollershutter)
+    * GN-A-U230V-JRG (rollershutter)
+    * OPUS-FUNK PLUS Jalousieaktor 1fach UP (rollershutter)
+    * OPUS-Funk PLUS Steckdosenleiste (smart multiple socket)
  * NodOn Smart Plug (ASP-2-1-10), Permundo PSC234 (smart plug with metering)
  * Thermokon SR04 room control
  * Hoppe SecuSignal window handles
