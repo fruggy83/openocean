@@ -26,7 +26,8 @@
 				<label>EEP</label>
 				<description>EEP which is used by virtual rocker switch</description>
 				<options>
-					<option value="F6_02_01_Virtual">F6-02-01</option>
+					<option value="F6_02_01_Virtual">F6-02-01 (upper rocker => DIR1)</option>
+					<option value="F6_02_02_Virtual">F6-02-02 (upper rocker => DIR2)</option>
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<default>F6_02_01_Virtual</default>

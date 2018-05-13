@@ -92,9 +92,11 @@ import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0A;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0F;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_12;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
+import org.openhab.binding.openocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01_Virtual;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_02;
+import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_02_Virtual;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_01;
 import org.openhab.binding.openocean.internal.eep.Generic.Generic4BS;
@@ -123,11 +125,16 @@ public enum EEPType {
 
     PTM200(RORG.RPS, 0x00, 0x00, false, PTM200Message.class, null, CHANNEL_LIGHT_SWITCHING, CHANNEL_RECEIVINGSTATE),
 
+    PushButton(RORG.RPS, 0x01, 0x01, false, F6_01_01.class, THING_TYPE_PUSHBUTTON, CHANNEL_PUSHBUTTON,
+            CHANNEL_RECEIVINGSTATE),
+
     RockerSwitch2RockerStyle1(RORG.RPS, 0x02, 0x01, false, F6_02_01.class, THING_TYPE_ROCKERSWITCH,
             CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
     RockerSwitch2RockerStyle2(RORG.RPS, 0x02, 0x02, false, F6_02_02.class, THING_TYPE_ROCKERSWITCH,
             CHANNEL_ROCKERSWITCH_CHANNELA, CHANNEL_ROCKERSWITCH_CHANNELB, CHANNEL_RECEIVINGSTATE),
     VirtualRockerSwitch(RORG.RPS, 0x02, 0x01, false, "Virtual", 0, F6_02_01_Virtual.class,
+            THING_TYPE_VIRTUALROCKERSWITCH, CHANNEL_VIRTUALROCKERSWITCH_CHANNELA, CHANNEL_VIRTUALROCKERSWITCH_CHANNELB),
+    VirtualRockerSwitchStyle2(RORG.RPS, 0x02, 0x02, false, "Virtual", 0, F6_02_02_Virtual.class,
             THING_TYPE_VIRTUALROCKERSWITCH, CHANNEL_VIRTUALROCKERSWITCH_CHANNELA, CHANNEL_VIRTUALROCKERSWITCH_CHANNELB),
 
     MechanicalHandle00(RORG.RPS, 0x10, 0x00, false, F6_10_00.class, THING_TYPE_MECHANICALHANDLE,

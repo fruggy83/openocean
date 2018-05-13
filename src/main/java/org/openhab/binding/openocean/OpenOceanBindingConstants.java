@@ -37,6 +37,7 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_BRIDGE = new ThingTypeUID(BINDING_ID, "bridge");
 
     // List of all Thing Type UIDs
+    public final static ThingTypeUID THING_TYPE_PUSHBUTTON = new ThingTypeUID(BINDING_ID, "pushButton");
     public final static ThingTypeUID THING_TYPE_ROCKERSWITCH = new ThingTypeUID(BINDING_ID, "rockerSwitch");
     public final static ThingTypeUID THING_TYPE_VIRTUALROCKERSWITCH = new ThingTypeUID(BINDING_ID,
             "virtualRockerSwitch");
@@ -54,11 +55,12 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_GENERICTHING = new ThingTypeUID(BINDING_ID, "genericThing");
     public final static ThingTypeUID THING_TYPE_ELTAKOFSB = new ThingTypeUID(BINDING_ID, "eltakoFSB");
 
-    public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_ROCKERSWITCH,
-            THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_UNIVERSALACTUATOR, THING_TYPE_CENTRALCOMMAND,
-            THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH,
-            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR, THING_TYPE_HUMIDITYTEMPERATURESENSOR,
-            THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB, THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR);
+    public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_PUSHBUTTON,
+            THING_TYPE_ROCKERSWITCH, THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_UNIVERSALACTUATOR,
+            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE,
+            THING_TYPE_CONTACTANDSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR,
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB,
+            THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR);
 
     // List of all Channel IDs
     public final static String CHANNEL_REPEATERMODE = "repeater";
@@ -79,6 +81,8 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_MOTIONDETECTION = "motionDetection";
     public final static String CHANNEL_ILLUMINATION = "illumination";
 
+    public final static String CHANNEL_PUSHBUTTON = "pushButton";
+
     public final static String CHANNEL_ROCKERSWITCH_CHANNELA = "rockerswitchA";
     public final static String CHANNEL_ROCKERSWITCH_CHANNELB = "rockerswitchB";
 
@@ -90,6 +94,11 @@ public class OpenOceanBindingConstants {
     public final static String CHANNEL_TEACHINCMD = "teachInCMD";
     public final static String CHANNEL_INSTANTPOWER = "instantpower";
     public final static String CHANNEL_TOTALUSAGE = "totalusage";
+    public final static String CHANNEL_AUTOOFF = "autoOFF";
+    public final static String CHANNEL_DELAYRADIOOFF = "delayRadioOFF";
+    public final static String CHANNEL_EXTERNALINTERFACEMODE = "externalInterfaceMode";
+    public final static String CHANNEL_TWOSTATESWITCH = "twoStateSwitch";
+
     public final static String CHANNEL_RECEIVINGSTATE = "receivingState";
 
     public final static String CHANNEL_GENERIC_LIGHT_SWITCHING = "genericLightSwitch";
@@ -142,6 +151,10 @@ public class OpenOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_WINDOWHANDLESTATE), CoreItemFactory.STRING));
                     put(CHANNEL_TEACHINCMD, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TEACHINCMD),
                             CoreItemFactory.SWITCH));
+
+                    put(CHANNEL_PUSHBUTTON, new ChannelDescription(
+                            DefaultSystemChannelTypeProvider.SYSTEM_RAWBUTTON.getUID(), "", "Push button", false));
+
                     put(CHANNEL_ROCKERSWITCH_CHANNELA,
                             new ChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), "",
                                     "Rockerswitch channel A", false));
@@ -158,6 +171,15 @@ public class OpenOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER), CoreItemFactory.NUMBER));
                     put(CHANNEL_TOTALUSAGE, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TOTALUSAGE),
                             CoreItemFactory.NUMBER));
+                    put(CHANNEL_AUTOOFF, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_AUTOOFF),
+                            CoreItemFactory.NUMBER));
+                    put(CHANNEL_DELAYRADIOOFF, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_DELAYRADIOOFF), CoreItemFactory.NUMBER));
+                    put(CHANNEL_EXTERNALINTERFACEMODE, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_EXTERNALINTERFACEMODE), CoreItemFactory.STRING));
+                    put(CHANNEL_TWOSTATESWITCH, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_TWOSTATESWITCH), CoreItemFactory.SWITCH));
+
                     put(CHANNEL_RECEIVINGSTATE, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_RECEIVINGSTATE), CoreItemFactory.STRING));
 

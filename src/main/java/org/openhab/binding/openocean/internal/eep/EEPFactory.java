@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
+import org.openhab.binding.openocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_01;
@@ -62,6 +63,14 @@ public class EEPFactory {
 
         switch (msg.getRORG()) {
             case RPS:
+                try {
+                    EEP result = new F6_01_01(msg);
+                    if (result.isValid()) { // check if t21 is set, nu not set, and data == 0x10 or 0x00
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
+
                 try {
                     EEP result = new F6_02_01(msg);
                     if (result.isValid()) { // check if highest bit is not set
