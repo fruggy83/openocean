@@ -28,7 +28,8 @@ public class ERP1Message extends ESP3Packet {
         _4BS((byte) 0xA5, 4),
         VLD((byte) 0xD2, -1),
         // ADT(0xA6, -1),
-        UTE((byte) 0xD4, -1);
+        UTE((byte) 0xD4, -1),
+        MSC((byte) 0xD1, -1);
 
         private byte value;
         private int dataLength;

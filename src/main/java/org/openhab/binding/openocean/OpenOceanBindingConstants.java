@@ -64,6 +64,9 @@ public class OpenOceanBindingConstants {
 
     // List of all Channel IDs
     public final static String CHANNEL_REPEATERMODE = "repeater";
+
+    // List of all Channel Type Ids
+    public final static String CHANNELTYPE_REPEATERMODE = "repeaterMode";
     public final static String CHANNEL_SETBASEID = "setBaseId";
     public final static String CHANNEL_LIGHT_SWITCHING = "lightSwitch";
     public final static String CHANNEL_GENERAL_SWITCHING = "generalSwitch";
@@ -199,6 +202,9 @@ public class OpenOceanBindingConstants {
                     put(CHANNEL_GENERIC_TEACHINCMD,
                             new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_GENERIC_TEACHINCMD),
                                     CoreItemFactory.SWITCH, "Teach in", true));
+
+                    put(CHANNELTYPE_REPEATERMODE, new ChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNELTYPE_REPEATERMODE), CoreItemFactory.STRING));
                 }
             });
 
@@ -247,5 +253,6 @@ public class OpenOceanBindingConstants {
             .of(OpenOceanProfileTypes.RockerSwitchToPlayPause, OpenOceanProfileTypes.RockerSwitchToOnOff);
 
     public static final int EltakoId = 0x00d;
+    public static final int NodONId = 0x046; // NodOn devices are designed by ID-RF hence use their ID
 
 }

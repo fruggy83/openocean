@@ -8,7 +8,7 @@
 	<channel-type id="repeaterMode" advanced="true">
 		<item-type>String</item-type>
 		<label>Repeater Mode</label>
-		<description>Repeater mode of EnOcean gateway</description>
+		<description>Repeater mode of EnOcean gateway/device</description>
 		<state>
 			<options>
 				<option value="OFF">Repeater off</option>

@@ -22,6 +22,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
+import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.openocean.internal.transceiver.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public abstract class EEP {
     protected static final int StatusLength = 1;
     protected static final int RORGLength = 1;
 
+    protected RORG newRORG = RORG.Unknown;
     protected byte[] bytes;
     protected byte[] optionalData;
     protected byte[] senderId;
@@ -103,6 +105,11 @@ public abstract class EEP {
         return convertToEventImpl(channelId, lastEvent, config);
     }
 
+    public EEP setRORG(RORG newRORG) {
+        this.newRORG = newRORG;
+        return this;
+    }
+
     public EEP setData(byte... bytes) {
         if (!validateData(bytes)) {
             throw new IllegalArgumentException();
@@ -150,10 +157,16 @@ public abstract class EEP {
             byte[] payLoad = new byte[RORGLength + getDataLength() + SenderIdLength + StatusLength
                     + optionalDataLength];
             Arrays.fill(payLoad, Zero);
-            payLoad[0] = getEEPType().getRORG().getValue();
+
+            byte rorgValue = getEEPType().getRORG().getValue();
+            if (newRORG != RORG.Unknown) {
+                rorgValue = newRORG.getValue();
+            }
+
+            payLoad[0] = rorgValue;
             ERP1Message message = new ERP1Message(payLoad.length - optionalDataLength, optionalDataLength, payLoad);
 
-            message.setPayload(Helper.concatAll(new byte[] { getEEPType().getRORG().getValue() }, bytes, senderId,
+            message.setPayload(Helper.concatAll(new byte[] { rorgValue }, bytes, senderId,
                     new byte[] { (byte) (status | (suppressRepeating ? 0b1111 : 0)) })); // set repeater count to max if
             // suppressRepeating
 

@@ -90,7 +90,9 @@ import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_09;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0A;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0F;
+import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0F_NodON;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_12;
+import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_12_NodON;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.openocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
@@ -309,8 +311,13 @@ public enum EEPType {
             CHANNEL_GENERAL_SWITCHING, CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_RECEIVINGSTATE),
     SwitchWithEnergyMeasurment_0A(RORG.VLD, 0x01, 0x0A, true, D2_01_0A.class, THING_TYPE_MEASUREMENTSWITCH,
             CHANNEL_GENERAL_SWITCHING, CHANNEL_RECEIVINGSTATE),
+    SwitchWithEnergyMeasurment_0F_NODON(RORG.VLD, 0x01, 0x0F, true, "NODON", NodONId, D2_01_0F_NodON.class,
+            THING_TYPE_MEASUREMENTSWITCH, CHANNEL_GENERAL_SWITCHING, CHANNELTYPE_REPEATERMODE, CHANNEL_RECEIVINGSTATE),
     SwitchWithEnergyMeasurment_0F(RORG.VLD, 0x01, 0x0F, true, D2_01_0F.class, THING_TYPE_MEASUREMENTSWITCH,
             CHANNEL_GENERAL_SWITCHING, CHANNEL_RECEIVINGSTATE),
+    SwitchWithEnergyMeasurment_12_NODON(RORG.VLD, 0x01, 0x12, true, "NODON", NodONId, D2_01_12_NodON.class,
+            THING_TYPE_MEASUREMENTSWITCH, CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB,
+            CHANNELTYPE_REPEATERMODE, CHANNEL_RECEIVINGSTATE),
     SwitchWithEnergyMeasurment_12(RORG.VLD, 0x01, 0x12, true, D2_01_12.class, THING_TYPE_MEASUREMENTSWITCH,
             CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB, CHANNEL_RECEIVINGSTATE);
 
