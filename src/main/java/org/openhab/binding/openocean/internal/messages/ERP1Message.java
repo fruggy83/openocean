@@ -22,23 +22,23 @@ import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 public class ERP1Message extends ESP3Packet {
 
     public enum RORG {
-        Unknown(0x00, 0),
-        RPS(0xF6, 1),
-        _1BS(0xD5, 1),
-        _4BS(0xA5, 4),
-        VLD(0xD2, -1),
+        Unknown((byte) 0x00, 0),
+        RPS((byte) 0xF6, 1),
+        _1BS((byte) 0xD5, 1),
+        _4BS((byte) 0xA5, 4),
+        VLD((byte) 0xD2, -1),
         // ADT(0xA6, -1),
-        UTE(0xD4, -1);
+        UTE((byte) 0xD4, -1);
 
-        private int value;
+        private byte value;
         private int dataLength;
 
-        RORG(int value, int dataLength) {
+        RORG(byte value, int dataLength) {
             this.value = value;
             this.dataLength = dataLength;
         }
 
-        public int getValue() {
+        public byte getValue() {
             return this.value;
         }
 
@@ -46,7 +46,7 @@ public class ERP1Message extends ESP3Packet {
             return dataLength;
         }
 
-        public static RORG getRORG(int value) {
+        public static RORG getRORG(byte value) {
             for (RORG t : RORG.values()) {
                 if (t.value == value) {
                     return t;
@@ -59,18 +59,18 @@ public class ERP1Message extends ESP3Packet {
 
     protected RORG rorg;
 
-    int[] senderId;
+    byte[] senderId;
     boolean teachIn;
 
     public ERP1Message() {
         super.setPacketType(ESPPacketType.RADIO_ERP1);
     }
 
-    public ERP1Message(int dataLength, int optionalDataLength, int[] payload) {
+    public ERP1Message(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, ESPPacketType.RADIO_ERP1, payload);
 
         teachIn = false;
-        senderId = new int[0];
+        senderId = new byte[0];
         try {
             rorg = RORG.getRORG(payload[0]);
 
@@ -105,7 +105,7 @@ public class ERP1Message extends ESP3Packet {
 
         } catch (Exception e) {
             rorg = RORG.Unknown;
-            senderId = new int[0];
+            senderId = new byte[0];
         }
     }
 
@@ -113,7 +113,7 @@ public class ERP1Message extends ESP3Packet {
         return rorg;
     }
 
-    public final int[] getSenderId() {
+    public final byte[] getSenderId() {
         return senderId;
     }
 

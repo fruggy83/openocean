@@ -16,7 +16,7 @@ import org.openhab.binding.openocean.internal.transceiver.Helper;
  */
 public class RDBaseIdResponse extends Response {
 
-    private int[] baseId = null;
+    private byte[] baseId = null;
     private int remainingWriteCycles = 0;
 
     public RDBaseIdResponse(Response response) {
@@ -24,7 +24,7 @@ public class RDBaseIdResponse extends Response {
                 Helper.concatAll(response.getPayload(), response.getOptionalPayload()));
     }
 
-    RDBaseIdResponse(int dataLength, int optionalDataLength, int[] payload) {
+    RDBaseIdResponse(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, payload);
 
         if (this.payload == null || this.payload.length != 5 || this.optionalPayload == null
@@ -33,12 +33,12 @@ public class RDBaseIdResponse extends Response {
         }
 
         baseId = getPayload(1, 4);
-        remainingWriteCycles = optionalPayload[0];
+        remainingWriteCycles = optionalPayload[0] & 0xFF;
 
         _isValid = true;
     }
 
-    public final int[] getBaseId() {
+    public final byte[] getBaseId() {
         return baseId;
     }
 

@@ -17,21 +17,21 @@ import java.security.InvalidParameterException;
 public class Response extends ESP3Packet {
 
     public enum ResponseType {
-        RET_OK(0x00),
-        RET_ERROR(0x01),
-        RET_NOT_SUPPORTED(0x02),
-        RET_WRONG_PARAM(0x03),
-        RET_OPERATION_DENIED(0x04),
-        RET_LOCK_SET(0x05),
-        RET_BUFFER_TO_SMALL(0x06),
-        RET_NO_FREE_BUFFER(0x07),
-        RET_FLASH_HW_ERROR(0x82),
-        RET_BASEID_OUT_OF_RANGE(0x90),
-        RET_BASEID_MAX_REACHED(0x91);
+        RET_OK((byte) 0x00),
+        RET_ERROR((byte) 0x01),
+        RET_NOT_SUPPORTED((byte) 0x02),
+        RET_WRONG_PARAM((byte) 0x03),
+        RET_OPERATION_DENIED((byte) 0x04),
+        RET_LOCK_SET((byte) 0x05),
+        RET_BUFFER_TO_SMALL((byte) 0x06),
+        RET_NO_FREE_BUFFER((byte) 0x07),
+        RET_FLASH_HW_ERROR((byte) 0x82),
+        RET_BASEID_OUT_OF_RANGE((byte) 0x90),
+        RET_BASEID_MAX_REACHED((byte) 0x91);
 
-        private int value;
+        private byte value;
 
-        ResponseType(int value) {
+        ResponseType(byte value) {
             this.value = value;
         }
 
@@ -39,7 +39,7 @@ public class Response extends ESP3Packet {
             return this.value;
         }
 
-        public static ResponseType getResponsetype(int value) {
+        public static ResponseType getResponsetype(byte value) {
             for (ResponseType t : ResponseType.values()) {
                 if (t.value == value) {
                     return t;
@@ -54,7 +54,7 @@ public class Response extends ESP3Packet {
     protected ResponseType responseType;
     protected boolean _isValid = false;
 
-    Response(int dataLength, int optionalDataLength, int[] payload) {
+    Response(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, ESPPacketType.RESPONSE, payload);
 
         try {

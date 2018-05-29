@@ -20,8 +20,8 @@ public abstract class _RPSMessage extends EEP {
     protected boolean t21;
     protected boolean nu;
 
-    public static final int T21Flag = 0x20;
-    public static final int NUFlag = 0x10;
+    public static final byte T21Flag = 0x20;
+    public static final byte NUFlag = 0x10;
 
     public _RPSMessage() {
         super();
@@ -40,7 +40,7 @@ public abstract class _RPSMessage extends EEP {
     }
 
     @Override
-    public EEP setStatus(int status) {
+    public EEP setStatus(byte status) {
         super.setStatus(status);
         t21 = (status & T21Flag) != 0;
         nu = (status & NUFlag) != 0;

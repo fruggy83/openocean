@@ -22,7 +22,7 @@ import org.eclipse.smarthome.core.thing.profiles.TriggerProfileType;
  */
 public class OpenOceanProfileTypes {
 
-    public static final ProfileTypeUID RockerSwitchToPlayPause = new ProfileTypeUID(ProfileTypeUID.SYSTEM_SCOPE,
+    public static final ProfileTypeUID RockerSwitchToPlayPause = new ProfileTypeUID(BINDING_ID,
             "rockerswitch-to-play-pause");
 
     public static final ProfileTypeUID RockerSwitchToOnOff = new ProfileTypeUID(BINDING_ID, "rockerswitch-to-on-off");

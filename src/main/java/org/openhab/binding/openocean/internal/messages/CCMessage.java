@@ -14,7 +14,7 @@ package org.openhab.binding.openocean.internal.messages;
  */
 public class CCMessage extends ESP3Packet {
 
-    public CCMessage(int dataLength, int optionalDataLength, int[] payload) {
+    public CCMessage(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, ESPPacketType.COMMON_COMMAND, payload);
 
     }

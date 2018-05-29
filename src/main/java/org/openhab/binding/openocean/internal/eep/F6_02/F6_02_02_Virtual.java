@@ -22,7 +22,7 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class F6_02_01_Virtual extends _RPSMessage {
+public class F6_02_02_Virtual extends _RPSMessage {
 
     final byte AI = 0;
     final byte A0 = 1;
@@ -30,11 +30,11 @@ public class F6_02_01_Virtual extends _RPSMessage {
     final byte B0 = 3;
     final byte PRESSED = 16;
 
-    public F6_02_01_Virtual() {
+    public F6_02_02_Virtual() {
         super();
     }
 
-    public F6_02_01_Virtual(ERP1Message packet) {
+    public F6_02_02_Virtual(ERP1Message packet) {
         super(packet);
     }
 
@@ -53,20 +53,20 @@ public class F6_02_01_Virtual extends _RPSMessage {
 
             switch (channelId) {
                 case CHANNEL_VIRTUALROCKERSWITCH_CHANNELA:
-                    if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
+                    if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
                         setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
                         setData((byte) ((A0 << 5) | PRESSED));
-                    } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
+                    } else if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
                         setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
                         setData((byte) ((AI << 5) | PRESSED));
                     }
                     break;
 
                 case CHANNEL_VIRTUALROCKERSWITCH_CHANNELB:
-                    if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
+                    if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
                         setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
                         setData((byte) ((B0 << 5) | PRESSED));
-                    } else if (s.equals(CommonTriggerEvents.DIR2_PRESSED)) {
+                    } else if (s.equals(CommonTriggerEvents.DIR1_PRESSED)) {
                         setStatus((byte) (_RPSMessage.T21Flag | _RPSMessage.NUFlag));
                         setData((byte) ((BI << 5) | PRESSED));
                     }

@@ -42,6 +42,22 @@
 		<description>The switch channel allows to switch something on and off.</description>
 		<category>Switch</category>
 	</channel-type>
+	
+	<!-- General Switch Channel -->
+    <channel-type id="generalSwitchA">
+        <item-type>Switch</item-type>
+        <label>Switch Channel A</label>
+        <description>The switch channel allows to switch channel A on and off.</description>
+        <category>Switch</category>
+    </channel-type>
+    
+    <!-- General Switch Channel -->
+    <channel-type id="generalSwitchB">
+        <item-type>Switch</item-type>
+        <label>Switch Channel B</label>
+        <description>The switch channel allows to switch channel B on and off.</description>
+        <category>Switch</category>
+    </channel-type>
 
 	<!-- Rollershutter Channel -->
 	<channel-type id="rollershutter">
@@ -66,11 +82,11 @@
 	</channel-type>
 
 	<channel-type id="temperature">
-		<item-type>Number</item-type>
+		<item-type>Number:Temperature</item-type>
 		<label>Temperature</label>
 		<description>Current temperature in degree Celsius</description>
 		<category>Temperature</category>
-		<state pattern="%.1f °C" readOnly="true" />
+		<state pattern="%.1f %unit%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="humidity">
@@ -138,17 +154,17 @@
 	</channel-type>
 
 	<channel-type id="instantpower">
-		<item-type>Number</item-type>
+		<item-type>Number:Power</item-type>
 		<label>Instant Power</label>
 		<description>Instant power consumption in Watts</description>
-		<state pattern="%d W" readOnly="true" />
+		<state pattern="%d %unit%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="totalusage">
-		<item-type>Number</item-type>
+		<item-type>Number:Energy</item-type>
 		<label>Total Usage</label>
 		<description>Used energy in Kilowatt hours</description>
-		<state pattern="%d kWh" readOnly="true" />
+		<state pattern="%d %unit%" readOnly="true" />
 	</channel-type>
 
 	<!-- Teach in Channel -->
@@ -199,5 +215,54 @@
 			</parameter>
 		</config-description>
 	</channel-type>
+	
+	<channel-type id="motionDetection">
+        <item-type>Switch</item-type>
+        <label>Motion detected</label>
+        <description>Motion detection sensor state.</description>
+        <category>Switch</category>
+        <state readOnly="true" />
+    </channel-type>
+    
+    <channel-type id="illumination">
+        <item-type>Number:Illuminance</item-type>
+        <label>Lux</label>
+        <description>Illumination in lux</description>
+        <state pattern="%d %unit%" readOnly="true" />
+    </channel-type>
+    
+    <channel-type id="autoOFF" advanced="true">
+        <item-type>Number:Duration</item-type>
+        <label>Auto Off</label>
+        <description>Automatically switch to off</description>
+        <state pattern="%d %unit%" />
+    </channel-type>
+    
+    <channel-type id="delayRadioOFF" advanced="true">
+        <item-type>Number:Duration</item-type>
+        <label>Delay radio off</label>
+        <description>Delay switch off by radio for given seconds</description>
+        <state pattern="%d %unit%" />
+    </channel-type>
+
+    <channel-type id="externalInterfaceMode" advanced="true">
+        <item-type>String</item-type>
+        <label>External interface mode</label>
+        <description>This option is to selected the type of the wired switch</description>
+        <state>
+            <options>
+                <option value="EXTERNALSWITCH">Switch</option>
+                <option value="EXTERNALBUTTON">Push button</option>
+                <option value="EXTERNALAUTO">Auto detect</option>
+            </options>
+        </state>
+    </channel-type>
+    
+    <channel-type id="twoStateSwitch" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Switching state</label>
+        <description>Switch state according to specific on/off positions (otherwise toggle)</description>
+        <category>Switch</category>
+    </channel-type>
 
 </thing:thing-descriptions>

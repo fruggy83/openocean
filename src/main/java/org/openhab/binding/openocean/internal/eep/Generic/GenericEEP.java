@@ -33,10 +33,10 @@ import org.eclipse.smarthome.core.transform.actions.Transformation;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelTransformationConfig;
 import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
  *
@@ -85,7 +85,7 @@ public class GenericEEP extends EEP {
 
             if (output != null && !output.isEmpty() && !input.equals(output)) {
                 try {
-                    setData(Helper.hexStringToBytes(output));
+                    setData(HexUtils.hexToBytes(output));
                 } catch (Exception e) {
                     logger.debug("Command {} could not transformed", command.toString());
                 }
@@ -100,7 +100,7 @@ public class GenericEEP extends EEP {
             OpenOceanChannelTransformationConfig transformationInfo = config
                     .as(OpenOceanChannelTransformationConfig.class);
 
-            String payload = Helper.bytesToHexString(bytes);
+            String payload = HexUtils.bytesToHex(bytes);
             String input = channelId + "|" + payload;
             String output = Transformation.transform(transformationInfo.transformationType,
                     transformationInfo.transformationFuntion, input);
@@ -151,7 +151,7 @@ public class GenericEEP extends EEP {
     }
 
     @Override
-    protected boolean validateData(int[] bytes) {
+    protected boolean validateData(byte[] bytes) {
         return true;
     }
 

@@ -23,12 +23,12 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.config.OpenOceanActuatorConfig;
 import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.eep.EEPFactory;
 import org.openhab.binding.openocean.internal.eep.EEPType;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 import com.google.common.collect.Sets;
 
@@ -42,8 +42,8 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
             THING_TYPE_CENTRALCOMMAND, THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH,
             THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
 
-    protected int[] senderId;
-    protected int[] destinationId;
+    protected byte[] senderId;
+    protected byte[] destinationId;
 
     protected EEPType sendingEEPType = null;
     protected boolean broadcastMessages = true;
@@ -96,9 +96,9 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
                 }
 
                 if (this.broadcastMessages) {
-                    destinationId = new int[] { 0xff, 0xff, 0xff, 0xff };
+                    destinationId = new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff };
                 } else {
-                    destinationId = Helper.hexStringTo4Bytes(thing.getUID().getId());
+                    destinationId = HexUtils.hexToBytes(thing.getUID().getId());
                 }
 
             } catch (Exception e) {
@@ -143,11 +143,11 @@ public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
             updateConfiguration(config);
         }
 
-        int[] baseId = bridgeHandler.getBaseId();
-        baseId[3] += senderId;
+        byte[] baseId = bridgeHandler.getBaseId();
+        baseId[3] = (byte) ((baseId[3] & 0xFF) + senderId);
         this.senderId = baseId;
 
-        this.updateProperty(PROPERTY_Enocean_ID, Helper.bytesToHexString(this.senderId));
+        this.updateProperty(PROPERTY_Enocean_ID, HexUtils.bytesToHex(this.senderId));
         bridgeHandler.addSender(senderId, thing);
 
         return true;

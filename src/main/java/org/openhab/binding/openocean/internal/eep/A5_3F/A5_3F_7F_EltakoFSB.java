@@ -26,12 +26,12 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
  */
 public class A5_3F_7F_EltakoFSB extends _4BSMessage {
 
-    static final int Stop = 0x00;
-    static final int MoveUp = 0x01;
-    static final int MoveDown = 0x02;
+    static final byte Stop = 0x00;
+    static final byte MoveUp = 0x01;
+    static final byte MoveDown = 0x02;
 
-    static final int Up = 0x70;
-    static final int Down = 0x50;
+    static final byte Up = 0x70;
+    static final byte Down = 0x50;
 
     public A5_3F_7F_EltakoFSB() {
         super();
@@ -43,40 +43,41 @@ public class A5_3F_7F_EltakoFSB extends _4BSMessage {
 
     @Override
     protected void convertFromCommandImpl(Command command, String channelId, State currentState, Configuration config) {
-        int teachInBit = TeachInBit; // (getIsTeachIn() ? Zero : TeachInBit);
-        int shutTime = 255;
+
+        int shutTime = 0xFF;
         if (config != null) {
-            shutTime = config.as(OpenOceanChannelRollershutterConfig.class).shutTime;
+            shutTime = Math.min(255, config.as(OpenOceanChannelRollershutterConfig.class).shutTime);
         }
 
         if (command instanceof PercentType) {
             PercentType target = (PercentType) command;
             if (target.intValue() == PercentType.ZERO.intValue()) {
-                setData(Zero, shutTime, MoveUp, teachInBit); // => move completely up
+                setData(Zero, (byte) shutTime, MoveUp, TeachInBit); // => move completely up
             } else if (target.intValue() == PercentType.HUNDRED.intValue()) {
-                setData(Zero, shutTime, MoveDown, teachInBit); // => move completely down
+                setData(Zero, (byte) shutTime, MoveDown, TeachInBit); // => move completely down
             } else if (currentState != null) {
-                PercentType current = (PercentType) currentState.as(PercentType.class);
+                PercentType current = currentState.as(PercentType.class);
                 if (config != null && current != null) {
                     if (current.intValue() != target.intValue()) {
-                        int direction = current.intValue() > target.intValue() ? MoveUp : MoveDown;
-                        int duration = Math.min(255, (Math.abs(current.intValue() - target.intValue()) * shutTime)
-                                / PercentType.HUNDRED.intValue());
+                        byte direction = current.intValue() > target.intValue() ? MoveUp : MoveDown;
+                        byte duration = (byte) Math.min(255,
+                                (Math.abs(current.intValue() - target.intValue()) * shutTime)
+                                        / PercentType.HUNDRED.intValue());
 
-                        setData(Zero, duration, direction, teachInBit);
+                        setData(Zero, duration, direction, TeachInBit);
                     }
                 }
             }
 
         } else if (command instanceof UpDownType) {
             if ((UpDownType) command == UpDownType.UP) {
-                setData(Zero, shutTime, MoveUp, teachInBit); // => 0 percent
+                setData(Zero, (byte) shutTime, MoveUp, TeachInBit); // => 0 percent
             } else if ((UpDownType) command == UpDownType.DOWN) {
-                setData(Zero, shutTime, MoveDown, teachInBit); // => 100 percent
+                setData(Zero, (byte) shutTime, MoveDown, TeachInBit); // => 100 percent
             }
         } else if (command instanceof StopMoveType) {
             if ((StopMoveType) command == StopMoveType.STOP) {
-                setData(Zero, 0xFF, Stop, teachInBit);
+                setData(Zero, (byte) 0xFF, Stop, TeachInBit);
             }
         }
     }
@@ -94,9 +95,10 @@ public class A5_3F_7F_EltakoFSB extends _4BSMessage {
 
             } else if (packet.getRORG() == RORG._4BS && currentState != null) {
                 int direction = getDB_1() == MoveUp ? -1 : 1;
-                int duration = ((getDB_3() << 8) + getDB_2()) / 10; // => Time in DB3 and DB2 is given in ms
+                int duration = ((getDB_3Value() << 8) + getDB_2Value()) / 10; // => Time in DB3 and DB2 is given
+                                                                              // in ms
 
-                PercentType current = (PercentType) currentState.as(PercentType.class);
+                PercentType current = currentState.as(PercentType.class);
                 if (config != null && current != null) {
                     OpenOceanChannelRollershutterConfig c = config.as(OpenOceanChannelRollershutterConfig.class);
                     if (c.shutTime != -1) {

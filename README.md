@@ -28,7 +28,7 @@ This binding is developed on and tested with the following things
     * GN-A-U230V-JRG (rollershutter)
     * OPUS-FUNK PLUS Jalousieaktor 1fach UP (rollershutter)
     * OPUS-Funk PLUS Steckdosenleiste (smart multiple socket)
- * NodOn Smart Plug (ASP-2-1-10), Permundo PSC234 (smart plug with metering)
+ * NodOn Smart Plug (ASP-2-1-10), In Wall Switch (SIN-2-2-00, SIN-2-1-0x), Permundo PSC234 (smart plug with metering)
  * Thermokon SR04 room control
  * Hoppe SecuSignal window handles
  * Rocker switches (NodOn, Eltako FT55 etc)
@@ -151,3 +151,4 @@ Many thanks to:
  * The NodOn support for their hints about the ADT and UTE teach in messages.
  * The fhem project for the inspiration and their EnOcean addon
  * [leifbladt](https://github.com/leifbladt) for his work on the installation notes
+ * [Casshern81](https://github.com/Casshern81) for his work on the documentation, valuable hints and testing efforts

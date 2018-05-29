@@ -26,9 +26,10 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class A5_38_08_Dimming extends _4BSMessage {
 
-    static final int CommandId = 0x02;
-    static final int SwitchOff = 0x00;
-    static final int SwitchOn = 0x01;
+    static final byte CommandId = 0x02;
+    static final byte SwitchOff = 0x00;
+    static final byte SwitchOn = 0x01;
+    static final byte Switch100Percent = 0x64;
 
     public A5_38_08_Dimming() {
         super();
@@ -39,16 +40,15 @@ public class A5_38_08_Dimming extends _4BSMessage {
     }
 
     @Override
-    protected void convertFromCommandImpl(Command outputCommand, String channelId, State currentState, Configuration config) {
-
-        int teachInBit = TeachInBit; // (getIsTeachIn() ? Zero : TeachInBit);
+    protected void convertFromCommandImpl(Command outputCommand, String channelId, State currentState,
+            Configuration config) {
 
         if (outputCommand instanceof DecimalType) {
-            setData(CommandId, ((DecimalType) outputCommand).byteValue(), Zero, (teachInBit | SwitchOn));
+            setData(CommandId, ((DecimalType) outputCommand).byteValue(), Zero, (byte) (TeachInBit | SwitchOn));
         } else if ((OnOffType) outputCommand == OnOffType.ON) {
-            setData(CommandId, 0x64, Zero, (teachInBit | SwitchOn));
+            setData(CommandId, Switch100Percent, Zero, (byte) (TeachInBit | SwitchOn));
         } else {
-            setData(CommandId, Zero, Zero, (teachInBit | SwitchOff));
+            setData(CommandId, Zero, Zero, (byte) (TeachInBit | SwitchOff));
         }
     }
 
@@ -62,7 +62,7 @@ public class A5_38_08_Dimming extends _4BSMessage {
             if (getDB_0() == (TeachInBit | SwitchOff)) {
                 return new PercentType(0);
             } else {
-                return new PercentType(getDB_2());
+                return new PercentType(getDB_2Value());
             }
         }
 

@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.openocean.internal.eep.A5_02;
+package org.openhab.binding.openocean.internal.eep.A5_08;
 
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 
@@ -14,25 +14,29 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class A5_02_20 extends A5_02 {
+public class A5_08_01 extends A5_08 {
 
-    public A5_02_20(ERP1Message packet) {
+    public A5_08_01(ERP1Message packet) {
         super(packet);
     }
 
     @Override
-    protected double getScaledMin() {
-        return -10;
+    protected double getScaledTemperatureMin() {
+        return 0;
     }
 
     @Override
-    protected double getScaledMax() {
-        return 41.2;
+    protected double getScaledTemperatureMax() {
+        return 51;
     }
 
     @Override
-    protected int getUnscaledTemperatureValue() {
-        return getDB_1Value() + ((getDB_2Value() & 0b11) << 8);
+    protected double getScaledIlluminationMin() {
+        return 0;
     }
 
+    @Override
+    protected double getScaledIlluminationMax() {
+        return 510;
+    }
 }

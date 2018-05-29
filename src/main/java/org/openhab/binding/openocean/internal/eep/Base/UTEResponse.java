@@ -16,19 +16,19 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class UTEResponse extends _VLDMessage {
 
-    public static final int TeachIn_MASK = 0x3f;
-    public static final int CommunicationType_MASK = 0x80;
-    public static final int ResponseNeeded_MASK = 0x40;
-    public static final int TeachIn_NotSpecified = 0x20;
+    public static final byte TeachIn_MASK = 0x3f;
+    public static final byte CommunicationType_MASK = (byte) 0x80;
+    public static final byte ResponseNeeded_MASK = 0x40;
+    public static final byte TeachIn_NotSpecified = 0x20;
 
     public UTEResponse(ERP1Message packet) {
 
         int dataLength = packet.getPayload().length - SenderIdLength - RORGLength - StatusLength;
 
         setData(packet.getPayload(RORGLength, dataLength));
-        bytes[0] = 0x91; // bidirectional communication, teach in accepted, teach in response
+        bytes[0] = (byte) 0x91; // bidirectional communication, teach in accepted, teach in response
 
-        setStatus(0x80);
+        setStatus((byte) 0x80);
 
         setDestinationId(packet.getSenderId());
     }

@@ -25,12 +25,12 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class PTM200Message extends _RPSMessage {
 
-    static final int On = 0x70;
-    static final int Off = 0x50;
-    static final int Up = 0x70;
-    static final int Down = 0x50;
-    static final int Open = 0xE0;
-    static final int Closed = 0xF0;
+    static final byte On = 0x70;
+    static final byte Off = 0x50;
+    static final byte Up = 0x70;
+    static final byte Down = 0x50;
+    static final byte Open = (byte) 0xE0;
+    static final byte Closed = (byte) 0xF0;
 
     public PTM200Message() {
         super();

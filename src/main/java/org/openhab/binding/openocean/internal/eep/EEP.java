@@ -32,17 +32,17 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class EEP {
 
-    public static final int Zero = 0x00;
+    public static final byte Zero = 0x00;
     protected static final int SenderIdLength = 4;
     protected static final int StatusLength = 1;
     protected static final int RORGLength = 1;
 
-    protected int[] bytes;
-    protected int[] optionalData;
-    protected int[] senderId;
-    protected int status;
+    protected byte[] bytes;
+    protected byte[] optionalData;
+    protected byte[] senderId;
+    protected byte status;
 
-    protected int[] destinationId;
+    protected byte[] destinationId;
 
     protected boolean suppressRepeating;
 
@@ -103,7 +103,7 @@ public abstract class EEP {
         return convertToEventImpl(channelId, lastEvent, config);
     }
 
-    public EEP setData(int... bytes) {
+    public EEP setData(byte... bytes) {
         if (!validateData(bytes)) {
             throw new IllegalArgumentException();
         }
@@ -112,7 +112,7 @@ public abstract class EEP {
         return this;
     }
 
-    public EEP setOptionalData(int... bytes) {
+    public EEP setOptionalData(byte... bytes) {
         if (bytes != null) {
             this.optionalData = Arrays.copyOf(bytes, bytes.length);
         }
@@ -120,7 +120,7 @@ public abstract class EEP {
         return this;
     }
 
-    public EEP setSenderId(int[] senderId) {
+    public EEP setSenderId(byte[] senderId) {
         if (senderId == null || senderId.length != SenderIdLength) {
             throw new IllegalArgumentException();
         }
@@ -129,7 +129,7 @@ public abstract class EEP {
         return this;
     }
 
-    public EEP setStatus(int status) {
+    public EEP setStatus(byte status) {
         this.status = status;
         return this;
     }
@@ -147,14 +147,15 @@ public abstract class EEP {
                 optionalDataLength = optionalData.length;
             }
 
-            int[] payLoad = new int[RORGLength + getDataLength() + SenderIdLength + StatusLength + optionalDataLength];
+            byte[] payLoad = new byte[RORGLength + getDataLength() + SenderIdLength + StatusLength
+                    + optionalDataLength];
             Arrays.fill(payLoad, Zero);
             payLoad[0] = getEEPType().getRORG().getValue();
             ERP1Message message = new ERP1Message(payLoad.length - optionalDataLength, optionalDataLength, payLoad);
 
-            message.setPayload(Helper.concatAll(new int[] { getEEPType().getRORG().getValue() }, bytes, senderId,
-                    new int[] { status | (suppressRepeating ? 0b1111 : 0) })); // set repeater count to max if
-                                                                               // suppressRepeating
+            message.setPayload(Helper.concatAll(new byte[] { getEEPType().getRORG().getValue() }, bytes, senderId,
+                    new byte[] { (byte) (status | (suppressRepeating ? 0b1111 : 0)) })); // set repeater count to max if
+            // suppressRepeating
 
             message.setOptionalPayload(optionalData);
 
@@ -164,7 +165,7 @@ public abstract class EEP {
         return null;
     }
 
-    protected boolean validateData(int[] bytes) {
+    protected boolean validateData(byte[] bytes) {
         return bytes != null && bytes.length == getDataLength();
     }
 
@@ -217,7 +218,7 @@ public abstract class EEP {
         return getEEPType().getThingTypeUID();
     }
 
-    public int[] getSenderId() {
+    public byte[] getSenderId() {
         return senderId;
     }
 
@@ -225,10 +226,10 @@ public abstract class EEP {
         discoveredThingResultBuilder.withProperty(PARAMETER_RECEIVINGEEPID, getEEPType().getId());
     }
 
-    public EEP setDestinationId(int[] destinationId) {
+    public EEP setDestinationId(byte[] destinationId) {
         if (destinationId != null) {
             this.destinationId = Arrays.copyOf(destinationId, destinationId.length);
-            setOptionalData(Helper.concatAll(new int[] { 0x01 }, destinationId, new int[] { 0xff, 0x00 }));
+            setOptionalData(Helper.concatAll(new byte[] { 0x01 }, destinationId, new byte[] { (byte) 0xff, 0x00 }));
         }
         return this;
     }

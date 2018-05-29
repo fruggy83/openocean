@@ -9,7 +9,8 @@
 package org.openhab.binding.openocean.internal.eep.A5_02;
 
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.DecimalType;
+import org.eclipse.smarthome.core.library.types.QuantityType;
+import org.eclipse.smarthome.core.library.unit.SIUnits;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
@@ -38,7 +39,7 @@ public abstract class A5_02 extends _4BSMessage {
     protected abstract double getScaledMax();
 
     protected int getUnscaledTemperatureValue() {
-        return getDB_1();
+        return getDB_1Value();
     }
 
     @Override
@@ -50,6 +51,6 @@ public abstract class A5_02 extends _4BSMessage {
         double scaledTemp = getScaledMin()
                 - (((getUnscaledMin() - getUnscaledTemperatureValue()) * (getScaledMin() - getScaledMax()))
                         / getUnscaledMin());
-        return new DecimalType(scaledTemp);
+        return new QuantityType<>(scaledTemp, SIUnits.CELSIUS);
     }
 }

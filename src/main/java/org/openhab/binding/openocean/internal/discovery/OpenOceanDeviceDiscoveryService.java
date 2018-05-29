@@ -19,6 +19,7 @@ import org.eclipse.smarthome.config.discovery.DiscoveryServiceCallback;
 import org.eclipse.smarthome.config.discovery.ExtendedDiscoveryService;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.handler.OpenOceanBridgeHandler;
 import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.eep.EEPFactory;
@@ -27,7 +28,6 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;
 import org.openhab.binding.openocean.internal.transceiver.ESP3PacketListener;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,9 +96,9 @@ public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
             return;
         }
 
-        int[] id = eep.getSenderId();
+        byte[] id = eep.getSenderId();
         ThingTypeUID thingTypeUID = eep.getThingTypeUID();
-        ThingUID thingUID = new ThingUID(thingTypeUID, bridgeHandler.getThing().getUID(), Helper.bytesToHexString(id));
+        ThingUID thingUID = new ThingUID(thingTypeUID, bridgeHandler.getThing().getUID(), HexUtils.bytesToHex(id));
 
         if (discoveryServiceCallback.getExistingThing(thingUID) == null) {
 
@@ -113,15 +113,15 @@ public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
             if (msg.getRORG() == RORG.UTE && (msg.getPayload(1, 1)[0] & UTEResponse.ResponseNeeded_MASK) == 0) {
 
                 // get new sender Id
-                deviceId = bridgeHandler.getNextDeviceId(Helper.bytesToHexString(id));
+                deviceId = bridgeHandler.getNextDeviceId(HexUtils.bytesToHex(id));
                 if (deviceId > 0) {
-                    int[] newSenderId = bridgeHandler.getBaseId();
+                    byte[] newSenderId = bridgeHandler.getBaseId();
                     newSenderId[3] += deviceId;
 
                     // send response
                     EEP response = EEPFactory.buildResponseEEPFromTeachInERP1(msg, newSenderId);
                     bridgeHandler.sendMessage(response.getERP1Message(), null);
-                    logger.info("Send teach in response for {}", Helper.bytesToHexString(id));
+                    logger.info("Send teach in response for {}", HexUtils.bytesToHex(id));
                 }
 
             }

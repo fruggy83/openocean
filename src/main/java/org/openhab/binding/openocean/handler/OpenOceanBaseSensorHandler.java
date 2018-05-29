@@ -20,6 +20,7 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.config.OpenOceanBaseConfig;
 import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.eep.EEPFactory;
@@ -27,7 +28,6 @@ import org.openhab.binding.openocean.internal.eep.EEPType;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;
 import org.openhab.binding.openocean.internal.transceiver.ESP3PacketListener;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 import com.google.common.collect.Sets;
 
@@ -39,7 +39,8 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
 
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_ROOMOPERATINGPANEL,
             THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH, THING_TYPE_TEMPERATURESENSOR,
-            THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_ROCKERSWITCH);
+            THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_ROCKERSWITCH, THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR,
+            THING_TYPE_PUSHBUTTON);
 
     protected EEPType receivingEEPType = null;
 
@@ -109,7 +110,7 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
 
         EEP eep = EEPFactory.buildEEP(receivingEEPTyp(), (ERP1Message) packet);
 
-        logger.debug("ESP Packet {} for {} received", Helper.bytesToHexString(packet.getPayload()),
+        logger.debug("ESP Packet {} for {} received", HexUtils.bytesToHex(packet.getPayload()),
                 this.getThing().getUID().getId());
 
         if (eep.isValid()) {

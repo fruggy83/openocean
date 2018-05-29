@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.openhab.binding.openocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.openocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
+import org.openhab.binding.openocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_00;
 import org.openhab.binding.openocean.internal.eep.F6_10.F6_10_01;
@@ -63,6 +64,14 @@ public class EEPFactory {
         switch (msg.getRORG()) {
             case RPS:
                 try {
+                    EEP result = new F6_01_01(msg);
+                    if (result.isValid()) { // check if t21 is set, nu not set, and data == 0x10 or 0x00
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
+
+                try {
                     EEP result = new F6_02_01(msg);
                     if (result.isValid()) { // check if highest bit is not set
                         return result;
@@ -96,13 +105,15 @@ public class EEPFactory {
                     return null;
                 }
 
-                int db_3 = msg.getPayload()[1];
-                int db_2 = msg.getPayload()[2];
+                byte db_3 = msg.getPayload()[1];
+                byte db_2 = msg.getPayload()[2];
+                byte db_1 = msg.getPayload()[3];
 
-                int func = db_3 >> 2;
-                int type = ((db_3 & 3) << 5) + (db_2 >> 3);
+                int func = db_3 >>> 2;
+                int type = ((db_3 & 0b11) << 5) + (db_2 >>> 3);
+                int manufId = ((db_2 & 0b111) << 8) + (db_1 & 0xff);
 
-                EEPType eepType = EEPType.getType(RORG._4BS, func, type);
+                EEPType eepType = EEPType.getType(RORG._4BS, func, type, manufId);
                 if (eepType == null) {
                     logger.debug("Received unsupported EEP teach in, fallback to generic thing");
                     eepType = EEPType.Generic4BS;
@@ -111,13 +122,19 @@ public class EEPFactory {
                 return buildEEP(eepType, msg);
             }
             case UTE: {
-                int[] payload = msg.getPayload();
+                byte[] payload = msg.getPayload();
 
-                int rorg = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength];
-                int func = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength - EEP.RORGLength];
-                int type = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength - EEP.RORGLength - 1];
+                byte rorg = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength];
+                byte func = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength - EEP.RORGLength];
+                byte type = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength - EEP.RORGLength - 1];
 
-                EEPType eepType = EEPType.getType(RORG.getRORG(rorg), func, type);
+                byte manufIdMSB = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength - EEP.RORGLength
+                        - 2];
+                byte manufIdLSB = payload[payload.length - 1 - EEP.StatusLength - EEP.SenderIdLength - EEP.RORGLength
+                        - 3];
+                int manufId = ((manufIdMSB & 0b111) << 8) + (manufIdLSB & 0xff);
+
+                EEPType eepType = EEPType.getType(RORG.getRORG(rorg), func, type, manufId);
                 if (eepType == null) {
                     logger.info("Received unsupported EEP teach in, fallback to generic thing");
                     RORG r = RORG.getRORG(rorg);
@@ -141,7 +158,7 @@ public class EEPFactory {
 
     }
 
-    public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, int[] senderId) {
+    public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, byte[] senderId) {
         EEP result = new UTEResponse(msg);
         result.setSenderId(senderId);
 

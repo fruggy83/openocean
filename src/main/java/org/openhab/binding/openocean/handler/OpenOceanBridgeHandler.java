@@ -31,6 +31,7 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ConfigStatusBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.OpenOceanConfigStatusMessage;
 import org.openhab.binding.openocean.internal.messages.BaseResponse;
 import org.openhab.binding.openocean.internal.messages.ESP3Packet;
@@ -41,7 +42,6 @@ import org.openhab.binding.openocean.internal.messages.RDVersionResponse;
 import org.openhab.binding.openocean.internal.messages.Response;
 import org.openhab.binding.openocean.internal.messages.Response.ResponseType;
 import org.openhab.binding.openocean.internal.transceiver.ESP3PacketListener;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanSerialTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListener;
@@ -68,7 +68,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
     private OpenOceanTransceiver transceiver;
     private ScheduledFuture<?> connectorTask;
 
-    private int[] baseId = null;
+    private byte[] baseId = null;
     private Thing[] sendingThings = new Thing[128];
 
     private int nextDeviceId = 0;
@@ -116,7 +116,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
             if (command instanceof StringType) {
                 try {
 
-                    int[] id = Helper.hexStringTo4Bytes(((StringType) command).toFullString());
+                    byte[] id = HexUtils.hexToBytes(((StringType) command).toFullString());
 
                     sendMessage(ESP3PacketFactory.CO_WR_IDBASE(id),
                             new ResponseListenerIgnoringTimeouts<BaseResponse>() {
@@ -200,7 +200,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
                                 if (response.isValid() && response.isOK()) {
                                     baseId = response.getBaseId().clone();
-                                    updateProperty(PROPERTY_Base_ID, Helper.bytesToHexString(response.getBaseId()));
+                                    updateProperty(PROPERTY_Base_ID, HexUtils.bytesToHex(response.getBaseId()));
                                     updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
                                             Integer.toString(response.getRemainingWriteCycles()));
                                     transceiver.setFilteredDeviceId(baseId);
@@ -291,7 +291,7 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
         return configStatusMessages;
     }
 
-    public int[] getBaseId() {
+    public byte[] getBaseId() {
         return baseId.clone();
     }
 

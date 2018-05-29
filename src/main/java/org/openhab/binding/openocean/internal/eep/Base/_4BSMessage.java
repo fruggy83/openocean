@@ -9,11 +9,11 @@
 package org.openhab.binding.openocean.internal.eep.Base;
 
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelTeachInConfig;
 import org.openhab.binding.openocean.internal.eep.EEP;
 import org.openhab.binding.openocean.internal.eep.EEPType;
 import org.openhab.binding.openocean.internal.messages.ERP1Message;
-import org.openhab.binding.openocean.internal.transceiver.Helper;
 
 /**
  *
@@ -29,23 +29,39 @@ public abstract class _4BSMessage extends EEP {
         super();
     }
 
-    public static final int TeachInBit = 0x08;
-    public static final int LRN_Type_Mask = 0x80;
+    public static final byte TeachInBit = 0x08;
+    public static final byte LRN_Type_Mask = (byte) 0x80;
 
-    public int getDB_0() {
+    public byte getDB_0() {
         return bytes[3];
     }
 
-    public int getDB_1() {
+    public int getDB_0Value() {
+        return (getDB_0() & 0xFF);
+    }
+
+    public byte getDB_1() {
         return bytes[2];
     }
 
-    public int getDB_2() {
+    public int getDB_1Value() {
+        return (getDB_1() & 0xFF);
+    }
+
+    public byte getDB_2() {
         return bytes[1];
     }
 
-    public int getDB_3() {
+    public int getDB_2Value() {
+        return (getDB_2() & 0xFF);
+    }
+
+    public byte getDB_3() {
         return bytes[0];
+    }
+
+    public int getDB_3Value() {
+        return (getDB_3() & 0xFF);
     }
 
     @Override
@@ -60,14 +76,14 @@ public abstract class _4BSMessage extends EEP {
 
             EEPType type = getEEPType();
 
-            int db3 = (getEEPType().getFunc() << 2) + ((type.getType()) >> 5);
-            int db2 = ((type.getType() << 3) & 255);
-            int db1 = 0;
+            byte db3 = (byte) ((getEEPType().getFunc() << 2) | ((type.getType()) >>> 5));
+            byte db2 = (byte) ((type.getType() << 3) & 0xff);
+            byte db1 = 0;
 
             try {
                 int manufId = (Integer.parseInt(c.manufacturerId, 16) & 0x7ff); // => 11 bit
-                db2 += (manufId >> 8);
-                db1 += (manufId & 255);
+                db2 += (manufId >>> 8);
+                db1 += (manufId & 0xff);
             } catch (Exception e) {
 
             }
@@ -76,7 +92,7 @@ public abstract class _4BSMessage extends EEP {
 
         } else {
             try {
-                int[] msg = Helper.hexStringTo4Bytes(c.teachInMSG);
+                byte[] msg = HexUtils.hexToBytes(c.teachInMSG);
                 setData(msg);
             } catch (Exception e) {
             }

@@ -21,11 +21,11 @@ import org.openhab.binding.openocean.internal.messages.ERP1Message;
  */
 public class F6_02_01 extends _RPSMessage {
 
-    final int AI = 0;
-    final int A0 = 1;
-    final int BI = 2;
-    final int B0 = 3;
-    final int PRESSED = 16;
+    final byte AI = 0;
+    final byte A0 = 1;
+    final byte BI = 2;
+    final byte B0 = 3;
+    final byte PRESSED = 16;
 
     int secondByte = -1;
     int secondStatus = -1;
@@ -48,20 +48,20 @@ public class F6_02_01 extends _RPSMessage {
 
             switch (channelId) {
                 case CHANNEL_ROCKERSWITCH_CHANNELA:
-                    if ((bytes[0] >> 5) == A0) {
+                    if ((bytes[0] >>> 5) == A0) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR1_PRESSED
                                 : CommonTriggerEvents.DIR1_RELEASED;
-                    } else if ((bytes[0] >> 5) == AI) {
+                    } else if ((bytes[0] >>> 5) == AI) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR2_PRESSED
                                 : CommonTriggerEvents.DIR2_RELEASED;
                     }
                     return null;
 
                 case CHANNEL_ROCKERSWITCH_CHANNELB:
-                    if ((bytes[0] >> 5) == B0) {
+                    if ((bytes[0] >>> 5) == B0) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR1_PRESSED
                                 : CommonTriggerEvents.DIR1_RELEASED;
-                    } else if ((bytes[0] >> 5) == BI) {
+                    } else if ((bytes[0] >>> 5) == BI) {
                         return ((bytes[0] & PRESSED) != 0) ? CommonTriggerEvents.DIR2_PRESSED
                                 : CommonTriggerEvents.DIR2_RELEASED;
                     }
@@ -79,7 +79,7 @@ public class F6_02_01 extends _RPSMessage {
     }
 
     @Override
-    protected boolean validateData(int[] bytes) {
+    protected boolean validateData(byte[] bytes) {
         return super.validateData(bytes) && !getBit(bytes[0], 7);
     }
 }
