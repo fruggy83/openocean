@@ -44,7 +44,7 @@ public class A5_38_08_Dimming extends _4BSMessage {
             Configuration config) {
 
         if (outputCommand instanceof DecimalType) {
-            if (((DecimalType) outputCommand) == DecimalType.ZERO) {
+            if (((DecimalType) outputCommand).equals(DecimalType.ZERO)) {
                 setData(CommandId, Zero, Zero, (byte) (TeachInBit | SwitchOff));
             } else {
                 setData(CommandId, ((DecimalType) outputCommand).byteValue(), Zero, (byte) (TeachInBit | SwitchOn));
