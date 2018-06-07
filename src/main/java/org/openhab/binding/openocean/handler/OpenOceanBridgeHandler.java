@@ -13,7 +13,6 @@ import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
@@ -43,12 +42,15 @@ import org.openhab.binding.openocean.internal.messages.Response;
 import org.openhab.binding.openocean.internal.messages.Response.ResponseType;
 import org.openhab.binding.openocean.internal.transceiver.ESP3PacketListener;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanSerialTransceiver;
+import org.openhab.binding.openocean.internal.transceiver.OpenOceanTCPTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListener;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListenerIgnoringTimeouts;
 import org.openhab.binding.openocean.internal.transceiver.TransceiverErrorListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -63,7 +65,8 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanBridgeHandler.class);
 
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_BRIDGE);
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_BRIDGE,
+            THING_TYPE_TCPBRIDGE);
 
     private OpenOceanTransceiver transceiver;
     private ScheduledFuture<?> connectorTask;
@@ -174,8 +177,14 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
         try {
             if (transceiver == null) {
-                transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this,
-                        scheduler);
+                if (getThing().getThingTypeUID().equals(THING_TYPE_BRIDGE)) {
+                    transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this,
+                            scheduler);
+                } else {
+                    Configuration c = getThing().getConfiguration();
+                    transceiver = new OpenOceanTCPTransceiver((String) getThing().getConfiguration().get(HOST),
+                            ((BigDecimal) getThing().getConfiguration().get(PORT)).intValue(), this, scheduler);
+                }
             }
 
             if (transceiver != null) {

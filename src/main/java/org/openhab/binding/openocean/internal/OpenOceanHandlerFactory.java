@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.openocean.internal;
 
-import static org.openhab.binding.openocean.OpenOceanBindingConstants.THING_TYPE_BRIDGE;
-
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -58,7 +56,7 @@ public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(THING_TYPE_BRIDGE)) {
+        if (OpenOceanBridgeHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {
             OpenOceanBridgeHandler bridgeHandler = new OpenOceanBridgeHandler((Bridge) thing);
             registerDeviceDiscoveryService(bridgeHandler);
             return bridgeHandler;

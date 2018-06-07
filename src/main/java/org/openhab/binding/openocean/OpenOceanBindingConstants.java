@@ -35,6 +35,7 @@ public class OpenOceanBindingConstants {
 
     // bridge
     public final static ThingTypeUID THING_TYPE_BRIDGE = new ThingTypeUID(BINDING_ID, "bridge");
+    public final static ThingTypeUID THING_TYPE_TCPBRIDGE = new ThingTypeUID(BINDING_ID, "tcpbridge");
 
     // List of all Thing Type UIDs
     public final static ThingTypeUID THING_TYPE_PUSHBUTTON = new ThingTypeUID(BINDING_ID, "pushButton");
@@ -217,6 +218,7 @@ public class OpenOceanBindingConstants {
     // Bridge config properties
     public static final String SENDERID = "senderId";
     public static final String PORT = "port";
+    public static final String HOST = "host";
     public static final String NEXTDEVICEID = "nextDeviceId";
 
     // Bridge properties
