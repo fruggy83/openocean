@@ -69,6 +69,7 @@ public abstract class OpenOceanBaseThingHandler extends ConfigStatusThingHandler
     @Override
     public void initialize() {
         logger.debug("Initializing open ocean base thing handler.");
+        this.gateway = null; // reset gateway
         initializeThing((getBridge() == null) ? null : getBridge().getStatus());
     }
 

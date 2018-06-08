@@ -8,6 +8,7 @@
 	<thing-type id="rockerSwitch">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="tcpbridge" />
 		</supported-bridge-type-refs>
 
 		<label>F6-02 - Rocker Switch</label>

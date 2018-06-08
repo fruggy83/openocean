@@ -7,6 +7,7 @@
 	<thing-type id="genericThing">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="tcpbridge" />
 		</supported-bridge-type-refs>
 
 		<label>00-00 - Generic thing</label>

@@ -8,6 +8,7 @@
 	<thing-type id="mechanicalHandle">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="tcpbridge" />
 		</supported-bridge-type-refs>
 
 		<label>F6-10 - Mechanical Handle</label>
