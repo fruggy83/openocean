@@ -31,6 +31,7 @@ public abstract class D2_01 extends _VLDMessage {
 
     protected final byte cmdMask = 0x0f;
     protected final byte outputValueMask = 0x7f;
+    protected final byte outputChannelMask = 0x1f;
 
     protected final byte CMD_ACTUATOR_SET_STATUS = 0x01;
     protected final byte CMD_ACTUATOR_STATUS_QUERY = 0x03;
@@ -68,6 +69,18 @@ public abstract class D2_01 extends _VLDMessage {
 
     protected State getSwitchingData() {
         if (getCMD() == CMD_ACTUATOR_STATUS_RESPONE) {
+            return (bytes[bytes.length - 1] & outputValueMask) > 0 ? OnOffType.ON : OnOffType.OFF;
+        }
+
+        return UnDefType.UNDEF;
+    }
+
+    protected byte getChannel() {
+        return (byte) (bytes[1] & outputChannelMask);
+    }
+
+    protected State getSwitchingData(byte channel) {
+        if (getCMD() == CMD_ACTUATOR_STATUS_RESPONE && (getChannel() == channel || getChannel() == AllChannels_Mask)) {
             return (bytes[bytes.length - 1] & outputValueMask) > 0 ? OnOffType.ON : OnOffType.OFF;
         }
 
@@ -174,6 +187,10 @@ public abstract class D2_01 extends _VLDMessage {
         switch (channelId) {
             case CHANNEL_GENERAL_SWITCHING:
                 return getSwitchingData();
+            case CHANNEL_GENERAL_SWITCHINGA:
+                return getSwitchingData(ChannelA_Mask);
+            case CHANNEL_GENERAL_SWITCHINGB:
+                return getSwitchingData(ChannelB_Mask);
             case CHANNEL_INSTANTPOWER:
                 return getPowerMeasurementData();
             case CHANNEL_TOTALUSAGE:
