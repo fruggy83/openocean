@@ -219,6 +219,7 @@ public class OpenOceanBindingConstants {
     public static final String SENDERID = "senderId";
     public static final String PORT = "port";
     public static final String HOST = "host";
+    public static final String RS485 = "rs485";
     public static final String NEXTDEVICEID = "nextDeviceId";
 
     // Bridge properties

@@ -176,12 +176,13 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
     private synchronized void initTransceiver() {
 
         try {
+
+            Configuration c = getThing().getConfiguration();
             if (transceiver == null) {
                 if (getThing().getThingTypeUID().equals(THING_TYPE_BRIDGE)) {
                     transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this,
                             scheduler);
                 } else {
-                    Configuration c = getThing().getConfiguration();
                     transceiver = new OpenOceanTCPTransceiver((String) getThing().getConfiguration().get(HOST),
                             ((BigDecimal) getThing().getConfiguration().get(PORT)).intValue(), this, scheduler);
                 }
@@ -196,31 +197,36 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "starting rx thread...");
                 transceiver.StartReceiving(scheduler);
 
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
-                        "trying to get bridge base id...");
-                logger.debug("request base id");
-                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
-                        new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
+                if ((boolean) c.get(RS485)) {
+                    baseId = new byte[4];
+                    updateStatus(ThingStatus.ONLINE);
+                } else {
+                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
+                            "trying to get bridge base id...");
+                    logger.debug("request base id");
+                    transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
+                            new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
 
-                            @Override
-                            public void responseReceived(RDBaseIdResponse response) {
+                                @Override
+                                public void responseReceived(RDBaseIdResponse response) {
 
-                                logger.debug("received response for base id");
+                                    logger.debug("received response for base id");
 
-                                if (response.isValid() && response.isOK()) {
-                                    baseId = response.getBaseId().clone();
-                                    updateProperty(PROPERTY_Base_ID, HexUtils.bytesToHex(response.getBaseId()));
-                                    updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
-                                            Integer.toString(response.getRemainingWriteCycles()));
-                                    transceiver.setFilteredDeviceId(baseId);
+                                    if (response.isValid() && response.isOK()) {
+                                        baseId = response.getBaseId().clone();
+                                        updateProperty(PROPERTY_Base_ID, HexUtils.bytesToHex(response.getBaseId()));
+                                        updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
+                                                Integer.toString(response.getRemainingWriteCycles()));
+                                        transceiver.setFilteredDeviceId(baseId);
 
-                                    updateStatus(ThingStatus.ONLINE);
-                                } else {
-                                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                                            "Could not get BaseId");
+                                        updateStatus(ThingStatus.ONLINE);
+                                    } else {
+                                        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                                                "Could not get BaseId");
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
 
                 transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION,
                         new ResponseListenerIgnoringTimeouts<RDVersionResponse>() {

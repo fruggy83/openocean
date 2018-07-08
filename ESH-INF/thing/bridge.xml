@@ -11,7 +11,7 @@
 
 		<channels>
 			<channel id="repeater" typeId="repeaterMode" />
-			<channel typeId="setBaseId" id="setBaseId"></channel>
+			<channel typeId="setBaseId" id="setBaseId" />
 		</channels>
 
 		<properties>
@@ -29,6 +29,11 @@
 				<label>Serial port</label>
 				<description>Serial port of the connected enocean transceiver</description>
 				<required>true</required>
+			</parameter>
+			<parameter name="rs485" type="boolean">
+				<advanced>true</advanced>
+				<label>Gateway connected directly to RS485 BUS</label>
+				<default>false</default>
 			</parameter>
 			<parameter name="nextDeviceId" type="integer">
 				<advanced>true</advanced>

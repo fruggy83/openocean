@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
  *
  * @author Daniel Weber - Initial contribution
  */
-@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.openocean", configurationPolicy = ConfigurationPolicy.OPTIONAL)
+@Component(service = ThingHandlerFactory.class, configurationPid = "binding.openocean", configurationPolicy = ConfigurationPolicy.OPTIONAL)
 public class OpenOceanHandlerFactory extends BaseThingHandlerFactory {
 
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Sets
