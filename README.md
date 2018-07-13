@@ -50,9 +50,11 @@ If the actuator supports UTE teach-ins, the corresponding thing can be created a
 If the actuator does not support UTE teach-ins, you have to create, configure and choose the right EEP of the thing manually. It is important to link the teach-in channel of this thing. Afterwards you have to activate the pairing mode of the actuator. Then switch on the teach-in item(/channel) to send a teach-in message to the actuator. If the pairing was successful, you can control the actuator and unlink the teach-in channel.
 
 
-## Thing Configuration (Adding your Actuators, Switches, Sensors, etc.)
+## Adding Enocean-Things (Actuators, Switches, Sensors, etc.)
+https://github.com/fruggy83/openocean/wiki#how-to-add-an-enocean-thing-actuator-sensor-wallswitch-etc-via-paperui
 
-Things can and should by configured through PaperUI (On How-to see: https://github.com/fruggy83/openocean/wiki#how-to-add-an-enocean-thing-actuator-sensor-wallswitch-etc-via-paperui). Following the most important config parameters:
+## Thing Configuration
+Things can and should by configured through PaperUI. Following the most important config parameters:
 
 Bridge
 
