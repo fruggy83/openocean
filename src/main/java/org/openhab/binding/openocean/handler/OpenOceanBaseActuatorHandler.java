@@ -38,9 +38,9 @@ import com.google.common.collect.Sets;
  */
 public class OpenOceanBaseActuatorHandler extends OpenOceanBaseSensorHandler {
 
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_UNIVERSALACTUATOR,
-            THING_TYPE_CENTRALCOMMAND, THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH,
-            THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB);
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_CENTRALCOMMAND,
+            THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING,
+            THING_TYPE_ROLLERSHUTTER);
 
     protected byte[] senderId;
     protected byte[] destinationId;

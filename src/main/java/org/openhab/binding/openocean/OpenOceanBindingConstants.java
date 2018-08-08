@@ -41,7 +41,7 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_ROCKERSWITCH = new ThingTypeUID(BINDING_ID, "rockerSwitch");
     public final static ThingTypeUID THING_TYPE_VIRTUALROCKERSWITCH = new ThingTypeUID(BINDING_ID,
             "virtualRockerSwitch");
-    public final static ThingTypeUID THING_TYPE_UNIVERSALACTUATOR = new ThingTypeUID(BINDING_ID, "universalCommand");
+    // public final static ThingTypeUID THING_TYPE_UNIVERSALACTUATOR = new ThingTypeUID(BINDING_ID, "universalCommand");
     public final static ThingTypeUID THING_TYPE_CENTRALCOMMAND = new ThingTypeUID(BINDING_ID, "centralCommand");
     public final static ThingTypeUID THING_TYPE_ROOMOPERATINGPANEL = new ThingTypeUID(BINDING_ID, "roomOperatingPanel");
     public final static ThingTypeUID THING_TYPE_MECHANICALHANDLE = new ThingTypeUID(BINDING_ID, "mechanicalHandle");
@@ -53,14 +53,14 @@ public class OpenOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR = new ThingTypeUID(BINDING_ID,
             "lightTemperatureOccupancySensor");
     public final static ThingTypeUID THING_TYPE_GENERICTHING = new ThingTypeUID(BINDING_ID, "genericThing");
-    public final static ThingTypeUID THING_TYPE_ELTAKOFSB = new ThingTypeUID(BINDING_ID, "eltakoFSB");
+    // public final static ThingTypeUID THING_TYPE_ELTAKOFSB = new ThingTypeUID(BINDING_ID, "eltakoFSB");
+    public final static ThingTypeUID THING_TYPE_ROLLERSHUTTER = new ThingTypeUID(BINDING_ID, "rollershutter");
 
     public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_PUSHBUTTON,
-            THING_TYPE_ROCKERSWITCH, THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_UNIVERSALACTUATOR,
-            THING_TYPE_CENTRALCOMMAND, THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE,
-            THING_TYPE_CONTACTANDSWITCH, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR,
-            THING_TYPE_HUMIDITYTEMPERATURESENSOR, THING_TYPE_GENERICTHING, THING_TYPE_ELTAKOFSB,
-            THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR);
+            THING_TYPE_ROCKERSWITCH, THING_TYPE_VIRTUALROCKERSWITCH, THING_TYPE_CENTRALCOMMAND,
+            THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACTANDSWITCH,
+            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR, THING_TYPE_HUMIDITYTEMPERATURESENSOR,
+            THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR);
 
     // List of all Channel IDs
     public final static String CHANNEL_REPEATERMODE = "repeater";

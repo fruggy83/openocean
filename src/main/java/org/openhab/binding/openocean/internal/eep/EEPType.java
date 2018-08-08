@@ -93,6 +93,7 @@ import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0F;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_0F_NodON;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_12;
 import org.openhab.binding.openocean.internal.eep.D2_01.D2_01_12_NodON;
+import org.openhab.binding.openocean.internal.eep.D2_05.D2_05_00;
 import org.openhab.binding.openocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.openocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.openocean.internal.eep.F6_02.F6_02_01;
@@ -293,7 +294,7 @@ public enum EEPType {
     // UniversalCommand(RORG._4BS, 0x3f, 0x7f, false, A5_3F_7F_Universal.class, THING_TYPE_UNIVERSALACTUATOR,
     // CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER, CHANNEL_TEACHINCMD,
     // CHANNEL_RECEIVINGSTATE),
-    EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, "EltakoFSB", 0, A5_3F_7F_EltakoFSB.class, THING_TYPE_UNIVERSALACTUATOR, 0,
+    EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, "EltakoFSB", 0, A5_3F_7F_EltakoFSB.class, THING_TYPE_ROLLERSHUTTER, 0,
             new Hashtable<String, Configuration>() {
                 private static final long serialVersionUID = 1L;
                 {
@@ -306,6 +307,8 @@ public enum EEPType {
                     put(CHANNEL_RECEIVINGSTATE, new Configuration());
                 }
             }),
+    Rollershutter_D2(RORG.VLD, 0x05, 0x00, true, D2_05_00.class, THING_TYPE_ROLLERSHUTTER, CHANNEL_ROLLERSHUTTER,
+            CHANNEL_RECEIVINGSTATE),
 
     SwitchWithEnergyMeasurment_09(RORG.VLD, 0x01, 0x09, true, D2_01_09.class, THING_TYPE_MEASUREMENTSWITCH,
             CHANNEL_GENERAL_SWITCHING, CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_RECEIVINGSTATE),

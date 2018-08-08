@@ -4,13 +4,13 @@
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="eltakoFSB">
+	<thing-type id="rollershutter">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="bridge" />
 		</supported-bridge-type-refs>
 
-		<label>Eltako rollershutter</label>
-		<description>Eltako rollershutter (FSB14/61/71) with EEP A5-3F-7F</description>
+		<label>Rollershutter</label>
+		<description>Rollershutter (like Eltako FSB14/61/71 or NodOn SIN-2-RS-01)</description>
 
 		<properties>
 			<property name="enoceanId" />
@@ -20,10 +20,16 @@
 				<label>Sender Id</label>
 				<description>Id is used to generate the EnOcean Id (Int between [1-127]). If not specified the next free Id will be determined by bridge</description>
 			</parameter>
+			<parameter name="pollingInterval" type="integer" min="0" unit="s">
+				<label>Polling interval</label>
+				<description>Time in seconds after a refresh is triggerd, 0 to disable</description>
+				<default>300</default>
+			</parameter>
 			<parameter name="sendingEEPId" type="text">
 				<label>EEP for sending commands</label>
 				<options>
 					<option value="A5_3F_7F_EltakoFSB">Eltako FSB14/61/71</option>
+					<option value="D2_05_00">D2-05-00 Rollershutter (like SIN-2-RS-01)</option>
 				</options>
 				<default>A5_3F_7F_EltakoFSB</default>
 				<limitToOptions>true</limitToOptions>
@@ -37,6 +43,7 @@
 				<label>EEP for receiving states</label>
 				<options>
 					<option value="A5_3F_7F_EltakoFSB">Eltako FSB14/61/71</option>
+					<option value="D2_05_00">D2-05-00 Rollershutter (like SIN-2-RS-01)</option>
 				</options>
 				<default>A5_3F_7F_EltakoFSB</default>
 				<limitToOptions>true</limitToOptions>
