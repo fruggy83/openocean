@@ -43,8 +43,6 @@ public abstract class OpenOceanTransceiver {
     private Future<?> readingTask;
     private Future<?> timeOut;
 
-    protected String path;
-
     private Logger logger = LoggerFactory.getLogger(OpenOceanTransceiver.class);
 
     class Request {
@@ -142,9 +140,7 @@ public abstract class OpenOceanTransceiver {
         ReadingData
     }
 
-    public OpenOceanTransceiver(String path, TransceiverErrorListener errorListener,
-            ScheduledExecutorService scheduler) {
-        this.path = path;
+    public OpenOceanTransceiver(TransceiverErrorListener errorListener, ScheduledExecutorService scheduler) {
 
         requestQueue = new RequestQueue(scheduler);
         listeners = new HashMap<Long, ESP3PacketListener>();
@@ -174,10 +170,10 @@ public abstract class OpenOceanTransceiver {
         logger.debug("Interrupt rx Thread");
         if (readingTask != null) {
             readingTask.cancel(true);
-        }
-
-        synchronized (this) {
-            this.notify();
+            try {
+                inputStream.close();
+            } catch (Exception e) {
+            }
         }
 
         readingTask = null;
@@ -187,168 +183,171 @@ public abstract class OpenOceanTransceiver {
     }
 
     private void receivePackets() {
+        byte[] buffer = new byte[1];
+
+        while (readingTask != null && !readingTask.isCancelled()) {
+
+            int bytesRead = read(buffer, 1);
+            if (bytesRead > 0) {
+                // if byte == sync byte => processMessage
+                processMessage(buffer[0]);
+            }
+        }
+    }
+
+    protected abstract int read(byte[] buffer, int length);
+
+    byte[] dataBuffer = new byte[Helper.ENOCEAN_MAX_DATA];
+    ReadingState state = ReadingState.WaitingForSyncByte; // we already received sync byte when we get called
+    int currentPosition = 0;
+    int dataLength = -1;
+    int optionalLength = -1;
+    byte packetType = -1;
+
+    private void processMessage(byte firstByte) {
 
         byte[] readingBuffer = new byte[Helper.ENOCEAN_MAX_DATA];
         int bytesRead = -1;
         byte _byte;
 
-        byte[] dataBuffer = new byte[Helper.ENOCEAN_MAX_DATA];
-        ReadingState state = ReadingState.WaitingForSyncByte;
-        int currentPosition = 0;
-        int dataLength = -1;
-        int optionalLength = -1;
-        byte packetType = -1;
+        try {
 
-        logger.debug("Listening on port: {}", path);
+            readingBuffer[0] = firstByte;
 
-        while (readingTask != null && !readingTask.isCancelled()) {
-            try {
+            bytesRead = this.inputStream.read(readingBuffer, 1, inputStream.available());
+            if (bytesRead == -1) {
+                throw new IOException("could not read from inputstream");
+            }
 
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        break;
-                    }
-                }
-
-                if (readingTask.isCancelled()) {
-                    return;
-                }
-
-                bytesRead = this.inputStream.read(readingBuffer, 0, inputStream.available());
-                if (bytesRead == -1) {
-                    throw new IOException("could not read from inputstream");
-                }
-
-                for (int p = 0; p < bytesRead; p++) {
-                    _byte = readingBuffer[p];
-
-                    switch (state) {
-                        case WaitingForSyncByte:
-                            if (_byte == Helper.ENOCEAN_SYNC_BYTE) {
-                                state = ReadingState.ReadingHeader;
-                                logger.trace("Received Sync Byte");
-                            }
-                            break;
-                        case ReadingHeader:
-                            if (currentPosition == Helper.ENOCEAN_HEADER_LENGTH) {
-                                if (Helper.checkCRC8(dataBuffer, Helper.ENOCEAN_HEADER_LENGTH, _byte)
-                                        && ((dataBuffer[0] & 0xFF) << 8) + (dataBuffer[1] & 0xFF)
-                                                + (dataBuffer[2] & 0xFF) > 0) {
-
-                                    state = ReadingState.ReadingData;
-
-                                    dataLength = ((dataBuffer[0] & 0xFF << 8) | (dataBuffer[1] & 0xFF));
-                                    optionalLength = dataBuffer[2] & 0xFF;
-                                    packetType = dataBuffer[3];
-                                    currentPosition = 0;
-
-                                    if (packetType == 3) {
-                                        logger.trace("Received sub_msg");
-                                    }
-
-                                    logger.trace("Received header, data length {} optional length {} packet type {}",
-                                            dataLength, optionalLength, packetType);
-                                } else {
-                                    // check if we find a sync byte in current buffer
-                                    int copyFrom = -1;
-                                    for (int i = 0; i < Helper.ENOCEAN_HEADER_LENGTH; i++) {
-                                        if (dataBuffer[i] == Helper.ENOCEAN_SYNC_BYTE) {
-                                            copyFrom = i + 1;
-                                            break;
-                                        }
-                                    }
-
-                                    if (copyFrom != -1) {
-                                        System.arraycopy(dataBuffer, copyFrom, dataBuffer, 0,
-                                                Helper.ENOCEAN_HEADER_LENGTH - copyFrom);
-                                        state = ReadingState.ReadingHeader;
-                                        currentPosition = Helper.ENOCEAN_HEADER_LENGTH - copyFrom;
-                                        dataBuffer[currentPosition++] = _byte;
-                                    } else {
-                                        currentPosition = 0;
-                                        state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
-                                                : ReadingState.WaitingForSyncByte;
-                                    }
-                                    logger.trace("CrC8 header check not successful");
-                                }
-                            } else {
-                                dataBuffer[currentPosition++] = _byte;
-                            }
-                            break;
-                        case ReadingData:
-                            if (currentPosition == dataLength + optionalLength) {
-                                if (Helper.checkCRC8(dataBuffer, dataLength + optionalLength, _byte)) {
-                                    state = ReadingState.WaitingForSyncByte;
-                                    ESP3Packet packet = ESP3PacketFactory.BuildPacket(dataLength, optionalLength,
-                                            packetType, dataBuffer);
-
-                                    if (packet != null) {
-                                        if (packet.getPacketType() == ESPPacketType.RESPONSE) {
-                                            logger.trace("publish response");
-
-                                            if (currentRequest != null) {
-                                                if (currentRequest.ResponseListener != null) {
-
-                                                    logger.trace("response received");
-                                                    currentRequest.ResponsePacket = (Response) packet;
-                                                    try {
-                                                        currentRequest.ResponseListener
-                                                                .handleResponse(currentRequest.ResponsePacket);
-                                                    } catch (Exception e) {
-                                                    }
-
-                                                    logger.trace("handled request");
-                                                } else {
-                                                    logger.trace("request without listener");
-                                                }
-                                            }
-                                        } else if (packet instanceof ERP1Message) {
-
-                                            ERP1Message msg = (ERP1Message) packet;
-
-                                            logger.trace("publish event for: {}",
-                                                    HexUtils.bytesToHex(msg.getSenderId()));
-
-                                            byte[] d = new byte[dataLength + optionalLength];
-                                            System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                            logger.trace("{}", HexUtils.bytesToHex(d));
-
-                                            informListeners(msg);
-                                        }
-                                    } else {
-                                        logger.trace("Unknown ESP3Packet");
-                                        byte[] d = new byte[dataLength + optionalLength];
-                                        System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                        logger.trace("{}", HexUtils.bytesToHex(d));
-                                    }
-
-                                    requestQueue.sendNext();
-
-                                } else {
-                                    state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
-                                            : ReadingState.WaitingForSyncByte;
-                                    logger.trace("esp packet malformed");
-                                }
-
-                                currentPosition = 0;
-                                dataLength = optionalLength = packetType = -1;
-                            } else {
-                                dataBuffer[currentPosition++] = _byte;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            } catch (IOException ioexception) {
-                errorListener.ErrorOccured(ioexception);
+            if (readingTask == null || readingTask.isCancelled()) {
                 return;
             }
-        }
 
-        logger.debug("finished listening");
+            bytesRead++;
+            for (int p = 0; p < bytesRead; p++) {
+                _byte = readingBuffer[p];
+
+                switch (state) {
+                    case WaitingForSyncByte:
+                        if (_byte == Helper.ENOCEAN_SYNC_BYTE) {
+                            state = ReadingState.ReadingHeader;
+                            logger.trace("Received Sync Byte");
+                        }
+                        break;
+                    case ReadingHeader:
+                        if (currentPosition == Helper.ENOCEAN_HEADER_LENGTH) {
+                            if (Helper.checkCRC8(dataBuffer, Helper.ENOCEAN_HEADER_LENGTH, _byte)
+                                    && ((dataBuffer[0] & 0xFF) << 8) + (dataBuffer[1] & 0xFF)
+                                            + (dataBuffer[2] & 0xFF) > 0) {
+
+                                state = ReadingState.ReadingData;
+
+                                dataLength = ((dataBuffer[0] & 0xFF << 8) | (dataBuffer[1] & 0xFF));
+                                optionalLength = dataBuffer[2] & 0xFF;
+                                packetType = dataBuffer[3];
+                                currentPosition = 0;
+
+                                if (packetType == 3) {
+                                    logger.trace("Received sub_msg");
+                                }
+
+                                logger.trace("Received header, data length {} optional length {} packet type {}",
+                                        dataLength, optionalLength, packetType);
+                            } else {
+                                // check if we find a sync byte in current buffer
+                                int copyFrom = -1;
+                                for (int i = 0; i < Helper.ENOCEAN_HEADER_LENGTH; i++) {
+                                    if (dataBuffer[i] == Helper.ENOCEAN_SYNC_BYTE) {
+                                        copyFrom = i + 1;
+                                        break;
+                                    }
+                                }
+
+                                if (copyFrom != -1) {
+                                    System.arraycopy(dataBuffer, copyFrom, dataBuffer, 0,
+                                            Helper.ENOCEAN_HEADER_LENGTH - copyFrom);
+                                    state = ReadingState.ReadingHeader;
+                                    currentPosition = Helper.ENOCEAN_HEADER_LENGTH - copyFrom;
+                                    dataBuffer[currentPosition++] = _byte;
+                                } else {
+                                    currentPosition = 0;
+                                    state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
+                                            : ReadingState.WaitingForSyncByte;
+                                }
+                                logger.trace("CrC8 header check not successful");
+                            }
+                        } else {
+                            dataBuffer[currentPosition++] = _byte;
+                        }
+                        break;
+                    case ReadingData:
+                        if (currentPosition == dataLength + optionalLength) {
+                            if (Helper.checkCRC8(dataBuffer, dataLength + optionalLength, _byte)) {
+                                state = ReadingState.WaitingForSyncByte;
+                                ESP3Packet packet = ESP3PacketFactory.BuildPacket(dataLength, optionalLength,
+                                        packetType, dataBuffer);
+
+                                if (packet != null) {
+                                    if (packet.getPacketType() == ESPPacketType.RESPONSE) {
+                                        logger.trace("publish response");
+
+                                        if (currentRequest != null) {
+                                            if (currentRequest.ResponseListener != null) {
+
+                                                logger.trace("response received");
+                                                currentRequest.ResponsePacket = (Response) packet;
+                                                try {
+                                                    currentRequest.ResponseListener
+                                                            .handleResponse(currentRequest.ResponsePacket);
+                                                } catch (Exception e) {
+                                                }
+
+                                                logger.trace("handled request");
+                                            } else {
+                                                logger.trace("request without listener");
+                                            }
+                                        }
+                                    } else if (packet instanceof ERP1Message) {
+
+                                        ERP1Message msg = (ERP1Message) packet;
+
+                                        logger.debug("publish event for: {}", HexUtils.bytesToHex(msg.getSenderId()));
+
+                                        byte[] d = new byte[dataLength + optionalLength];
+                                        System.arraycopy(dataBuffer, 0, d, 0, d.length);
+                                        logger.debug("{}", HexUtils.bytesToHex(d));
+
+                                        informListeners(msg);
+                                    }
+                                } else {
+                                    logger.trace("Unknown ESP3Packet");
+                                    byte[] d = new byte[dataLength + optionalLength];
+                                    System.arraycopy(dataBuffer, 0, d, 0, d.length);
+                                    logger.trace("{}", HexUtils.bytesToHex(d));
+                                }
+
+                                requestQueue.sendNext();
+
+                            } else {
+                                state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
+                                        : ReadingState.WaitingForSyncByte;
+                                logger.trace("esp packet malformed");
+                            }
+
+                            currentPosition = 0;
+                            dataLength = optionalLength = packetType = -1;
+                        } else {
+                            dataBuffer[currentPosition++] = _byte;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } catch (IOException ioexception) {
+            errorListener.ErrorOccured(ioexception);
+            return;
+        }
     }
 
     public void sendESP3Packet(ESP3Packet packet, ResponseListener<? extends Response> responseCallback)

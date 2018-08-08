@@ -32,6 +32,7 @@ import gnu.io.UnsupportedCommOperationException;
  */
 public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements SerialPortEventListener {
 
+    protected String path;
     SerialPort serialPort;
     private static final int ENOCEAN_DEFAULT_BAUD = 57600;
 
@@ -39,7 +40,8 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
 
     public OpenOceanSerialTransceiver(String path, TransceiverErrorListener errorListener,
             ScheduledExecutorService scheduler) {
-        super(path, errorListener, scheduler);
+        super(errorListener, scheduler);
+        this.path = path;
     }
 
     @Override
@@ -68,9 +70,6 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
         inputStream = serialPort.getInputStream();
         outputStream = serialPort.getOutputStream();
 
-        serialPort.addEventListener(this);
-        serialPort.notifyOnDataAvailable(true);
-
         logger.info("OpenOceanSerialTransceiver initialized");
     }
 
@@ -78,12 +77,6 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
     public void ShutDown() {
 
         logger.debug("shutting down transceiver");
-
-        if (serialPort != null) {
-            logger.debug("removing serial event listener");
-            serialPort.removeEventListener();
-        }
-
         super.ShutDown();
 
         if (outputStream != null) {
@@ -116,6 +109,15 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
             synchronized (this) {
                 this.notify();
             }
+        }
+    }
+
+    @Override
+    protected int read(byte[] buffer, int length) {
+        try {
+            return this.inputStream.read(buffer, 0, length);
+        } catch (IOException e) {
+            return 0;
         }
     }
 }

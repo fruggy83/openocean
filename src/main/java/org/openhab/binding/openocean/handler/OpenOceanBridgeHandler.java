@@ -13,7 +13,6 @@ import static org.openhab.binding.openocean.OpenOceanBindingConstants.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
@@ -43,12 +42,15 @@ import org.openhab.binding.openocean.internal.messages.Response;
 import org.openhab.binding.openocean.internal.messages.Response.ResponseType;
 import org.openhab.binding.openocean.internal.transceiver.ESP3PacketListener;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanSerialTransceiver;
+import org.openhab.binding.openocean.internal.transceiver.OpenOceanTCPTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.OpenOceanTransceiver;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListener;
 import org.openhab.binding.openocean.internal.transceiver.ResponseListenerIgnoringTimeouts;
 import org.openhab.binding.openocean.internal.transceiver.TransceiverErrorListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -63,7 +65,8 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
 
     private Logger logger = LoggerFactory.getLogger(OpenOceanBridgeHandler.class);
 
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_BRIDGE);
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Sets.newHashSet(THING_TYPE_SERIALBRIDGE,
+            THING_TYPE_TCPBRIDGE);
 
     private OpenOceanTransceiver transceiver;
     private ScheduledFuture<?> connectorTask;
@@ -173,9 +176,16 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
     private synchronized void initTransceiver() {
 
         try {
+
+            Configuration c = getThing().getConfiguration();
             if (transceiver == null) {
-                transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this,
-                        scheduler);
+                if (getThing().getThingTypeUID().equals(THING_TYPE_SERIALBRIDGE)) {
+                    transceiver = new OpenOceanSerialTransceiver((String) getThing().getConfiguration().get(PORT), this,
+                            scheduler);
+                } else {
+                    transceiver = new OpenOceanTCPTransceiver((String) getThing().getConfiguration().get(HOST),
+                            ((BigDecimal) getThing().getConfiguration().get(PORT)).intValue(), this, scheduler);
+                }
             }
 
             if (transceiver != null) {
@@ -187,31 +197,36 @@ public class OpenOceanBridgeHandler extends ConfigStatusBridgeHandler implements
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "starting rx thread...");
                 transceiver.StartReceiving(scheduler);
 
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
-                        "trying to get bridge base id...");
-                logger.debug("request base id");
-                transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
-                        new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
+                if ((boolean) c.get(RS485)) {
+                    baseId = new byte[4];
+                    updateStatus(ThingStatus.ONLINE);
+                } else {
+                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING,
+                            "trying to get bridge base id...");
+                    logger.debug("request base id");
+                    transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_IDBASE,
+                            new ResponseListenerIgnoringTimeouts<RDBaseIdResponse>() {
 
-                            @Override
-                            public void responseReceived(RDBaseIdResponse response) {
+                                @Override
+                                public void responseReceived(RDBaseIdResponse response) {
 
-                                logger.debug("received response for base id");
+                                    logger.debug("received response for base id");
 
-                                if (response.isValid() && response.isOK()) {
-                                    baseId = response.getBaseId().clone();
-                                    updateProperty(PROPERTY_Base_ID, HexUtils.bytesToHex(response.getBaseId()));
-                                    updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
-                                            Integer.toString(response.getRemainingWriteCycles()));
-                                    transceiver.setFilteredDeviceId(baseId);
+                                    if (response.isValid() && response.isOK()) {
+                                        baseId = response.getBaseId().clone();
+                                        updateProperty(PROPERTY_Base_ID, HexUtils.bytesToHex(response.getBaseId()));
+                                        updateProperty(PROPERTY_REMAINING_WRITE_CYCLES_Base_ID,
+                                                Integer.toString(response.getRemainingWriteCycles()));
+                                        transceiver.setFilteredDeviceId(baseId);
 
-                                    updateStatus(ThingStatus.ONLINE);
-                                } else {
-                                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                                            "Could not get BaseId");
+                                        updateStatus(ThingStatus.ONLINE);
+                                    } else {
+                                        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                                                "Could not get BaseId");
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
 
                 transceiver.sendESP3Packet(ESP3PacketFactory.CO_RD_VERSION,
                         new ResponseListenerIgnoringTimeouts<RDVersionResponse>() {

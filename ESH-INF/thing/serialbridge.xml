@@ -5,13 +5,13 @@
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
 	<!-- OpenOcean Bridge -->
-	<bridge-type id="bridge">
-		<label>OpenOcean Bridge</label>
+	<bridge-type id="serialbridge">
+		<label>OpenOcean Serial Bridge</label>
 		<description>The OpenOcean bridge connects to an ESP3 device.</description>
 
 		<channels>
 			<channel id="repeater" typeId="repeaterMode" />
-			<channel typeId="setBaseId" id="setBaseId"></channel>
+			<channel typeId="setBaseId" id="setBaseId" />
 		</channels>
 
 		<properties>
@@ -29,6 +29,11 @@
 				<label>Serial port</label>
 				<description>Serial port of the connected enocean transceiver</description>
 				<required>true</required>
+			</parameter>
+			<parameter name="rs485" type="boolean">
+				<advanced>true</advanced>
+				<label>Gateway connected directly to RS485 BUS</label>
+				<default>false</default>
 			</parameter>
 			<parameter name="nextDeviceId" type="integer">
 				<advanced>true</advanced>

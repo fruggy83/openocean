@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableSet;
 @Component(service = UsbSerialDiscoveryParticipant.class)
 public class OpenOceanUsbSerialDiscoveryParticipant implements UsbSerialDiscoveryParticipant {
 
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = ImmutableSet.of(THING_TYPE_BRIDGE);
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = ImmutableSet.of(THING_TYPE_SERIALBRIDGE);
 
     public static final int ENOCEAN_USB300_DONGLE_VENDOR_ID = 0x0403;
     public static final int ENOCEAN_USB300_DONGLE_PRODUCT_ID = 0x6001;
@@ -67,9 +67,9 @@ public class OpenOceanUsbSerialDiscoveryParticipant implements UsbSerialDiscover
 
     private ThingUID createBridgeThingType(UsbSerialDeviceInformation deviceInformation) {
         if (deviceInformation.getSerialNumber() != null) {
-            return new ThingUID(THING_TYPE_BRIDGE, deviceInformation.getSerialNumber());
+            return new ThingUID(THING_TYPE_SERIALBRIDGE, deviceInformation.getSerialNumber());
         } else {
-            return new ThingUID(THING_TYPE_BRIDGE, String.valueOf(deviceInformation.getProductId()));
+            return new ThingUID(THING_TYPE_SERIALBRIDGE, String.valueOf(deviceInformation.getProductId()));
         }
     }
 

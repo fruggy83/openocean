@@ -6,7 +6,8 @@
 
 	<thing-type id="rollershutter">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="serialbridge" />
+			<bridge-type-ref id="tcpbridge" />
 		</supported-bridge-type-refs>
 
 		<label>Rollershutter</label>
