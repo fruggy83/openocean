@@ -120,6 +120,7 @@ public class OpenOceanDeviceDiscoveryService extends AbstractDiscoveryService
 
                     // send response
                     EEP response = EEPFactory.buildResponseEEPFromTeachInERP1(msg, newSenderId);
+                    response.setSuppressRepeating(true);
                     bridgeHandler.sendMessage(response.getERP1Message(), null);
                     logger.info("Send teach in response for {}", HexUtils.bytesToHex(id));
                 }
