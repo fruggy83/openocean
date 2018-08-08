@@ -33,6 +33,7 @@ Import-Package:
  org.eclipse.smarthome.core.transform,
  org.eclipse.smarthome.core.transform.actions,
  org.eclipse.smarthome.core.types,
+ org.junit;version="4.0.0";resolution:=optional,
  org.eclipse.smarthome.core.util,
  org.eclipse.smarthome.model.script.engine.action,
  org.openhab.binding.openocean,

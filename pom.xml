@@ -15,5 +15,13 @@
 
 	<name>OpenOcean Binding</name>
 	<packaging>eclipse-plugin</packaging>
-
+	
+	<dependencies>
+	<dependency>
+        <groupId>org.eclipse.smarthome.config</groupId>
+        <artifactId>org.eclipse.smarthome.config.discovery.usbserial</artifactId>
+        <version>0.10.0-SNAPSHOT</version>
+    </dependency>
+    </dependencies>
+		
 </project>
