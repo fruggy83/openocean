@@ -43,7 +43,7 @@ public class A5_3F_7F_Universal extends _4BSMessage {
                 String c = Transformation.transform(transformationInfo.transformationType,
                         transformationInfo.transformationFuntion, command.toString());
 
-                if (c != command.toString()) {
+                if (c != null && c != command.toString()) {
                     setData(HexUtils.hexToBytes(c));
                 }
 
