@@ -20,6 +20,7 @@ import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
+import gnu.io.RXTXCommDriver;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
@@ -45,8 +46,18 @@ public class OpenOceanSerialTransceiver extends OpenOceanTransceiver implements 
     public void Initialize() throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException,
             IOException, TooManyListenersException {
 
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(path);
-        CommPort commPort = portIdentifier.open(this.getClass().getName(), 2000);
+        CommPort commPort;
+
+        // There is currently a bug in nrjavaserial (https://github.com/NeuronRobotics/nrjavaserial/pull/121) so
+        // directly use RXTXCommDriver on windows os
+        if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
+            RXTXCommDriver RXTXDriver = new RXTXCommDriver();
+            RXTXDriver.initialize();
+            commPort = RXTXDriver.getCommPort(path, CommPortIdentifier.PORT_SERIAL);
+        } else {
+            CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(path);
+            commPort = portIdentifier.open(this.getClass().getName(), 2000);
+        }
 
         serialPort = (SerialPort) commPort;
         serialPort.setSerialPortParams(ENOCEAN_DEFAULT_BAUD, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
