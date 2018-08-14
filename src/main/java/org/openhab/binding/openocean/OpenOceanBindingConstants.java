@@ -253,7 +253,7 @@ public class OpenOceanBindingConstants {
 
     @NonNull
     public static final Set<ProfileTypeUID> SUPPORTED_PROFILETYPES_UIDS = ImmutableSet
-            .of(OpenOceanProfileTypes.RockerSwitchToPlayPause, OpenOceanProfileTypes.RockerSwitchToOnOff);
+            .of(OpenOceanProfileTypes.RockerSwitchToPlayPause, OpenOceanProfileTypes.RockerSwitchFromOnOff);
 
     public static final int EltakoId = 0x00d;
     public static final int NodONId = 0x046; // NodOn devices are designed by ID-RF hence use their ID

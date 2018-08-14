@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Daniel Weber - Initial contribution
  */
 @Component(service = { ProfileFactory.class, ProfileTypeProvider.class, ProfileAdvisor.class })
+
 public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, ProfileTypeProvider {
 
     private ChannelTypeRegistry channelTypeRegistry;
@@ -48,8 +49,8 @@ public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, 
 
         if (profileTypeUID.equals(OpenOceanProfileTypes.RockerSwitchToPlayPause)) {
             return new RockerSwitchToPlayPauseProfile(callback);
-        } else if (profileTypeUID.equals(OpenOceanProfileTypes.RockerSwitchToOnOff)) {
-            return new RockerSwitchToOnOffProfile(callback, profileContext);
+        } else if (profileTypeUID.equals(OpenOceanProfileTypes.RockerSwitchFromOnOff)) {
+            return new RockerSwitchFromOnOffProfile(callback, profileContext);
         }
 
         return null;
@@ -74,7 +75,7 @@ public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, 
             if (CoreItemFactory.PLAYER.equalsIgnoreCase(itemType)) {
                 return OpenOceanProfileTypes.RockerSwitchToPlayPause;
             } else if (CoreItemFactory.SWITCH.equalsIgnoreCase(itemType)) {
-                return OpenOceanProfileTypes.RockerSwitchToOnOff;
+                return OpenOceanProfileTypes.RockerSwitchFromOnOff;
             }
         }
 
@@ -90,7 +91,7 @@ public class OpenOceanProfileFactory implements ProfileFactory, ProfileAdvisor, 
     @Override
     public Collection<@NonNull ProfileType> getProfileTypes(@Nullable Locale locale) {
         return ImmutableSet.of(OpenOceanProfileTypes.RockerSwitchToPlayPauseType,
-                OpenOceanProfileTypes.RockerSwitchToOnOffType);
+                OpenOceanProfileTypes.RockerSwitchFromOnOffType);
     }
 
     @Reference

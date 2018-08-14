@@ -17,7 +17,6 @@ import org.eclipse.smarthome.core.thing.profiles.ProfileCallback;
 import org.eclipse.smarthome.core.thing.profiles.ProfileContext;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
 import org.eclipse.smarthome.core.thing.profiles.StateProfile;
-import org.eclipse.smarthome.core.thing.profiles.TriggerProfile;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.openocean.internal.config.OpenOceanChannelVirtualRockerSwitchConfig;
@@ -27,7 +26,7 @@ import org.openhab.binding.openocean.internal.config.OpenOceanChannelVirtualRock
  *
  * @author Daniel Weber - Initial contribution
  */
-public class RockerSwitchToOnOffProfile implements TriggerProfile, StateProfile {
+public class RockerSwitchFromOnOffProfile implements StateProfile {
 
     private final ProfileCallback callback;
     private final ProfileContext context;
@@ -35,7 +34,7 @@ public class RockerSwitchToOnOffProfile implements TriggerProfile, StateProfile 
     private final SwitchMode switchMode;
     private final Integer duration;
 
-    RockerSwitchToOnOffProfile(ProfileCallback callback, ProfileContext context) {
+    RockerSwitchFromOnOffProfile(ProfileCallback callback, ProfileContext context) {
         this.callback = callback;
         this.context = context;
 
@@ -47,23 +46,13 @@ public class RockerSwitchToOnOffProfile implements TriggerProfile, StateProfile 
 
     @Override
     public ProfileTypeUID getProfileTypeUID() {
-        return OpenOceanProfileTypes.RockerSwitchToOnOff;
+        return OpenOceanProfileTypes.RockerSwitchFromOnOff;
     }
 
     @Override
     public void onStateUpdateFromItem(State state) {
         // do not react on item state updates as they are triggered by this profile
 
-    }
-
-    @Override
-    public void onTriggerFromHandler(String event) {
-        if (event.equalsIgnoreCase(CommonTriggerEvents.DIR1_PRESSED)) {
-            callback.sendUpdate(OnOffType.ON);
-        } else if (event.equalsIgnoreCase(CommonTriggerEvents.DIR2_PRESSED)) {
-            callback.sendUpdate(OnOffType.OFF);
-
-        }
     }
 
     @Override

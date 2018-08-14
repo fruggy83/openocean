@@ -14,6 +14,7 @@ import org.eclipse.smarthome.core.library.CoreItemFactory;
 import org.eclipse.smarthome.core.thing.DefaultSystemChannelTypeProvider;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeBuilder;
 import org.eclipse.smarthome.core.thing.profiles.ProfileTypeUID;
+import org.eclipse.smarthome.core.thing.profiles.StateProfileType;
 import org.eclipse.smarthome.core.thing.profiles.TriggerProfileType;
 
 /**
@@ -25,16 +26,16 @@ public class OpenOceanProfileTypes {
     public static final ProfileTypeUID RockerSwitchToPlayPause = new ProfileTypeUID(BINDING_ID,
             "rockerswitch-to-play-pause");
 
-    public static final ProfileTypeUID RockerSwitchToOnOff = new ProfileTypeUID(BINDING_ID, "rockerswitch-to-on-off");
+    public static final ProfileTypeUID RockerSwitchFromOnOff = new ProfileTypeUID(BINDING_ID,
+            "rockerswitch-from-on-off");
 
     public static final TriggerProfileType RockerSwitchToPlayPauseType = ProfileTypeBuilder
             .newTrigger(RockerSwitchToPlayPause, "Rocker switch to Play/Pause")
             .withSupportedItemTypes(CoreItemFactory.PLAYER)
             .withSupportedChannelTypeUIDs(DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID()).build();
 
-    public static final TriggerProfileType RockerSwitchToOnOffType = ProfileTypeBuilder
-            .newTrigger(RockerSwitchToOnOff, "Rocker switch to/from On/Off")
-            .withSupportedItemTypes(CoreItemFactory.SWITCH).withSupportedChannelTypeUIDs(
-                    DefaultSystemChannelTypeProvider.SYSTEM_RAWROCKER.getUID(), VirtualRockerSwitchChannelType)
+    public static final StateProfileType RockerSwitchFromOnOffType = ProfileTypeBuilder
+            .newState(RockerSwitchFromOnOff, "Rocker switch from On/Off item")
+            .withSupportedItemTypes(CoreItemFactory.SWITCH).withSupportedChannelTypeUIDs(VirtualRockerSwitchChannelType)
             .build();
 }

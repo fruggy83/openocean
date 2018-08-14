@@ -18,6 +18,7 @@ import java.util.TooManyListenersException;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.openocean.internal.OpenOceanException;
@@ -72,7 +73,7 @@ public abstract class OpenOceanTransceiver {
             }
         }
 
-        public synchronized void sendNext() throws IOException {
+        private synchronized void sendNext() throws IOException {
             // if (timeOut != null) {
             // timeOut.cancel(true);
             // }
@@ -96,20 +97,20 @@ public abstract class OpenOceanTransceiver {
                                 logger.debug("{}", HexUtils.bytesToHex(b));
                             }
 
-                            /*
-                             * timeOut = scheduler.schedule(() -> {
-                             * try {
-                             * sendNext();
-                             * } catch (IOException e) {
-                             * errorListener.ErrorOccured(e);
-                             * return;
-                             * }
-                             * }, 2000, TimeUnit.MILLISECONDS);
-                             */
-
                             outputStream.write(b);
                             outputStream.flush();
 
+                            // slowdown sending of message to avoid hickups at receivers
+                            // Todo tweak sending intervall (500 ist just a
+                            timeOut = scheduler.schedule(() -> {
+                                try {
+                                    logger.debug("sendNext");
+                                    sendNext();
+                                } catch (IOException e) {
+                                    errorListener.ErrorOccured(e);
+                                    return;
+                                }
+                            }, 500, TimeUnit.MILLISECONDS);
                         }
                     } else {
                         sendNext();
@@ -326,7 +327,7 @@ public abstract class OpenOceanTransceiver {
                                     logger.trace("{}", HexUtils.bytesToHex(d));
                                 }
 
-                                requestQueue.sendNext();
+                                // requestQueue.sendNext();
 
                             } else {
                                 state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
