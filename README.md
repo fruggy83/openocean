@@ -133,9 +133,9 @@ on Ubuntu 16.04.
 * ssh into your Ubuntu machine
 * Download precompiled binding into your openhab2-addons folder and adjust permissions
   * ``cd /usr/share/openhab2/addons/``
-  * ``sudo wget https://github.com/fruggy83/openocean/raw/master/precompiled/org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
-  * ``sudo chown openhab:openhab org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
-  * ``sudo chmod 644 org.openhab.binding.openocean-2.3.0-SNAPSHOT.jar``
+  * ``sudo wget https://github.com/fruggy83/openocean/raw/master/precompiled/org.openhab.binding.openocean-2.4.0-SNAPSHOT.jar``
+  * ``sudo chown openhab:openhab org.openhab.binding.openocean-2.4.0-SNAPSHOT.jar``
+  * ``sudo chmod 644 org.openhab.binding.openocean-2.4.0-SNAPSHOT.jar``
 * Additional openHAB configuration (see [openHAB documentation](https://docs.openhab.org/installation/linux.html#recommended-additional-setup-steps))
   * Add ``openhab`` user to tty group
     * ``sudo adduser openhab tty``
