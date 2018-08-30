@@ -77,6 +77,7 @@ public class OpenOceanBindingConstants {
 
     public final static String CHANNEL_DIMMER = "dimmer";
     public final static String CHANNEL_ROLLERSHUTTER = "rollershutter";
+    public final static String CHANNEL_ANGLE = "angle";
     public final static String CHANNEL_TEMPERATURE = "temperature";
     public final static String CHANNEL_HUMIDITY = "humidity";
     public final static String CHANNEL_SETPOINT = "setPoint";
@@ -135,6 +136,8 @@ public class OpenOceanBindingConstants {
                             CoreItemFactory.DIMMER));
                     put(CHANNEL_ROLLERSHUTTER, new ChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_ROLLERSHUTTER), CoreItemFactory.ROLLERSHUTTER));
+                    put(CHANNEL_ANGLE, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_ANGLE),
+                            CoreItemFactory.NUMBER));
                     put(CHANNEL_TEMPERATURE, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_TEMPERATURE),
                             CoreItemFactory.NUMBER));
                     put(CHANNEL_HUMIDITY, new ChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_HUMIDITY),
