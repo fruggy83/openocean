@@ -83,6 +83,7 @@ import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_21;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_22;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_23;
 import org.openhab.binding.openocean.internal.eep.A5_11.A5_11_03;
+import org.openhab.binding.openocean.internal.eep.A5_12.A5_12_01;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Blinds;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Dimming;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Switching;
@@ -292,8 +293,8 @@ public enum EEPType {
             CHANNEL_LIGHT_SWITCHING, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
     CentralCommandDimming(RORG._4BS, 0x38, 0x08, false, A5_38_08_Dimming.class, THING_TYPE_CENTRALCOMMAND, 0x02,
             CHANNEL_DIMMER, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
-    CentralCommandBlinds(RORG._4BS, 0x38, 0x08, false, A5_38_08_Blinds.class, THING_TYPE_CENTRALCOMMAND,
-            0x07, CHANNEL_ROLLERSHUTTER, CHANNEL_ANGLE, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
+    CentralCommandBlinds(RORG._4BS, 0x38, 0x08, false, A5_38_08_Blinds.class, THING_TYPE_CENTRALCOMMAND, 0x07,
+            CHANNEL_ROLLERSHUTTER, CHANNEL_ANGLE, CHANNEL_TEACHINCMD, CHANNEL_RECEIVINGSTATE),
 
     // UniversalCommand(RORG._4BS, 0x3f, 0x7f, false, A5_3F_7F_Universal.class, THING_TYPE_UNIVERSALACTUATOR,
     // CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER, CHANNEL_TEACHINCMD,
@@ -329,7 +330,10 @@ public enum EEPType {
             THING_TYPE_MEASUREMENTSWITCH, CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB,
             CHANNELTYPE_REPEATERMODE, CHANNEL_RECEIVINGSTATE),
     SwitchWithEnergyMeasurment_12(RORG.VLD, 0x01, 0x12, true, D2_01_12.class, THING_TYPE_MEASUREMENTSWITCH,
-            CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB, CHANNEL_RECEIVINGSTATE);
+            CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB, CHANNEL_RECEIVINGSTATE),
+
+    SwitchWithEnergyMeasurment_A5(RORG._4BS, 0x12, 0x01, false, A5_12_01.class, THING_TYPE_MEASUREMENTSWITCH,
+            CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_RECEIVINGSTATE);
 
     private RORG rorg;
     private int func;
