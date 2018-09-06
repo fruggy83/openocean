@@ -47,13 +47,16 @@ public abstract class A5_12 extends _4BSMessage {
 
             switch (div) {
                 case 0:
-                    factor /= 3600.0;
+                    factor /= 1;
                     break;
                 case 1:
-                    factor /= 1000;
+                    factor /= 10;
                     break;
                 case 2:
-                    factor = 1;
+                    factor /= 100;
+                    break;
+                case 3:
+                    factor /= 1000;
                     break;
                 default:
                     return UnDefType.UNDEF;

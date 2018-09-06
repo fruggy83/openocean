@@ -26,7 +26,6 @@
 				<options>
 					<option value="A5_38_08_01">Gateway command - switching (A5_38_08 sub command 0x01)</option>
 					<option value="A5_38_08_02">Gateway command - dimming (A5_38_08 sub command 0x02)</option>
-					<option value="A5_38_08_07">Gateway command - blinds (A5_38_08 sub command 0x07)</option>
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>

@@ -83,7 +83,6 @@ import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_21;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_22;
 import org.openhab.binding.openocean.internal.eep.A5_10.A5_10_23;
 import org.openhab.binding.openocean.internal.eep.A5_11.A5_11_03;
-import org.openhab.binding.openocean.internal.eep.A5_12.A5_12_01;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Blinds;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Dimming;
 import org.openhab.binding.openocean.internal.eep.A5_38.A5_38_08_Switching;
@@ -330,10 +329,7 @@ public enum EEPType {
             THING_TYPE_MEASUREMENTSWITCH, CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB,
             CHANNELTYPE_REPEATERMODE, CHANNEL_RECEIVINGSTATE),
     SwitchWithEnergyMeasurment_12(RORG.VLD, 0x01, 0x12, true, D2_01_12.class, THING_TYPE_MEASUREMENTSWITCH,
-            CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB, CHANNEL_RECEIVINGSTATE),
-
-    SwitchWithEnergyMeasurment_A5(RORG._4BS, 0x12, 0x01, false, A5_12_01.class, THING_TYPE_MEASUREMENTSWITCH,
-            CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_RECEIVINGSTATE);
+            CHANNEL_GENERAL_SWITCHINGA, CHANNEL_GENERAL_SWITCHINGB, CHANNEL_RECEIVINGSTATE);
 
     private RORG rorg;
     private int func;
