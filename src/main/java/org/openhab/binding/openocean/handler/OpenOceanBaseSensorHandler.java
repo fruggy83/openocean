@@ -108,9 +108,9 @@ public class OpenOceanBaseSensorHandler extends OpenOceanBaseThingHandler implem
             return;
         }
 
-        EEP eep = EEPFactory.buildEEP(receivingEEPTyp(), (ERP1Message) packet);
+        EEP eep = EEPFactory.buildEEP(receivingEEPType, (ERP1Message) packet);
 
-        logger.debug("ESP Packet {} for {} received", HexUtils.bytesToHex(packet.getPayload()),
+        logger.debug("ESP Packet payload {} for {} received", HexUtils.bytesToHex(packet.getPayload()),
                 this.getThing().getUID().getId());
 
         if (eep.isValid()) {
