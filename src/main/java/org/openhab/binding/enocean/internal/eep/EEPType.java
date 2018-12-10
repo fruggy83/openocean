@@ -90,6 +90,7 @@ import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_00;
 import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_01;
 import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_02;
 import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_03;
+import org.openhab.binding.enocean.internal.eep.A5_13.A5_13_01;
 import org.openhab.binding.enocean.internal.eep.A5_38.A5_38_08_Blinds;
 import org.openhab.binding.enocean.internal.eep.A5_38.A5_38_08_Dimming;
 import org.openhab.binding.enocean.internal.eep.A5_38.A5_38_08_Switching;
@@ -317,6 +318,10 @@ public enum EEPType {
             CHANNEL_TOTALCUBICMETRE, CHANNEL_INSTANTLITRE, CHANNEL_RECEIVINGSTATE),
     AutomatedMeterReading_03(RORG._4BS, 0x12, 0x03, false, A5_12_03.class, THING_TYPE_AUTOMATEDMETERSENSOR,
             CHANNEL_TOTALCUBICMETRE, CHANNEL_INSTANTLITRE, CHANNEL_RECEIVINGSTATE),
+
+    EnvironmentalSensor_01(RORG._4BS, 0x13, 0x01, false, A5_13_01.class, THING_TYPE_ENVIRONMENTALSENSOR,
+            CHANNEL_ILLUMINATION, CHANNEL_TEMPERATURE, CHANNEL_WINDSPEED, CHANNEL_RAINSTATUS, CHANNEL_ILLUMINATIONWEST,
+            CHANNEL_ILLUMINATIONSOUTHNORTH, CHANNEL_ILLUMINATIONEAST, CHANNEL_RECEIVINGSTATE),
 
     Rollershutter_A5(RORG._4BS, 0x11, 0x03, false, A5_11_03.class, THING_TYPE_ROLLERSHUTTER, CHANNEL_ROLLERSHUTTER,
             CHANNEL_ANGLE, CHANNEL_RECEIVINGSTATE),
