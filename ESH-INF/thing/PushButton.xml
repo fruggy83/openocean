@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean"
+<thing:thing-descriptions bindingId="enocean"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
@@ -7,17 +7,18 @@
 	<!-- RockerSwitch -->
 	<thing-type id="pushButton">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="serialbridge" />
-			<bridge-type-ref id="tcpbridge" />
+			<bridge-type-ref id="bridge" />
 		</supported-bridge-type-refs>
 
-		<label>F6-01 - Simple push button</label>
-		<description>Represents a physical push button (triggers "PRESSED" and "RELEASED" events)</description>
+		<label>Simple Push Button</label>
+		<description>Represents a physical push button (EEP: F6-01)</description>
 
-		<properties>
-			<property name="enoceanId" />
-		</properties>
 		<config-description>
+			<parameter name="enoceanId" type="text">
+				<label>EnOceanId</label>
+				<description>EnOceanId of device this thing belongs to</description>
+				<required>true</required>
+			</parameter>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
 				<description>EEP which is used by push button</description>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean"
+<thing:thing-descriptions bindingId="enocean"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
@@ -20,19 +20,8 @@
 
 	<channel-type id="setBaseId" advanced="true">
 		<item-type>String</item-type>
-		<label>Set base Id</label>
+		<label>Set Base Id</label>
 		<description>Set base id of EnOcean gateway. Use this with care! Must be between 0xFF800000 and 0xFFFFFF80</description>
-	</channel-type>
-
-	<!-- Light Switch Channel -->
-	<channel-type id="lightSwitch">
-		<item-type>Switch</item-type>
-		<label>Switch</label>
-		<description>The switch channel allows to switch the light on and off.</description>
-		<category>Light</category>
-		<tags>
-			<tag>Lighting</tag>
-		</tags>
 	</channel-type>
 
 	<!-- General Switch Channel -->
@@ -42,22 +31,22 @@
 		<description>The switch channel allows to switch something on and off.</description>
 		<category>Switch</category>
 	</channel-type>
-	
+
 	<!-- General Switch Channel -->
-    <channel-type id="generalSwitchA">
-        <item-type>Switch</item-type>
-        <label>Switch Channel A</label>
-        <description>The switch channel allows to switch channel A on and off.</description>
-        <category>Switch</category>
-    </channel-type>
-    
-    <!-- General Switch Channel -->
-    <channel-type id="generalSwitchB">
-        <item-type>Switch</item-type>
-        <label>Switch Channel B</label>
-        <description>The switch channel allows to switch channel B on and off.</description>
-        <category>Switch</category>
-    </channel-type>
+	<channel-type id="generalSwitchA">
+		<item-type>Switch</item-type>
+		<label>Switch Channel A</label>
+		<description>The switch channel allows to switch channel A on and off.</description>
+		<category>Switch</category>
+	</channel-type>
+
+	<!-- General Switch Channel -->
+	<channel-type id="generalSwitchB">
+		<item-type>Switch</item-type>
+		<label>Switch Channel B</label>
+		<description>The switch channel allows to switch channel B on and off.</description>
+		<category>Switch</category>
+	</channel-type>
 
 	<!-- Rollershutter Channel -->
 	<channel-type id="rollershutter">
@@ -72,15 +61,6 @@
 			</parameter>
 		</config-description>
 	</channel-type>
-	
-    <!-- Angle Channel -->
-    <channel-type id="angle">
-        <item-type>Number:Angle</item-type>
-        <label>Angle</label>
-        <description>Blind angle</description>
-        <category>Blinds</category>
-        <state pattern="%d°" />
-    </channel-type>
 
 	<!-- Dimmer Channel -->
 	<channel-type id="dimmer">
@@ -106,14 +86,6 @@
 		<state min="0" max="100" step="1" pattern="%d %%" readOnly="true" />
 	</channel-type>
 
-	<channel-type id="barometer">
-		<item-type>Number</item-type>
-		<label>Humidity</label>
-		<description>Relative humidity level in percentages</description>
-		<category>Humidity</category>
-		<state min="0" max="100" step="1" pattern="%d %%" readOnly="true" />
-	</channel-type>
-
 	<channel-type id="setPoint">
 		<item-type>Number</item-type>
 		<label>Set point</label>
@@ -123,7 +95,7 @@
 
 	<channel-type id="fanSpeedStage">
 		<item-type>String</item-type>
-		<label>Fan speed</label>
+		<label>Fan Speed</label>
 		<state readOnly="true">
 			<options>
 				<option value="-1">Auto</option>
@@ -151,7 +123,7 @@
 
 	<channel-type id="windowHandleState">
 		<item-type>String</item-type>
-		<label>Window handle state</label>
+		<label>Window Handle State</label>
 		<description>Describes the window handle state</description>
 		<state readOnly="true">
 			<options>
@@ -199,79 +171,100 @@
 
 	<channel-type id="receivingState">
 		<item-type>String</item-type>
-		<label>Receiving status</label>
+		<label>Receiving Status</label>
 		<state readOnly="true" />
 	</channel-type>
 
-	<!-- virtual rocker switch channel -->
-	<channel-type id="virtualRockerswitch">
-		<item-type>String</item-type>
-		<label>Rocker switch</label>
-		<description>The rocker switch channel allows to send rocker msg.</description>
-		<config-description>
-			<parameter name="duration" type="integer">
-				<label>Time in ms between Press and Release message</label>
-				<default>250</default>
-			</parameter>
-			<parameter name="switchMode" type="text">
-				<label>Switch mode</label>
-				<options>
-					<option value="rockerSwitch">Rocker switch</option>
-					<option value="toggleButtonDir1">Toggle button (upper button)</option>
-					<option value="toggleButtonDir2">Toggle button (lower button)</option>
-				</options>
-				<default>rockerSwitch</default>
-			</parameter>
-		</config-description>
-	</channel-type>
-	
 	<channel-type id="motionDetection">
-        <item-type>Switch</item-type>
-        <label>Motion detected</label>
-        <description>Motion detection sensor state.</description>
-        <category>Switch</category>
-        <state readOnly="true" />
-    </channel-type>
-    
-    <channel-type id="illumination">
-        <item-type>Number:Illuminance</item-type>
-        <label>Lux</label>
-        <description>Illumination in lux</description>
-        <state pattern="%d %unit%" readOnly="true" />
-    </channel-type>
-    
-    <channel-type id="autoOFF" advanced="true">
-        <item-type>Number:Duration</item-type>
-        <label>Auto Off</label>
-        <description>Automatically switch to off</description>
-        <state pattern="%d %unit%" />
-    </channel-type>
-    
-    <channel-type id="delayRadioOFF" advanced="true">
-        <item-type>Number:Duration</item-type>
-        <label>Delay radio off</label>
-        <description>Delay switch off by radio for given seconds</description>
-        <state pattern="%d %unit%" />
-    </channel-type>
+		<item-type>Switch</item-type>
+		<label>Motion Detected</label>
+		<description>Motion detection sensor state.</description>
+		<category>Switch</category>
+		<state readOnly="true" />
+	</channel-type>
 
-    <channel-type id="externalInterfaceMode" advanced="true">
-        <item-type>String</item-type>
-        <label>External interface mode</label>
-        <description>This option is to selected the type of the wired switch</description>
-        <state>
-            <options>
-                <option value="EXTERNALSWITCH">Switch</option>
-                <option value="EXTERNALBUTTON">Push button</option>
-                <option value="EXTERNALAUTO">Auto detect</option>
-            </options>
-        </state>
-    </channel-type>
-    
-    <channel-type id="twoStateSwitch" advanced="true">
-        <item-type>Switch</item-type>
-        <label>Switching state</label>
-        <description>Switch state according to specific on/off positions (otherwise toggle)</description>
-        <category>Switch</category>
-    </channel-type>
+	<channel-type id="illumination">
+		<item-type>Number:Illuminance</item-type>
+		<label>Lux</label>
+		<description>Illumination in lux</description>
+		<state pattern="%d %unit%" readOnly="true" />
+	</channel-type>
+
+	<channel-type id="autoOFF" advanced="true">
+		<item-type>Number:Duration</item-type>
+		<label>Auto Off</label>
+		<description>Automatically switch to off</description>
+		<state pattern="%d %unit%" />
+	</channel-type>
+
+	<channel-type id="delayRadioOFF" advanced="true">
+		<item-type>Number:Duration</item-type>
+		<label>Delay Radio Off</label>
+		<description>Delay switch off by radio for given seconds</description>
+		<state pattern="%d %unit%" />
+	</channel-type>
+
+	<channel-type id="externalInterfaceMode" advanced="true">
+		<item-type>String</item-type>
+		<label>External Interface Mode</label>
+		<description>This option is to selected the type of the wired switch</description>
+		<state>
+			<options>
+				<option value="EXTERNALSWITCH">Switch</option>
+				<option value="EXTERNALBUTTON">Push button</option>
+				<option value="EXTERNALAUTO">Auto detect</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="twoStateSwitch" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Switching State</label>
+		<description>Switch state according to specific on/off positions (otherwise toggle)</description>
+		<category>Switch</category>
+	</channel-type>
+
+	<channel-type id="ecoMode">
+		<item-type>Switch</item-type>
+		<label>Eco Mode</label>
+		<description>Activates eco mode (disables certain messages)</description>
+	</channel-type>
+
+	<!-- Angle Channel -->
+	<channel-type id="angle">
+		<item-type>Number:Angle</item-type>
+		<label>Angle</label>
+		<description>Blind angle</description>
+		<category>Blinds</category>
+		<state pattern="%d %unit%" />
+	</channel-type>
+
+	<!-- Litre Channel -->
+	<channel-type id="amrLitre">
+		<item-type>Number:Litre</item-type>
+		<label>Litre per second</label>
+		<state pattern="%d %unit%" readOnly="true" />
+	</channel-type>
+
+	<!-- Litre Channel -->
+	<channel-type id="amrCubicMetre">
+		<item-type>Number:Litre</item-type>
+		<label>Cubic metre</label>
+		<state pattern="%d %unit%" readOnly="true" />
+	</channel-type>
+
+	<channel-type id="counter">
+		<item-type>Number</item-type>
+		<label>Counter</label>
+		<description>Counter</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="currentNumber">
+		<item-type>Number</item-type>
+		<label>Current</label>
+		<description>Current</description>
+		<state readOnly="true" />
+	</channel-type>
 
 </thing:thing-descriptions>

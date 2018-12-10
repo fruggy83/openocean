@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean"
+<thing:thing-descriptions bindingId="enocean"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
 	<thing-type id="lightTemperatureOccupancySensor">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="serialbridge" />
-			<bridge-type-ref id="tcpbridge" />
+			<bridge-type-ref id="bridge" />
 		</supported-bridge-type-refs>
 
-		<label>A5-08 - Light, temperature and occupancy sensor</label>
-		<description>Light, temperature and occupancy sensor which sends EEP A5-08</description>
+		<label>Light/Temperature/Occupancy Sensor</label>
+		<description>Sensor which sends light, temperature and occupancy data (EEP: A5-08)</description>
 
 		<config-description>
+			<parameter name="enoceanId" type="text">
+				<label>EnOceanId</label>
+				<description>EnOceanId of device this thing belongs to</description>
+				<required>true</required>
+			</parameter>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
 				<description>EEP which is used by sensor</description>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean"
+<thing:thing-descriptions bindingId="enocean"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
@@ -7,14 +7,18 @@
 	<!-- MechanicalHandle -->
 	<thing-type id="mechanicalHandle">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="serialbridge" />
-			<bridge-type-ref id="tcpbridge" />
+			<bridge-type-ref id="bridge" />
 		</supported-bridge-type-refs>
 
-		<label>F6-10 - Mechanical Handle</label>
-		<description>Mechanical Handle like window/door handle (FHF) or FTKE</description>
+		<label>Mechanical Handle</label>
+		<description>Mechanical handle sensor for window/door handles (EEP: F6-10)</description>
 
 		<config-description>
+			<parameter name="enoceanId" type="text">
+				<label>EnOceanId</label>
+				<description>EnOceanId of device this thing belongs to</description>
+				<required>true</required>
+			</parameter>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
 				<description>EEP which is used by handle</description>

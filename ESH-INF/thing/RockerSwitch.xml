@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="openocean"
+<thing:thing-descriptions bindingId="enocean"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
@@ -7,17 +7,27 @@
 	<!-- RockerSwitch -->
 	<thing-type id="rockerSwitch">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="serialbridge" />
-			<bridge-type-ref id="tcpbridge" />
+			<bridge-type-ref id="bridge" />
 		</supported-bridge-type-refs>
 
-		<label>F6-02 - Rocker Switch</label>
-		<description>Represents a physical Rocker Switch</description>
+		<label>Rocker Switch</label>
+		<description>Represents a physical Rocker Switch (EEP: F6-02)</description>
 
-		<properties>
-			<property name="enoceanId" />
-		</properties>
+		<channels>
+			<channel typeId="system.rawrocker" id="rockerswitchA">
+				<label>Rocker Switch - Channel A</label>
+			</channel>
+			<channel typeId="system.rawrocker" id="rockerswitchB">
+				<label>Rocker Switch - Channel B</label>
+			</channel>
+		</channels>
+
 		<config-description>
+			<parameter name="enoceanId" type="text">
+				<label>EnOceanId</label>
+				<description>EnOceanId of device this thing belongs to</description>
+				<required>true</required>
+			</parameter>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
 				<description>EEP which is used by rocker switch</description>
@@ -32,4 +42,3 @@
 	</thing-type>
 
 </thing:thing-descriptions>
-        
