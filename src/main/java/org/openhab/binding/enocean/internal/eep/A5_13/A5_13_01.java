@@ -30,11 +30,11 @@ public class A5_13_01 extends A5_13 {
     }
 
     protected State getIllumination() {
-        return new QuantityType<>(((getDB_3Value() * 1000) / 255), SmartHomeUnits.LUX);
+        return new QuantityType<>(((getDB_3Value() * 1000.0) / 255.0), SmartHomeUnits.LUX);
     }
 
-    protected State getIllumination(int value) {
-        return new QuantityType<>(((value * 1000 * 150) / 255), SmartHomeUnits.LUX);
+    protected State getIllumination(double value) {
+        return new QuantityType<>(((value * 1000.0 * 150.0) / 255.0), SmartHomeUnits.LUX);
     }
 
     protected State getIlluminationWest() {
@@ -50,11 +50,11 @@ public class A5_13_01 extends A5_13 {
     }
 
     protected State getTemperature() {
-        return new QuantityType<>(-40 + ((getDB_2Value() * 120) / 255), SIUnits.CELSIUS);
+        return new QuantityType<>(-40.0 + ((getDB_2Value() * 120.0) / 255.0), SIUnits.CELSIUS);
     }
 
     protected State getWindSpeed() {
-        return new QuantityType<>(((getDB_1Value() * 70) / 255), SmartHomeUnits.METRE_PER_SECOND);
+        return new QuantityType<>(((getDB_1Value() * 70.0) / 255.0), SmartHomeUnits.METRE_PER_SECOND);
     }
 
     protected State getRainStatus() {
