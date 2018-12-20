@@ -35,6 +35,12 @@ This binding is developed on and tested with the following devices
     * FSB14 (rollershutter)
     * FUD14 (dimmer)
     * FSSA-230V (smart plug)
+    * FWZ12-65A (energy meter)
+    * FTKE (window / door contact)
+    * TF-FGB (window handle)
+    * TF-FKB (window contact)
+    * TF-AHDSB (outdoor brightness sensor)
+    * FAFT60 (outdoor temperature & humidity sensor)
  * The following Opus actuators:
     * GN-A-R12V-SR-4 (light)
     * GN-A-R12V-MF-2 (light)
@@ -43,7 +49,14 @@ This binding is developed on and tested with the following devices
     * GN-A-U230V-JRG (rollershutter)
     * OPUS-FUNK PLUS Jalousieaktor 1fach UP (rollershutter)
     * OPUS-Funk PLUS Steckdosenleiste (smart multiple socket)
- * NodOn Smart Plug (ASP-2-1-10), In Wall Switch (SIN-2-2-00, SIN-2-1-0x), Permundo PSC234 (smart plug with metering)
+ * NodOn: 
+    * Smart Plug (ASP-2-1-10)
+    * In Wall Switch (SIN-2-2-00, SIN-2-1-0x)
+    * Temperature & humidity sensor (STPH-2-1-05)
+ * Permundo 
+    * PSC234 (smart plug with metering) = Afriso APR234
+    * PSC132 (smart switch actor with metering)
+    * PSC152 (smart blinds control)
  * Thermokon SR04 room control
  * Hoppe SecuSignal window handles
  * Rocker switches (NodOn, Eltako FT55 etc)
@@ -56,11 +69,12 @@ Hence if your device supports one of the following EEPs the chances are good tha
 | bridge                          | -           | -             | repeaterMode, setBaseId      | USB300, EnOceanPi              | -         |
 | pushButton                      | F6-01       | 0x01          | pushButton                   |                                | Manually  |
 | rockerSwitch                    | F6-02       | 0x01-02       | rockerswitchA, rockerswitchB | Eltako FT55                    | Discovery |
-| mechanicalHandle                | F6-10       | 0x00-01       | windowHandleState, contact   | Hoppe SecuSignal handles       | Discovery |
-| contact                         | D5-00       | 0x01          | contact                      | Eltako FTK                     | Discovery |
+| mechanicalHandle                | F6-10       | 0x00-01       | windowHandleState, contact   | Hoppe SecuSignal handles, Eltako TF-FGB | Discovery |
+| contact                         | D5-00       | 0x01          | contact                      | Eltako FTK(E) & TF-FKB            | Discovery |
 | temperatureSensor               | A5-02       | 0x01-30       | temperature                  | Thermokon SR65                 | Discovery |
 | temperatureHumiditySensor       | A5-04       | 0x01-03       | humidity, temperature        | Eltako FTSB                    | Discovery |
 | lightTemperatureOccupancySensor | A5-08       | 0x01-03       | illumination, temperature,<br/>occupancy, motionDetection | Eltako FABH | Discovery |
+| lightSensor                     | A5-06       | 0x01          | illumination                 | Eltako TF-AHDSB                | Discovery |
 | roomOperatingPanel              | A5-10       | 0x01-23       | temperature, setPoint, fanSpeedStage,<br/>occupancy           | Thermokon SR04 | Discovery |
 | automatedMeterSensor            | A5-12       | 0x00-03       | counter, currentNumber, instantpower,<br/>totalusage, amrLitre, amrCubicMetre | FWZ12 | Discovery |
 | centralCommand                  | A5-38       | 0x08          | dimmer, generalSwitch        | Eltako FUD14, FSR14            | Teach-in |
@@ -134,15 +148,17 @@ If you change the SenderId of your thing, you have to pair again the thing with 
 |                                 | enoceanId         | EnOceanId of device this thing belongs to | hex value as string |
 | rockerSwitch                    | receivingEEPId    |                             | F6_02_01, F6_02_02 |
 |                                 | enoceanId         | | |
-| mechanicalHandle                | receivingEEPId    |                             | F6_10_00, F6_10_01 |
+| mechanicalHandle                | receivingEEPId    |                             | F6_10_00, F6_10_01, A5_14_09 |
 |                                 | enoceanId         | | |
-| contact                         | receivingEEPId    |                             | D5_00_01 |
+| contact                         | receivingEEPId    |                             | D5_00_01, A5_14_01_ELTAKO |
 |                                 | enoceanId         | | |
 | temperatureSensor               | receivingEEPId    |                             | A5_02_01-0B, A5_02_10-1B, A5_02_20, A5_02_30 |
 |                                 | enoceanId         | | |
 | temperatureHumiditySensor       | receivingEEPId    |                             | A5_04_01-03 |
 |                                 | enoceanId         | | |
 | lightTemperatureOccupancySensor | receivingEEPId    |                             | A5_08_01-03, A5_08_01_FXBH |
+|                                 | enoceanId         | | |
+| lightSensor                     | receivingEEPId    |                             | A5_06_01, A5_06_01_ELTAKO |
 |                                 | enoceanId         | | |
 | roomOperatingPanel              | receivingEEPId    |                             | A5_10_01-0D, A5_10_10-1F, A5_10_20-23 |
 |                                 | enoceanId         | | |
@@ -199,6 +215,7 @@ The channels of a thing are determined automatically based on the chosen EEP.
 | dimmer              | Dimmer             | Dimmer value in percent |
 | generalSwitch(/A/B) | Switch             | Switch something (channel A/B) ON/OFF |
 | rollershutter       | Rollershutter      | Shut time (shutTime) in seconds can be configured |
+| angle               | Number:Angle       | The angle for blinds
 | instantpower        | Number:Power       | Instant power consumption in Watts |
 | totalusage          | Number:Energy      | Used energy in Kilowatt hours |
 | receivingState      | String             | RSSI value and repeater count of last received message |
@@ -208,6 +225,8 @@ The channels of a thing are determined automatically based on the chosen EEP.
 |rockerswitchListenerSwitch| Switch        | Used to convert rocker switch messages into switch item state updates|
 |rockerswitchListenerRollershutter| Rollershutter | Used to convert rocker switch messages into rollershutter item state updates|
 |virtualRockerswitchB | String             | Used to send plain rocker switch messages (channel B used)|
+|batteryVoltage       | Number:ElectricPotential | Battery voltage for things with battery|
+|batteryStorage       | Number:ElectricPotential | Battery storage, don't know what this means...|
 
 ## Rules and Profiles
 
