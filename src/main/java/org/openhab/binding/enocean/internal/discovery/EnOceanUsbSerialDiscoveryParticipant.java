@@ -82,7 +82,7 @@ public class EnOceanUsbSerialDiscoveryParticipant implements UsbSerialDiscoveryP
                 && deviceInformation.getManufacturer() != null
                 && deviceInformation.getManufacturer().equalsIgnoreCase(ENOCEAN_USB300_DONGLE_MANUFACTURER)
                 && deviceInformation.getProduct() != null
-                && deviceInformation.getProduct().toLowerCase().contains("usb 300");
+                && deviceInformation.getProduct().toLowerCase().contains(ENOCEAN_USB300_DONGLE_PRODUCT);
     }
 
     private @Nullable String createEnoceanUSB300DongleLabel(UsbSerialDeviceInformation deviceInformation) {
