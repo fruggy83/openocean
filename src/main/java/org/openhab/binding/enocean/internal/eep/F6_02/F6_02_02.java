@@ -128,6 +128,7 @@ public class F6_02_02 extends _RPSMessage {
                                     : UpDownType.DOWN;
                         }
                     }
+                    break;
                 case ToggleDir1:
                     if ((bytes[0] >>> 5) == dir1) {
                         if (((bytes[0] & PRESSED) != 0)) {
@@ -138,6 +139,7 @@ public class F6_02_02 extends _RPSMessage {
                                             : inverse((UpDownType) currentState));
                         }
                     }
+                    break;
                 case ToggleDir2:
                     if ((bytes[0] >>> 5) == dir2) {
                         if (((bytes[0] & PRESSED) != 0)) {
@@ -148,6 +150,7 @@ public class F6_02_02 extends _RPSMessage {
                                             : inverse((UpDownType) currentState));
                         }
                     }
+                    break;
                 default:
                     break;
             }
