@@ -19,7 +19,7 @@ import org.openhab.binding.enocean.internal.messages.ERP1Message;
  */
 public class A5_07_01 extends A5_07 {
 
-    private final Integer PIR_OFF = 0x7f;
+    private final int PIR_OFF = 0x7f;
 
     public A5_07_01(ERP1Message packet) {
         super(packet);
