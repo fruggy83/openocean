@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 by the respective copyright holders.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -47,6 +47,11 @@ import org.openhab.binding.enocean.internal.eep.A5_02.A5_02_30;
 import org.openhab.binding.enocean.internal.eep.A5_04.A5_04_01;
 import org.openhab.binding.enocean.internal.eep.A5_04.A5_04_02;
 import org.openhab.binding.enocean.internal.eep.A5_04.A5_04_03;
+import org.openhab.binding.enocean.internal.eep.A5_06.A5_06_01;
+import org.openhab.binding.enocean.internal.eep.A5_06.A5_06_01_ELTAKO;
+import org.openhab.binding.enocean.internal.eep.A5_07.A5_07_01;
+import org.openhab.binding.enocean.internal.eep.A5_07.A5_07_02;
+import org.openhab.binding.enocean.internal.eep.A5_07.A5_07_03;
 import org.openhab.binding.enocean.internal.eep.A5_08.A5_08_01;
 import org.openhab.binding.enocean.internal.eep.A5_08.A5_08_01_FXBH;
 import org.openhab.binding.enocean.internal.eep.A5_08.A5_08_02;
@@ -232,6 +237,13 @@ public enum EEPType {
     TemperatureHumiditySensor_A5_04_03(RORG._4BS, 0x04, 0x03, false, A5_04_03.class,
             THING_TYPE_TEMPERATUREHUMIDITYSENSOR, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_RECEIVINGSTATE),
 
+    OCCUPANCYSENSOR_A5_07_01(RORG._4BS, 0x07, 0x01, false, A5_07_01.class, THING_TYPE_OCCUPANCYSENSOR,
+            CHANNEL_MOTIONDETECTION, CHANNEL_BATTERY_VOLTAGE, CHANNEL_RECEIVINGSTATE),
+    OCCUPANCYSENSOR_A5_07_02(RORG._4BS, 0x07, 0x02, false, A5_07_02.class, THING_TYPE_OCCUPANCYSENSOR,
+            CHANNEL_MOTIONDETECTION, CHANNEL_BATTERY_VOLTAGE, CHANNEL_RECEIVINGSTATE),
+    OCCUPANCYSENSOR_A5_07_03(RORG._4BS, 0x07, 0x02, false, A5_07_03.class, THING_TYPE_OCCUPANCYSENSOR,
+            CHANNEL_ILLUMINATION, CHANNEL_MOTIONDETECTION, CHANNEL_BATTERY_VOLTAGE, CHANNEL_RECEIVINGSTATE),
+
     LightTemperatureOccupancySensor_A5_08_01(RORG._4BS, 0x08, 0x01, false, A5_08_01.class,
             THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR, CHANNEL_TEMPERATURE, CHANNEL_MOTIONDETECTION,
             CHANNEL_ILLUMINATION, CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
@@ -244,6 +256,11 @@ public enum EEPType {
     FXBH_A5_08_01(RORG._4BS, 0x08, 0x01, false, "FXBH", ELTAKOID, A5_08_01_FXBH.class,
             THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR, CHANNEL_MOTIONDETECTION, CHANNEL_ILLUMINATION,
             CHANNEL_RECEIVINGSTATE),
+
+    LightSensor01(RORG._4BS, 0x06, 0x01, false, A5_06_01.class, THING_TYPE_LIGHTSENSOR, CHANNEL_ILLUMINATION,
+            CHANNEL_RECEIVINGSTATE),
+    LightSensor02(RORG._4BS, 0x06, 0x01, false, "ELTAKO", ELTAKOID, A5_06_01_ELTAKO.class, THING_TYPE_LIGHTSENSOR,
+            CHANNEL_ILLUMINATION, CHANNEL_RECEIVINGSTATE),
 
     RoomPanel_A5_10_01(RORG._4BS, 0x10, 0x01, false, A5_10_01.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
             CHANNEL_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_OCCUPANCY, CHANNEL_RECEIVINGSTATE),
