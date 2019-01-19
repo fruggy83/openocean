@@ -1,3 +1,6 @@
+[![Latest release](https://img.shields.io/github/release/fruggy83/openocean-blue.svg)](https://github.com/fruggy83/openocean/releases/latest) [![Donate to this project using PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/fruggy83) [![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/fruggy83)
+
+
 # EnOcean Binding
 
 The EnOcean binding connects openHAB to the EnOcean ecosystem.
@@ -231,6 +234,9 @@ The channels of a thing are determined automatically based on the chosen EEP.
 |batteryVoltage       | Number:ElectricPotential | Battery voltage for things with battery|
 |batteryStorage       | Number:ElectricPotential | Battery storage, don't know what this means...|
 
+Items linked to bi-directional actuators (actuator sends status messages back) should always disable the ```autoupdate```.
+This is especially true for Eltako rollershutter, as their position is calcaulted out of the current position and the moving time.
+
 ## Rules and Profiles
 
 The rockerSwitch things use _system:rawrocker_ channel types.
@@ -251,13 +257,13 @@ end
 
 ```xtend
 Bridge enocean:bridge:gtwy "EnOcean Gateway" [ path="/dev/ttyAMA0" ] {
-   Thing rockerSwitch rs01 "Rocker" @ "Kitchen" [ enoceanID="aabbcc01", receivingEEPId="F6_02_01" ]
-   Thing mechanicalHandle mh01 "Door handle" @ "Living room" [ enoceanID="aabbcc02", receivingEEPId="F6_10_00" ]
-   Thing roomOperatingPanel p01 "Panel" @ "Floor" [ enoceanID="aabbcc03", receivingEEPId="A5_10_06" ]
-   Thing centralCommand cc01 "Light" @ "Kitchen" [ enoceanID="aabbcc04", senderIdOffset=1, sendingEEPId="A5_38_08_01", receivingEEPId="F6_00_00", broadcastMessages=true, suppressRepeating=false ]
-   Thing centralCommand cc02 "Dimmer" @ "Living room" [ enoceanID="aabbcc05", senderIdOffset=2, sendingEEPId="A5_38_08_02", receivingEEPId="A5_38_08_02", broadcastMessages=true, suppressRepeating=false ]
-   Thing rollershutter r01 "Rollershutter" @ "Kitchen" [ enoceanID="aabbcc06", senderIdOffset=3, sendingEEPId="A5_3F_7F_EltakoFSB", receivingEEPId="A5_3F_7F_EltakoFSB", broadcastMessages=true, suppressRepeating=false ] {Channels: Type rollershutter:rollershutter [shutTime=25]}
-   Thing measurementSwitch ms01 "TV Smart Plug" @ "Living room" [ enoceanID="aabbcc07", senderIdOffset=4, sendingEEPId="D2_01_09", broadcastMessages=false, receivingEEPId="D2_01_09","A5_12_01", suppressRepeating=false, pollingInterval=300]
+   Thing rockerSwitch rs01 "Rocker" @ "Kitchen" [ enoceanId="aabbcc01", receivingEEPId="F6_02_01" ]
+   Thing mechanicalHandle mh01 "Door handle" @ "Living room" [ enoceanId="aabbcc02", receivingEEPId="F6_10_00" ]
+   Thing roomOperatingPanel p01 "Panel" @ "Floor" [ enoceanId="aabbcc03", receivingEEPId="A5_10_06" ]
+   Thing centralCommand cc01 "Light" @ "Kitchen" [ enoceanId="aabbcc04", senderIdOffset=1, sendingEEPId="A5_38_08_01", receivingEEPId="F6_00_00", broadcastMessages=true, suppressRepeating=false ]
+   Thing centralCommand cc02 "Dimmer" @ "Living room" [ enoceanId="aabbcc05", senderIdOffset=2, sendingEEPId="A5_38_08_02", receivingEEPId="A5_38_08_02", broadcastMessages=true, suppressRepeating=false ]
+   Thing rollershutter r01 "Rollershutter" @ "Kitchen" [ enoceanId="aabbcc06", senderIdOffset=3, sendingEEPId="A5_3F_7F_EltakoFSB", receivingEEPId="A5_3F_7F_EltakoFSB", broadcastMessages=true, suppressRepeating=false ] {Channels: Type rollershutter:rollershutter [shutTime=25]}
+   Thing measurementSwitch ms01 "TV Smart Plug" @ "Living room" [ enoceanId="aabbcc07", senderIdOffset=4, sendingEEPId="D2_01_09", broadcastMessages=false, receivingEEPId="D2_01_09","A5_12_01", suppressRepeating=false, pollingInterval=300]
    Thing classicDevice cd01 "Garage_Light" @ "Garage" [ 
         senderIdOffset=5, 
         sendingEEPId="F6_02_01", 
@@ -275,6 +281,7 @@ Bridge enocean:bridge:gtwy "EnOcean Gateway" [ path="/dev/ttyAMA0" ] {
 ```xtend
 Player Kitchen_Sonos "Sonos" (Kitchen) {channel="sonos:PLAY1:ID:control", channel="enocean:rockerSwitch:gtwy:rs01:rockerswitchA" [profile="system:rawrocker-to-play-pause"]}
 Dimmer Kitchen_Hue "Hue" <light> {channel="enocean:rockerSwitch:gtwy:rs01:rockerswitchB" [profile="system:rawrocker-to-dimmer"], channel="hue:0220:0017884f6626:9:brightness"}
+Rollershutter Kitchen_Rollershutter "Roller shutter" <blinds> (Kitchen) {channel="enocean:rollershutter:gtwy:r01:rollershutter", autoupdate="false"}
 Switch Garage_Light "Switch" {
         channel="enocean:classicDevice:gtwy:cd01:virtualRockerswitchA", 
         channel="enocean:classicDevice:gtwy:cd01:Listener1", 
@@ -329,5 +336,8 @@ Many thanks to:
 
  * The NodOn support for their hints about the ADT and UTE teach in messages.
  * The fhem project for the inspiration and their EnOcean addon
- * [leifbladt](https://github.com/leifbladt) for his work on the installation notes
+ * [bakkerv](https://github.com/bakkerv) for implementing EEP A5-11-04
+ * [bodiroga](https://github.com/bodiroga) for implementing the USB Discovery service
  * [Casshern81](https://github.com/Casshern81) for his work on the documentation, valuable hints and testing efforts
+ * [dominikkv](https://github.com/dominikkv) for implementing a lot of EEPs and source code improvements
+ * [leifbladt](https://github.com/leifbladt) for his work on the installation notes
