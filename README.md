@@ -1,4 +1,5 @@
-[![Latest release](https://img.shields.io/github/release/fruggy83/openocean-blue.svg)](https://github.com/fruggy83/openocean/releases/latest) [![Donate to this project using PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/fruggy83) [![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/fruggy83)
+
+[![Release](https://img.shields.io/github/release/fruggy83/openocean.svg)](https://github.com/fruggy83/openocean/releases/latest) [![Donate to this project using PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/fruggy83) [![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/fruggy83)
 
 
 # EnOcean Binding
