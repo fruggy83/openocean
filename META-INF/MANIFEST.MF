@@ -7,7 +7,7 @@ Bundle-Name: OpenOcean Binding
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-SymbolicName: org.openhab.binding.openocean;singleton:=true
 Bundle-Vendor: openHAB
-Bundle-Version: 2.5.0.1
+Bundle-Version: 2.5.0.2
 Import-Package: 
  javax.measure.quantity,
  org.apache.commons.io,
