@@ -23,6 +23,7 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
+import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
@@ -53,8 +54,8 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     private ScheduledFuture<?> refreshJob; // used for polling current status of thing
 
-    public EnOceanBaseActuatorHandler(Thing thing) {
-        super(thing);
+    public EnOceanBaseActuatorHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
+        super(thing, itemChannelLinkRegistry);
     }
 
     /**
@@ -170,7 +171,7 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
         logger.debug("polling channels");
         if (thing.getStatus().equals(ThingStatus.ONLINE)) {
-            for (Channel channel : getLinkedChannels()) {
+            for (Channel channel : this.getThing().getChannels()) {
                 handleCommand(channel.getUID(), RefreshType.REFRESH);
             }
         }
@@ -211,7 +212,7 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
         }
 
         // check if the channel is linked otherwise do nothing
-        if (!getLinkedChannels().contains(channel)) {
+        if (!isLinked(channelId)) {
             return;
         }
 
@@ -221,9 +222,8 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
             // Eltako rollershutter do not support absolute value just values relative to the current position
             // If we want to go to 80% we must know the current position to determine how long the rollershutter has
-            // to drive up/down. However items seems to be stateless, so we have to store the state by ourself.
-            // The currentState is updated by EnOceanBaseSensorHandler after receiving a response.
-            State currentState = getCurrentState(channelId);
+            // to drive up/down. The ItemState is updated by EnOceanBaseSensorHandler after receiving a response.
+            State currentState = getCurrentState(channel);
 
             ESP3Packet msg = eep
                     .setSenderId(senderId).setDestinationId(destinationId).convertFromCommand(channelId,

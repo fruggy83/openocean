@@ -21,6 +21,8 @@ import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
+import org.eclipse.smarthome.core.thing.type.ChannelKind;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
@@ -50,8 +52,8 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
 
     protected Hashtable<RORG, EEPType> receivingEEPTypes = null;
 
-    public EnOceanBaseSensorHandler(Thing thing) {
-        super(thing);
+    public EnOceanBaseSensorHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
+        super(thing, itemChannelLinkRegistry);
     }
 
     @Override
@@ -126,7 +128,10 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
     }
 
     protected Predicate<Channel> channelFilter(EEPType eepType, byte[] senderId) {
-        return c -> eepType.GetSupportedChannels().containsKey(c.getUID().getId());
+        return c -> {
+            boolean result = eepType.GetSupportedChannels().containsKey(c.getUID().getId());
+            return (isLinked(c.getUID().getId()) || c.getKind() == ChannelKind.TRIGGER) && result;
+        };
     }
 
     @Override
@@ -150,22 +155,22 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
 
             if (eep.isValid()) {
 
-                // try to interpret received message for all linked channels
-                getLinkedChannels().stream().filter(channelFilter(receivingEEPType, msg.getSenderId()))
+                // try to interpret received message for all linked or trigger channels
+                getThing().getChannels().stream().filter(channelFilter(receivingEEPType, msg.getSenderId()))
                         .forEach(channel -> {
                             String channelTypeId = channel.getChannelTypeUID().getId();
                             String channelId = channel.getUID().getId();
                             Configuration channelConfig = channel.getConfiguration();
+
                             switch (channel.getKind()) {
                                 case STATE:
-                                    State currentState = getCurrentState(channelId);
+                                    State currentState = getCurrentState(channel);
                                     State result = eep.convertToState(channelId, channelTypeId, channelConfig,
                                             currentState);
 
                                     // if message can be interpreted (result != UnDefType.UNDEF) => update item state
                                     if (result != null && result != UnDefType.UNDEF) {
                                         updateState(channelId, result);
-                                        setCurrentState(channelTypeId, result); // update internal state map
                                     }
                                     break;
                                 case TRIGGER:

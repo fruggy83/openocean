@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
 
 	<name>OpenOcean Binding</name>
-	<description>The EnOcean binding integrates the EnOcean system into openHab.</description>
-	<author>Daniel Weber</author>
+	<description>The EnOcean binding integrates the EnOcean system into openHab. Version 2.5.0.1</description>
+	<author>Daniel Weber</author>	
 
 </binding:binding>
