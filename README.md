@@ -191,6 +191,7 @@ If you change the SenderId of your thing, you have to pair again the thing with 
 |                                 | broadcastMessages |                             | true, false |
 |                                 | pollingInterval   |                             | Integer |
 |                                 | suppressRepeating |                             | true, false |
+|                                 | retryInterval     | Time in ms after messages are repeated if an answer is missing | Integer |
 | classicDevice                   | senderIdOffset    |                             | 1-127 |
 |                                 | sendingEEPId      |                             | F6_02_01, F6_02_02 |
 |                                 | broadcastMessages |                             | true, false |

@@ -30,4 +30,6 @@ public class EnOceanActuatorConfig extends EnOceanBaseConfig {
     public boolean broadcastMessages;
 
     public boolean suppressRepeating;
+
+    public int retryInterval = 0;
 }

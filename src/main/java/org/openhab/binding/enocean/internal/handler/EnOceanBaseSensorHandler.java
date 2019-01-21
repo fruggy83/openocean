@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Predicate;
 
 import org.eclipse.smarthome.config.core.Configuration;
@@ -55,6 +56,8 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
                     THING_TYPE_PUSHBUTTON, THING_TYPE_AUTOMATEDMETERSENSOR));
 
     protected Hashtable<RORG, EEPType> receivingEEPTypes = null;
+
+    protected ScheduledFuture<?> retryFuture = null;
 
     public EnOceanBaseSensorHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
         super(thing, itemChannelLinkRegistry);
@@ -158,6 +161,10 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
                     config.enoceanId);
 
             if (eep.isValid()) {
+
+                if (retryFuture != null && !retryFuture.isDone()) {
+                    retryFuture.cancel(false);
+                }
 
                 // try to interpret received message for all linked or trigger channels
                 getThing().getChannels().stream().filter(channelFilter(receivingEEPType, msg.getSenderId()))

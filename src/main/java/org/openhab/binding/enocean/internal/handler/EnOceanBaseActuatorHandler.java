@@ -26,8 +26,8 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
@@ -220,6 +220,10 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
             return;
         }
 
+        if (retryFuture != null && !retryFuture.isDone()) {
+            retryFuture.cancel(false);
+        }
+
         try {
             EEP eep = EEPFactory.createEEP(sendingEEPType);
             Configuration channelConfig = channel.getConfiguration();
@@ -235,6 +239,12 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
                     .setSuppressRepeating(getConfiguration().suppressRepeating).getERP1Message();
 
             getBridgeHandler().sendMessage(msg, null);
+
+            // Do not repeat refresh msg, as these msg get already repeated during refresh polling
+            if (getConfiguration().retryInterval > 0 && command != RefreshType.REFRESH) {
+                retryFuture = scheduler.scheduleWithFixedDelay(() -> getBridgeHandler().sendMessage(msg, null),
+                        getConfiguration().retryInterval, getConfiguration().retryInterval, TimeUnit.MILLISECONDS);
+            }
         } catch (Exception e) {
             logger.debug(e.getMessage());
         }
