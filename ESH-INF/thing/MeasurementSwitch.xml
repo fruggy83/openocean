@@ -98,6 +98,10 @@
 			     <label>Resend message after ms without a response</label>
 			     <default>0</default>
 			</parameter>
+			<parameter name="retryTries" type="integer">
+                 <label>Number of sending retries</label>
+                 <default>5</default>
+            </parameter>
 		</config-description>
 
 	</thing-type>

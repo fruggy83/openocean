@@ -32,4 +32,5 @@ public class EnOceanActuatorConfig extends EnOceanBaseConfig {
     public boolean suppressRepeating;
 
     public int retryInterval = 0;
+    public int retryTries = 5;
 }

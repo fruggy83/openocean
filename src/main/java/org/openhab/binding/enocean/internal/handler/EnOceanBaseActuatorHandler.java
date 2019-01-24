@@ -241,9 +241,16 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
             getBridgeHandler().sendMessage(msg, null);
 
             // Do not repeat refresh msg, as these msg get already repeated during refresh polling
-            if (getConfiguration().retryInterval > 0 && command != RefreshType.REFRESH) {
-                retryFuture = scheduler.scheduleWithFixedDelay(() -> getBridgeHandler().sendMessage(msg, null),
-                        getConfiguration().retryInterval, getConfiguration().retryInterval, TimeUnit.MILLISECONDS);
+            if (getConfiguration().retryInterval > 0 && getConfiguration().retryTries > 0
+                    && command != RefreshType.REFRESH) {
+                RunnableWrapper wrapper = new RunnableWrapper(() -> getBridgeHandler().sendMessage(msg, null),
+                        getConfiguration().retryTries);
+                synchronized (wrapper) {
+                    retryFuture = scheduler.scheduleWithFixedDelay(wrapper, getConfiguration().retryInterval,
+                            getConfiguration().retryInterval, TimeUnit.MILLISECONDS);
+                    wrapper.future = retryFuture;
+                    wrapper.notify();
+                }
             }
         } catch (Exception e) {
             logger.debug(e.getMessage());
@@ -264,9 +271,46 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     @Override
     public void dispose() {
-        if (refreshJob != null && !refreshJob.isCancelled()) {
+        if (refreshJob != null && !refreshJob.isDone()) {
             refreshJob.cancel(true);
-            refreshJob = null;
+        }
+        refreshJob = null;
+
+        if (retryFuture != null && !retryFuture.isDone()) {
+            retryFuture.cancel(true);
+        }
+        retryFuture = null;
+    }
+
+    class RunnableWrapper implements Runnable {
+
+        private Runnable action;
+        private int maxRuns = -1;
+        ScheduledFuture<?> future = null;
+
+        RunnableWrapper(Runnable action, int maxRuns) {
+            this.action = action;
+            this.maxRuns = maxRuns;
+        }
+
+        @Override
+        public void run() {
+            if (maxRuns > 0) {
+                action.run();
+
+                maxRuns--;
+                if (maxRuns <= 0) {
+                    synchronized (this) {
+                        if (future == null) {
+                            try {
+                                wait();
+                            } catch (Exception e) {
+                                /* should not happen... */ }
+                        }
+                        future.cancel(false);
+                    }
+                }
+            }
         }
     }
 }
