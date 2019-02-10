@@ -233,13 +233,32 @@ The channels of a thing are determined automatically based on the chosen EEP.
 |rockerswitchListenerRollershutter| Rollershutter | Used to convert rocker switch messages into rollershutter item state updates|
 |virtualRockerswitchB | String             | Used to send plain rocker switch messages (channel B used)|
 |batteryVoltage       | Number:ElectricPotential | Battery voltage for things with battery|
-|batteryStorage       | Number:ElectricPotential | Battery storage, don't know what this means...|
+|energyStorage        | Number:ElectricPotential | Energy storage, don't know what this means...|
 |rssi                 | Number                   | Received Signal Strength Indication of last received message |
 |repeatCount          | Number                   | Number of repeaters involved in the transmission of the telegram |
 |lastReceived         | DateTime                 | Date and time the last telegram was received |
 
 Items linked to bi-directional actuators (actuator sends status messages back) should always disable the ```autoupdate```.
 This is especially true for Eltako rollershutter, as their position is calcaulted out of the current position and the moving time.
+
+## Channel Configuration
+Some channels can be configured with parameters.
+
+|Channel type    | Parameter      | Meaning                    | Possible Values |
+|----------------|----------------|----------------------------|---|
+| rollershutter  | shutTime       | Time (in seconds) to completely close the rollershutter |  |
+| dimmer         | rampingTime    | Duration of dimming | A5-38-08: Ramping Time (in seconds), 0 = default ramping, 1..255 = seconds to 100%; D2-01-01: 0 = switch, 1-3 = timer 1-3, 4 = stop |
+| teachInCMD     | manufacturerId | Id is used for 4BS teach in with EEP   | HEX |
+|                | teachInMSG     | Use this message if teach in type and/or manufacturer id are unknown | HEX |
+
+Possible declaration in Thing DSL:
+```xtend
+Thing centralCommand 11223344 "Light" @ "Living room" [ enoceanId="11223344", senderIdOffset=15, sendingEEPId="A5_38_08_02", receivingEEPId="A5_38_08_02" ] {
+    Channels:
+        Type teachInCMD : teachInCMD [ teachInMSG="E0400D80" ]
+        Type dimmer : dimmer [ rampingTime=0 ]
+}
+```
 
 ## Rules and Profiles
 
