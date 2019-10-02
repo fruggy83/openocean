@@ -1,2 +1,7 @@
 target/
 .idea
+
+**/.settings/org.eclipse.*
+
+.vscode
+.factorypath
