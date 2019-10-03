@@ -175,6 +175,7 @@ public class EEPFactory {
             case Unknown:
             case VLD:
             case MSC:
+            case SIG:
                 return null;
         }
 
