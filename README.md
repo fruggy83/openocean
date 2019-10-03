@@ -41,6 +41,7 @@ This binding is developed on and tested with the following devices
     * FSSA-230V (smart plug)
     * FWZ12-65A (energy meter)
     * FTKE (window / door contact)
+    * FPE-1 & FPE-2 (window / door contact)
     * TF-FGB (window handle)
     * TF-FKB (window contact)
     * TF-AHDSB (outdoor brightness sensor)
@@ -71,7 +72,7 @@ Hence if your device supports one of the following EEPs the chances are good tha
 |Thing type                       | EEP family  | EEP Types     | Channels¹                    |  Devices²                      | Pairing   |
 |---------------------------------|-------------|---------------|------------------------------|--------------------------------|-----------|
 | bridge                          | -           | -             | repeaterMode, setBaseId      | USB300, EnOceanPi              | -         |
-| pushButton                      | F6-01       | 0x01          | pushButton                   |                                | Manually  |
+| pushButton                      | F6-01/D2-03 | 0x01/0x0A     | pushButton, doublePress,<br/>longPress, batteryLevel | NodOn soft button | Manually/Discovery  |
 | rockerSwitch                    | F6-02       | 0x01-02       | rockerswitchA, rockerswitchB | Eltako FT55                    | Discovery |
 | mechanicalHandle                | F6-10       | 0x00-01       | windowHandleState, contact   | Hoppe SecuSignal handles, Eltako TF-FGB | Discovery |
 | contact                         | D5-00       | 0x01          | contact                      | Eltako FTK(E) & TF-FKB            | Discovery |
@@ -88,7 +89,7 @@ Hence if your device supports one of the following EEPs the chances are good tha
 | measurementSwitch               | D2-01       | 0x00-0F,11,12 | generalSwitch(/A/B), instantpower,<br/>totalusage, repeaterMode | NodOn In Wall Switch | Discovery |
 | classicDevice                   | F6-02       | 0x01-02       | virtualRockerswitchA, virtualRockerswitchB | - | Teach-in |
 
-¹ Not all channels are supported by all devices, it depends which specific EEP type is used by the device, all thing types additionally support rssi, repeatCount and lastReceived channels
+¹ Not all channels are supported by all devices, it depends which specific EEP type is used by the device, all thing types additionally support `rssi`, `repeatCount` and `lastReceived` channels
 
 ² These are just examples of supported devices
 
@@ -150,7 +151,7 @@ If you change the SenderId of your thing, you have to pair again the thing with 
 |---------------------------------|-------------------|-----------------------------|---|
 | bridge                          | path              | Path to the EnOcean Gateway | COM3, /dev/ttyAMA0, rfc2217://x.x.x.x:3001 |
 |                                 | nextSenderId      | Set SenderId of next created thing.<br/>If omitted, the next unused SenderId is taken | 1-127 |
-| pushButton                      | receivingEEPId    | EEP used for receiving msg  | F6_01_01 |
+| pushButton                      | receivingEEPId    | EEP used for receiving msg  | F6_01_01, D2_03_0A |
 |                                 | enoceanId         | EnOceanId of device this thing belongs to | hex value as string |
 | rockerSwitch                    | receivingEEPId    |                             | F6_02_01, F6_02_02 |
 |                                 | enoceanId         | | |
@@ -213,8 +214,10 @@ The channels of a thing are determined automatically based on the chosen EEP.
 | repeaterMode        | String             | Set repeater level to 1, 2 or disable |
 | setBaseId           | String             | Changes the BaseId of your gateway. This can only be done 10 times! So use it with care. |
 | pushButton          | Trigger            | Channel type system:rawbutton, emits PRESSED and RELEASED events |
+| doublePress         | Trigger            | Channel type system:rawbutton, emits PRESSED |
+| longPress           | Trigger            | Channel type system:rawbutton, emits PRESSED and RELEASED events |
 | rockerswitchA/B     | Trigger            | Channel type system:rawrocker, emits DIR1_PRESSED, DIR1_RELEASED, DIR2_PRESSED, DIR2_RELEASED events |
-| windowHandleState   | String             | Textual representation of handle position (OPEN, CLOSED, TILTED)  |
+| windowHandleState   | String             | Textual representation of handle position (OPEN, CLOSED, TILTED) |
 | contact             | Contact            | State OPEN/CLOSED (tilted handle => OPEN) |
 | temperature         | Number:Temperature | Temperature in degree Celsius |
 | humidity            | Number             | Relative humidity level in percentages |
@@ -231,35 +234,42 @@ The channels of a thing are determined automatically based on the chosen EEP.
 | dimmer              | Dimmer             | Dimmer value in percent |
 | generalSwitch(/A/B) | Switch             | Switch something (channel A/B) ON/OFF |
 | rollershutter       | Rollershutter      | Shut time (shutTime) in seconds can be configured |
-| angle               | Number:Angle       | The angle for blinds
+| angle               | Number:Angle       | The angle for blinds |
 | instantpower        | Number:Power       | Instant power consumption in Watts |
 | totalusage          | Number:Energy      | Used energy in Kilowatt hours |
 | teachInCMD          | Switch             | Sends a teach-in msg, content can configured with parameter teachInMSG |
-| virtualSwitchA      | Switch             | Used to convert switch item commands into rocker switch messages (channel A used)<br/>Time in ms between sending a pressed and release message can be defined with channel parameter duration.<br/>The switch mode (rocker switch: use DIR1 and DIR2, toggle: use just one DIR) can be set with channel parameter switchMode (rockerSwitch, toggleButtonDir1, toggleButtonDir2)|
-|virtualRollershutterA| Rollershutter      | Used to convert rollershutter item commands into rocker switch messages (channel A used)|
-|rockerswitchListenerSwitch| Switch        | Used to convert rocker switch messages into switch item state updates|
-|rockerswitchListenerRollershutter| Rollershutter | Used to convert rocker switch messages into rollershutter item state updates|
-|virtualRockerswitchB | String             | Used to send plain rocker switch messages (channel B used)|
-|batteryVoltage       | Number:ElectricPotential | Battery voltage for things with battery|
-|energyStorage        | Number:ElectricPotential | Energy storage, don't know what this means...|
-|rssi                 | Number                   | Received Signal Strength Indication of last received message |
-|repeatCount          | Number                   | Number of repeaters involved in the transmission of the telegram |
-|lastReceived         | DateTime                 | Date and time the last telegram was received |
+| virtualSwitchA      | Switch             | Used to convert switch item commands into rocker switch messages (channel A used)<br/>Time in ms between sending a pressed and release message can be defined with channel parameter duration.<br/>The switch mode (rocker switch: use DIR1 and DIR2, toggle: use just one DIR) can be set with channel parameter switchMode (rockerSwitch, toggleButtonDir1, toggleButtonDir2) |
+| virtualRollershutterA | Rollershutter      | Used to convert rollershutter item commands into rocker switch messages (channel A used) |
+| rockerswitchListenerSwitch | Switch        | Used to convert rocker switch messages into switch item state updates |
+| rockerswitchListenerRollershutter | Rollershutter | Used to convert rocker switch messages into rollershutter item state updates |
+| virtualRockerswitchB | String             | Used to send plain rocker switch messages (channel B used) |
+| batteryVoltage       | Number:ElectricPotential | Battery voltage for things with battery |
+| energyStorage        | Number:ElectricPotential | Energy storage, don't know what this means... |
+| batterLevel          | Number             | Battery level in percent |
+| rssi                 | Number                   | Received Signal Strength Indication (dBm) of last received message |
+| repeatCount          | Number                   | Number of repeaters involved in the transmission of the telegram |
+| lastReceived         | DateTime                 | Date and time the last telegram was received |
 
-Items linked to bi-directional actuators (actuator sends status messages back) should always disable the ```autoupdate```.
-This is especially true for Eltako rollershutter, as their position is calcaulted out of the current position and the moving time.
+Items linked to bi-directional actuators (actuator sends status messages back) should always disable the `autoupdate`.
+This is especially true for Eltako rollershutter, as their position is calculated out of the current position and the moving time.
 
 ## Channel Configuration
+
 Some channels can be configured with parameters.
 
-|Channel type    | Parameter      | Meaning                    | Possible Values |
-|----------------|----------------|----------------------------|---|
-| rollershutter  | shutTime       | Time (in seconds) to completely close the rollershutter |  |
-| dimmer         | rampingTime    | Duration of dimming | A5-38-08: Ramping Time (in seconds), 0 = default ramping, 1..255 = seconds to 100%; D2-01-01: 0 = switch, 1-3 = timer 1-3, 4 = stop |
-| teachInCMD     | manufacturerId | Id is used for 4BS teach in with EEP   | HEX |
-|                | teachInMSG     | Use this message if teach in type and/or manufacturer id are unknown | HEX |
+| Channel type  | Parameter      | Meaning                                                              | Possible values                                                                                                                     |
+|---------------|----------------|----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| rollershutter | shutTime       | Time (in seconds) to completely close the rollershutter              |                                                                                                                                     |
+| dimmer        | rampingTime    | Duration of dimming                                                  | A5-38-08: Ramping Time (in seconds), 0 = default ramping, 1..255 = seconds to 100%; D2-01-01: 0 = switch, 1-3 = timer 1-3, 4 = stop |
+|               | eltakoDimmer   | Flag for Eltako dimmers, because Eltako does interpret this EEP differently | True for Eltako dimmer, false otherwise. Defaults to true for compatibility purpose.                                         |
+|               | storeValue     | Store final value. For Eltako devices, block dimming value.          | True or false. Defaults to false.                                                                                                   |
+| teachInCMD    | manufacturerId | Id is used for 4BS teach in with EEP                                 | HEX                                                                                                                                 |
+|               | teachInMSG     | Use this message if teach in type and/or manufacturer id are unknown | HEX                                                                                                                                 |
+|  totalusage   | validateValue  | Filter out increases more than 10.0 kWh and decreases less than 1.0 kWh | true / false                                                                                                                     |
+|  contact      | inverted       | Swap OPEN / CLOSED. Set True for Eltako FPE-2.                    | true / false. Defaults to false.                                                                                                    |
 
 Possible declaration in Thing DSL:
+
 ```xtend
 Thing centralCommand 11223344 "Light" @ "Living room" [ enoceanId="11223344", senderIdOffset=15, sendingEEPId="A5_38_08_02", receivingEEPId="A5_38_08_02" ] {
     Channels:
