@@ -14,12 +14,15 @@ package org.openhab.binding.enocean.internal.eep.A5_12;
 
 import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
+import java.util.function.Function;
+
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.eclipse.smarthome.core.util.HexUtils;
+import org.openhab.binding.enocean.internal.eep.EEPHelper;
 import org.openhab.binding.enocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
@@ -110,7 +113,7 @@ public abstract class A5_12 extends _4BSMessage {
     }
 
     @Override
-    protected State convertToStateImpl(String channelId, String channelTypeId, State currentState,
+    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
             Configuration config) {
         switch (channelId) {
             case CHANNEL_INSTANTPOWER:
@@ -118,6 +121,9 @@ public abstract class A5_12 extends _4BSMessage {
             case CHANNEL_CURRENTNUMBER:
                 return getCurrentValue();
             case CHANNEL_TOTALUSAGE:
+                State value = getCumulativeValue();
+                State currentState = getCurrentStateFunc.apply(channelId);
+                return EEPHelper.validateTotalUsage(value, currentState, config);
             case CHANNEL_TOTALCUBICMETRE:
             case CHANNEL_COUNTER:
                 return getCumulativeValue();

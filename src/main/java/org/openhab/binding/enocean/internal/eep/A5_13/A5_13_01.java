@@ -14,6 +14,8 @@ package org.openhab.binding.enocean.internal.eep.A5_13;
 
 import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
+import java.util.function.Function;
+
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.QuantityType;
@@ -66,7 +68,7 @@ public class A5_13_01 extends A5_13 {
     }
 
     @Override
-    public State convertToState(String channelId, String channelTypeId, Configuration config, State currentState) {
+    public State convertToState(String channelId, String channelTypeId, Configuration config, Function<String, State> getCurrentStateFunc) {
 
         if (isPartOne()) {
             switch (channelId) {

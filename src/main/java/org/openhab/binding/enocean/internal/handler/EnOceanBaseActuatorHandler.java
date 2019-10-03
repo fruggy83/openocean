@@ -30,7 +30,6 @@ import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
-import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.config.EnOceanActuatorConfig;
 import org.openhab.binding.enocean.internal.eep.EEP;
@@ -47,9 +46,8 @@ import org.openhab.binding.enocean.internal.messages.ESP3Packet;
 public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     // List of thing types which support sending of eep messages
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<ThingTypeUID>(
-            Arrays.asList(THING_TYPE_CENTRALCOMMAND, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING,
-                    THING_TYPE_ROLLERSHUTTER));
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_CENTRALCOMMAND,
+            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_THERMOSTAT));
 
     protected byte[] senderId; // base id of bridge + senderIdOffset, used for sending msg
     protected byte[] destinationId; // in case of broadcast FFFFFFFF otherwise the enocean id of the device
@@ -189,11 +187,15 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
             return;
         }
 
+        // check if the channel is linked otherwise do nothing
         String channelId = channelUID.getId();
-        Channel channel = getThing().getChannel(channelId);
-        if (channel == null) {
+        Channel channel = getThing().getChannel(channelUID);
+        if (channel == null || !isLinked(channelUID)) {
             return;
         }
+
+        ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
+        String channelTypeId = (channelTypeUID != null) ? channelTypeUID.getId() : "";
 
         // check if we do support refreshs
         if (command == RefreshType.REFRESH) {
@@ -202,22 +204,12 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
             }
 
             // receiving status cannot be refreshed
-            ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
-            if (channelTypeUID != null) {
-                String channelTypeId = channelTypeUID.getId();
-
-                switch (channelTypeId) {
-                    case CHANNEL_RSSI:
-                    case CHANNEL_REPEATCOUNT:
-                    case CHANNEL_LASTRECEIVED:
-                        return;
-                }
+            switch (channelTypeId) {
+                case CHANNEL_RSSI:
+                case CHANNEL_REPEATCOUNT:
+                case CHANNEL_LASTRECEIVED:
+                    return;
             }
-        }
-
-        // check if the channel is linked otherwise do nothing
-        if (!isLinked(channelId)) {
-            return;
         }
 
         if (retryFuture != null && !retryFuture.isDone()) {
@@ -225,35 +217,33 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
         }
 
         try {
-            EEP eep = EEPFactory.createEEP(sendingEEPType);
             Configuration channelConfig = channel.getConfiguration();
 
-            // Eltako rollershutter do not support absolute value just values relative to the current position
-            // If we want to go to 80% we must know the current position to determine how long the rollershutter has
-            // to drive up/down. The ItemState is updated by EnOceanBaseSensorHandler after receiving a response.
-            State currentState = getCurrentState(channel);
+            EEP eep = EEPFactory.createEEP(sendingEEPType);
+            if (eep.convertFromCommand(channelId, channelTypeId, command, id -> getCurrentState(id), channelConfig)
+                   .hasData()) {
+                ESP3Packet msg = eep.setSenderId(senderId)
+                                    .setDestinationId(destinationId)
+                                    .setSuppressRepeating(getConfiguration().suppressRepeating)
+                                    .getERP1Message();
+            
+                getBridgeHandler().sendMessage(msg, null);            
 
-            ESP3Packet msg = eep
-                    .setSenderId(senderId).setDestinationId(destinationId).convertFromCommand(channelId,
-                            channel.getChannelTypeUID().getId(), command, currentState, channelConfig)
-                    .setSuppressRepeating(getConfiguration().suppressRepeating).getERP1Message();
-
-            getBridgeHandler().sendMessage(msg, null);
-
-            // Do not repeat refresh msg, as these msg get already repeated during refresh polling
-            if (getConfiguration().retryInterval > 0 && getConfiguration().retryTries > 0
-                    && command != RefreshType.REFRESH) {
-                RunnableWrapper wrapper = new RunnableWrapper(() -> getBridgeHandler().sendMessage(msg, null),
-                        getConfiguration().retryTries);
-                synchronized (wrapper) {
-                    retryFuture = scheduler.scheduleWithFixedDelay(wrapper, getConfiguration().retryInterval,
-                            getConfiguration().retryInterval, TimeUnit.MILLISECONDS);
-                    wrapper.future = retryFuture;
-                    wrapper.notify();
+                // Do not repeat refresh msg, as these msg get already repeated during refresh polling
+                if (getConfiguration().retryInterval > 0 && getConfiguration().retryTries > 0
+                        && command != RefreshType.REFRESH) {
+                    RunnableWrapper wrapper = new RunnableWrapper(() -> getBridgeHandler().sendMessage(msg, null),
+                            getConfiguration().retryTries);
+                    synchronized (wrapper) {
+                        retryFuture = scheduler.scheduleWithFixedDelay(wrapper, getConfiguration().retryInterval,
+                                getConfiguration().retryInterval, TimeUnit.MILLISECONDS);
+                        wrapper.future = retryFuture;
+                        wrapper.notify();
+                    }
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            logger.warn("Exception while sending telegram!", e);
         }
     }
 

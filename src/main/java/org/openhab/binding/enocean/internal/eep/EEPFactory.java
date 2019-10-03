@@ -17,10 +17,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.enocean.internal.eep.Base._4BSMessage;
+import org.openhab.binding.enocean.internal.eep.Base._4BSTeachInVariation3Response;
 import org.openhab.binding.enocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.enocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.enocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00;
+import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00_EltakoFPE;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_01;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
@@ -96,7 +98,13 @@ public class EEPFactory {
                     }
                 } catch (Exception e) {
                 }
-
+                try {
+                    EEP result = new F6_10_00_EltakoFPE(msg);
+                    if (result.isValid()) { // check if data == 0x10 or 0x00
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
                 try {
                     EEP result = new F6_10_01(msg);
                     if (result.isValid()) {
@@ -110,8 +118,8 @@ public class EEPFactory {
                 return new D5_00_01(msg);
             case _4BS: {
                 int db_0 = msg.getPayload()[4];
-                if ((db_0 & _4BSMessage.LRN_Type_Mask) == 0) {
-                    logger.info("Received 4BS Teach In without EEP");
+                if ((db_0 & _4BSMessage.LRN_Type_Mask) == 0) { // Variation 1
+                    logger.info("Received 4BS Teach In variation 1 without EEP");
                     return null;
                 }
 
@@ -175,9 +183,19 @@ public class EEPFactory {
     }
 
     public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, byte[] senderId) {
-        EEP result = new UTEResponse(msg);
-        result.setSenderId(senderId);
+        switch (msg.getRORG()) {
+            case UTE:
+                EEP result = new UTEResponse(msg);
+                result.setSenderId(senderId);
 
-        return result;
+                return result;
+            case _4BS:
+                result = new _4BSTeachInVariation3Response(msg);
+                result.setSenderId(senderId);
+
+                return result;
+            default:
+                return null;
+        }
     }
 }

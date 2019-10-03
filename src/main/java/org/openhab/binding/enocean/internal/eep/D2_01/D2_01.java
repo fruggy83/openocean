@@ -14,6 +14,8 @@ package org.openhab.binding.enocean.internal.eep.D2_01;
 
 import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
+import java.util.function.Function;
+
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.core.library.types.DecimalType;
@@ -27,6 +29,7 @@ import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.config.EnOceanChannelDimmerConfig;
+import org.openhab.binding.enocean.internal.eep.EEPHelper;
 import org.openhab.binding.enocean.internal.eep.Base._VLDMessage;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
@@ -114,7 +117,7 @@ public abstract class D2_01 extends _VLDMessage {
         }
 
         EnOceanChannelDimmerConfig c = config.as(EnOceanChannelDimmerConfig.class);
-        byte rampingTime = (c.rampingTime == null) ? Zero : c.rampingTime.byteValue();
+        byte rampingTime = Integer.valueOf(c.rampingTime).byteValue();
 
         setData(CMD_ACTUATOR_SET_STATUS, (byte) ((rampingTime << 5) | outputChannel), outputValue);
     }
@@ -140,13 +143,14 @@ public abstract class D2_01 extends _VLDMessage {
             float factor = 1;
 
             switch (bytes[1] >>> 5) {
-                case 0:
-                    factor /= 3600.0;
+                case 0: // value is given as watt seconds, so divide it by 3600 to get watt hours, and 1000 to get
+                        // kilowatt hours
+                    factor /= (3600 * 1000);
                     break;
-                case 1:
+                case 1: // value is given as watt hours, so divide it by 1000 to get kilowatt hours
                     factor /= 1000;
                     break;
-                case 2:
+                case 2: // value is given as kilowatt hours
                     factor = 1;
                     break;
                 default:
@@ -166,10 +170,10 @@ public abstract class D2_01 extends _VLDMessage {
             float factor = 1;
 
             switch (bytes[1] >>> 5) {
-                case 3:
+                case 3: // value is given as watt
                     factor = 1;
                     break;
-                case 4:
+                case 4: // value is given as kilowatt
                     factor /= 1000;
                     break;
                 default:
@@ -192,8 +196,8 @@ public abstract class D2_01 extends _VLDMessage {
     }
 
     @Override
-    protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command, State currentState,
-            Configuration config) {
+    protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command,
+            Function<String, State> getCurrentStateFunc, Configuration config) {
 
         if (channelId.equals(CHANNEL_GENERAL_SWITCHING)) {
             if (command == RefreshType.REFRESH) {
@@ -227,7 +231,7 @@ public abstract class D2_01 extends _VLDMessage {
     }
 
     @Override
-    protected State convertToStateImpl(String channelId, String channelTypeId, State currentState,
+    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
             Configuration config) {
 
         switch (channelId) {
@@ -242,7 +246,9 @@ public abstract class D2_01 extends _VLDMessage {
             case CHANNEL_INSTANTPOWER:
                 return getPowerMeasurementData();
             case CHANNEL_TOTALUSAGE:
-                return getEnergyMeasurementData();
+                State value = getEnergyMeasurementData();
+                State currentState = getCurrentStateFunc.apply(channelId);
+                return EEPHelper.validateTotalUsage(value, currentState, config);
         }
 
         return UnDefType.UNDEF;

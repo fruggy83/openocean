@@ -10,18 +10,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
+
 package org.openhab.binding.enocean.internal.config;
 
 /**
  *
- * @author Daniel Weber - Initial contribution
+ * @author Holger Englert - Initial contribution
  */
-public class EnOceanChannelVirtualRockerSwitchConfig extends EnOceanChannelRockerSwitchConfigBase {
-
-    public Integer duration;
-
-    public EnOceanChannelVirtualRockerSwitchConfig() {
-        super();
-        duration = 350;
-    }
+public class EnOceanChannelContactConfig {
+    // Swap Open/Closed value, e.g.
+    // Eltako FPE-1: false, Eltako FPE-2: true
+    public boolean inverted = false;
 }

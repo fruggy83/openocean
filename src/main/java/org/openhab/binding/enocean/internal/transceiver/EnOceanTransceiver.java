@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 public abstract class EnOceanTransceiver {
 
     // Thread management
-    private Future<?> readingTask;
-    private Future<?> timeOut;
+    private Future<?> readingTask = null;
+    private Future<?> timeOut = null;
 
     private Logger logger = LoggerFactory.getLogger(EnOceanTransceiver.class);
 
@@ -98,6 +98,10 @@ public abstract class EnOceanTransceiver {
                             outputStream.write(b);
                             outputStream.flush();
 
+                            if (timeOut != null) {
+                                timeOut.cancel(true);
+                            }
+
                             // slowdown sending of message to avoid hickups at receivers
                             // Todo tweak sending intervall (250 ist just a first try)
                             timeOut = scheduler.schedule(() -> {
@@ -141,7 +145,7 @@ public abstract class EnOceanTransceiver {
     public EnOceanTransceiver(TransceiverErrorListener errorListener, ScheduledExecutorService scheduler) {
 
         requestQueue = new RequestQueue(scheduler);
-        listeners = new HashMap<Long, HashSet<ESP3PacketListener>>();
+        listeners = new HashMap<>();
         teachInListener = null;
         this.errorListener = errorListener;
     }
@@ -164,8 +168,12 @@ public abstract class EnOceanTransceiver {
     }
 
     public void ShutDown() {
-
         logger.debug("Interrupt rx Thread");
+
+        if (timeOut != null) {
+            timeOut.cancel(true);
+        }
+
         if (readingTask != null) {
             readingTask.cancel(true);
             try {
@@ -175,6 +183,7 @@ public abstract class EnOceanTransceiver {
         }
 
         readingTask = null;
+        timeOut = null;
         listeners.clear();
         teachInListener = null;
         errorListener = null;
@@ -387,7 +396,6 @@ public abstract class EnOceanTransceiver {
     }
 
     protected void informListeners(ERP1Message msg) {
-
         try {
             byte[] senderId = msg.getSenderId();
 
@@ -425,9 +433,8 @@ public abstract class EnOceanTransceiver {
 
     public void addPacketListener(ESP3PacketListener listener, long senderIdToListenTo) {
 
-        if (listeners.computeIfAbsent(listener.getSenderIdToListenTo(), k -> new HashSet<ESP3PacketListener>())
-                .add(listener)) {
-            logger.debug("Listener added: {}", listener.getSenderIdToListenTo());
+        if (listeners.computeIfAbsent(senderIdToListenTo, k -> new HashSet<>()).add(listener)) {
+            logger.debug("Listener added: {}", senderIdToListenTo);
         }
     }
 

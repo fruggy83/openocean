@@ -35,6 +35,7 @@ import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.thing.binding.builder.ThingBuilder;
 import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
 import org.eclipse.smarthome.core.thing.type.ChannelKind;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.EnOceanChannelDescription;
@@ -54,7 +55,9 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
 
     protected String configurationErrorDescription;
 
-    protected Hashtable<String, String> lastEvents = new Hashtable<>();;
+    // There is no data structure which holds the last triggered event, so we have to implement it by ourself
+    // This is especially needed for press and release events
+    protected Hashtable<String, String> lastEvents = new Hashtable<>();
 
     protected EnOceanBaseConfig config = null;
 
@@ -77,20 +80,25 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
     private void initializeThing(ThingStatus bridgeStatus) {
         logger.debug("initializeThing thing {} bridge status {}", getThing().getUID(), bridgeStatus);
 
-        if (getBridgeHandler() != null) {
-            if (bridgeStatus == ThingStatus.ONLINE) {
-                initializeConfig();
-                if (validateConfig()) {
-                    updateStatus(ThingStatus.ONLINE);
+        if (this.itemChannelLinkRegistry == null) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                    "ItemChannelLinkRegistry could not be found");
+        } else {
+            if (getBridgeHandler() != null) {
+                if (bridgeStatus == ThingStatus.ONLINE) {
+                    initializeConfig();
+                    if (validateConfig()) {
+                        updateStatus(ThingStatus.ONLINE);
+                    } else {
+                        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                                configurationErrorDescription);
+                    }
                 } else {
-                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                            configurationErrorDescription);
+                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
                 }
             } else {
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "A bridge is required");
             }
-        } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "A bridge is required");
         }
     }
 
@@ -118,7 +126,7 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
     protected void updateChannels(EEPType eep, boolean removeUnsupportedChannels) {
 
         @NonNull
-        List<@NonNull Channel> channelList = new LinkedList<@NonNull Channel>(this.getThing().getChannels());
+        List<@NonNull Channel> channelList = new LinkedList<>(this.getThing().getChannels());
         boolean channelListChanged = false;
 
         if (removeUnsupportedChannels) {
@@ -135,9 +143,15 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
                 continue;
             }
 
-            // if we already created a channel with the same type => skip
-            if (channelList.stream()
-                    .anyMatch(channel -> cd.channelTypeUID.getId().equals(channel.getChannelTypeUID().getId()))) {
+            // if we already created a channel with the same type and id => skip
+            if (channelList.stream().anyMatch(channel -> {
+                ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
+                String id = channelTypeUID == null ? "" : channelTypeUID.getId();
+
+                String cId = channel.getUID().getId();
+
+                return cd.channelTypeUID.getId().equals(id) && channelId.equals(cId);
+            })) {
                 continue;
             }
 
@@ -161,21 +175,22 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
         }
     }
 
-    @Override
-    public void thingUpdated(Thing thing) {
-        super.thingUpdated(thing);
-    }
-
     protected State getCurrentState(Channel channel) {
-
-        Set<Item> items = itemChannelLinkRegistry.getLinkedItems(channel.getUID());
-        for (Item item : items) {
-            if (item.getState() != UnDefType.UNDEF) {
-                return item.getState();
+        if (channel != null) {
+            Set<Item> items = itemChannelLinkRegistry.getLinkedItems(channel.getUID());
+            for (Item item : items) {
+                State state = item.getState();
+                if (state != UnDefType.NULL && state != UnDefType.UNDEF) {
+                    return state;
+                }
             }
         }
 
         return UnDefType.UNDEF;
+    }
+
+    protected State getCurrentState(String channelId) {
+        return getCurrentState(getThing().getChannel(channelId));
     }
 
     protected synchronized EnOceanBridgeHandler getBridgeHandler() {
@@ -221,7 +236,7 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
          * return configStatusMessages;
          */
 
-        return new LinkedList<ConfigStatusMessage>();
+        return new LinkedList<>();
     }
 
     @Override

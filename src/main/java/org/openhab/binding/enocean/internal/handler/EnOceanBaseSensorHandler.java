@@ -28,6 +28,7 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
 import org.eclipse.smarthome.core.thing.type.ChannelKind;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
@@ -49,7 +50,7 @@ import org.openhab.binding.enocean.internal.transceiver.ESP3PacketListener;
 public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements ESP3PacketListener {
 
     // List of all thing types which support receiving of eep messages
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<ThingTypeUID>(
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(
             Arrays.asList(THING_TYPE_ROOMOPERATINGPANEL, THING_TYPE_MECHANICALHANDLE, THING_TYPE_CONTACT,
                     THING_TYPE_TEMPERATURESENSOR, THING_TYPE_TEMPERATUREHUMIDITYSENSOR, THING_TYPE_ROCKERSWITCH,
                     THING_TYPE_OCCUPANCYSENSOR, THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR, THING_TYPE_LIGHTSENSOR,
@@ -137,7 +138,7 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
     protected Predicate<Channel> channelFilter(EEPType eepType, byte[] senderId) {
         return c -> {
             boolean result = eepType.GetSupportedChannels().containsKey(c.getUID().getId());
-            return (isLinked(c.getUID().getId()) || c.getKind() == ChannelKind.TRIGGER) && result;
+            return (isLinked(c.getUID()) || c.getKind() == ChannelKind.TRIGGER) && result;
         };
     }
 
@@ -158,26 +159,29 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
 
             EEP eep = EEPFactory.buildEEP(receivingEEPType, (ERP1Message) packet);
             logger.debug("ESP Packet payload {} for {} received", HexUtils.bytesToHex(packet.getPayload()),
-                    config.enoceanId);
+                HexUtils.bytesToHex(msg.getSenderId()));
 
             if (eep.isValid()) {
+                byte[] senderId = msg.getSenderId();
 
                 if (retryFuture != null && !retryFuture.isDone()) {
                     retryFuture.cancel(false);
                 }
 
                 // try to interpret received message for all linked or trigger channels
-                getThing().getChannels().stream().filter(channelFilter(receivingEEPType, msg.getSenderId()))
-                        .forEach(channel -> {
-                            String channelTypeId = channel.getChannelTypeUID().getId();
+                getThing().getChannels().stream().filter(channelFilter(receivingEEPType, senderId))
+                        .sorted((c1, c2) -> c1.getKind().compareTo(c2.getKind())) // handle state channels first
+                        .forEachOrdered(channel -> {
+                            ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
+                            String channelTypeId = (channelTypeUID != null) ? channelTypeUID.getId() : "";
+    
                             String channelId = channel.getUID().getId();
                             Configuration channelConfig = channel.getConfiguration();
 
                             switch (channel.getKind()) {
                                 case STATE:
-                                    State currentState = getCurrentState(channel);
                                     State result = eep.convertToState(channelId, channelTypeId, channelConfig,
-                                            currentState);
+                                        id -> getCurrentState(id));
 
                                     // if message can be interpreted (result != UnDefType.UNDEF) => update item state
                                     if (result != null && result != UnDefType.UNDEF) {
@@ -186,8 +190,7 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
                                     break;
                                 case TRIGGER:
                                     String lastEvent = lastEvents.get(channelId);
-                                    String event = eep.convertToEvent(channelId, channelTypeId, lastEvent,
-                                            channelConfig);
+                                    String event = eep.convertToEvent(channelId, channelTypeId, lastEvent, channelConfig);
                                     if (event != null) {
                                         triggerChannel(channel.getUID(), event);
                                         lastEvents.put(channelId, event);
@@ -197,7 +200,7 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
                         });
             }
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            logger.warn("Exception while receiving telegram!", e);
         }
     }
 }

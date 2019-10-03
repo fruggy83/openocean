@@ -15,13 +15,13 @@ package org.openhab.binding.enocean.internal.eep;
 import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
+import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
@@ -77,8 +77,8 @@ public abstract class EEP {
         setOptionalData(packet.getOptionalPayload());
     }
 
-    public EEP convertFromCommand(String channelId, String channelTypeId, Command command, State currentState,
-            Configuration config) {
+    public EEP convertFromCommand(String channelId, String channelTypeId, Command command,
+            Function<String, State> getCurrentStateFunc, Configuration config) {
         if (!getEEPType().isChannelSupported(channelId, channelTypeId)) {
             throw new IllegalArgumentException(String.format("Command %s of channel %s(%s) is not supported",
                     command.toString(), channelId, channelTypeId));
@@ -87,12 +87,12 @@ public abstract class EEP {
         if (channelTypeId.equals(CHANNEL_TEACHINCMD) && command == OnOffType.ON) {
             teachInQueryImpl(config);
         } else {
-            convertFromCommandImpl(channelId, channelTypeId, command, currentState, config);
+            convertFromCommandImpl(channelId, channelTypeId, command, getCurrentStateFunc, config);
         }
         return this;
     }
 
-    public State convertToState(String channelId, String channelTypeId, Configuration config, State currentState) {
+    public State convertToState(String channelId, String channelTypeId, Configuration config, Function<String, State> getCurrentStateFunc) {
         if (!getEEPType().isChannelSupported(channelId, channelTypeId)) {
             throw new IllegalArgumentException(
                     String.format("Channel %s(%s) is not supported", channelId, channelTypeId));
@@ -104,18 +104,18 @@ public abstract class EEP {
                     return UnDefType.UNDEF;
                 }
 
-                return new QuantityType<>((this.optionalData[5] & 0xFF) * -1, SmartHomeUnits.ONE);
+                return new DecimalType((this.optionalData[5] & 0xFF) * -1);
             case CHANNEL_REPEATCOUNT:
                 if (this.optionalData == null || this.optionalData.length < 6) {
                     return UnDefType.UNDEF;
                 }
 
-                return new QuantityType<>(this.status & 0b1111, SmartHomeUnits.ONE);
+                return new DecimalType(this.status & 0b1111);
             case CHANNEL_LASTRECEIVED:
                 return new DateTimeType();
         }
 
-        return convertToStateImpl(channelId, channelTypeId, currentState, config);
+        return convertToStateImpl(channelId, channelTypeId, getCurrentStateFunc, config);
     }
 
     public String convertToEvent(String channelId, String channelTypeId, String lastEvent, Configuration config) {
@@ -139,6 +139,10 @@ public abstract class EEP {
 
         this.bytes = Arrays.copyOf(bytes, bytes.length);
         return this;
+    }
+
+    public boolean hasData() {
+        return (this.bytes != null) && (this.bytes.length > 0);
     }
 
     public EEP setOptionalData(byte... bytes) {
@@ -195,6 +199,8 @@ public abstract class EEP {
             message.setOptionalPayload(optionalData);
 
             return message;
+        } else {
+            logger.warn("ERP1Message for EEP {} is not valid!", this.getClass().getName());
         }
 
         return null;
@@ -224,12 +230,12 @@ public abstract class EEP {
         return 0;
     }
 
-    protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command, State currentState,
-            Configuration config) {
-
+    protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command,
+            Function<String, State> getCurrentStateFunc, Configuration config) {
+        logger.warn("No implementation for sending data from channel {}/{} for this EEP!", channelId, channelTypeId);
     }
 
-    protected State convertToStateImpl(String channelId, String channelTypeId, State currentState,
+    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
             Configuration config) {
         return UnDefType.UNDEF;
     }
@@ -240,7 +246,7 @@ public abstract class EEP {
     }
 
     protected void teachInQueryImpl(Configuration config) {
-
+        logger.warn("No implementation for sending a response for this teach in!");
     }
 
     protected boolean getBit(int byteData, int bit) {

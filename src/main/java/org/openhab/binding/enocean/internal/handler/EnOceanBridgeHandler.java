@@ -68,8 +68,7 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
 
     private Logger logger = LoggerFactory.getLogger(EnOceanBridgeHandler.class);
 
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<ThingTypeUID>(
-            Arrays.asList(THING_TYPE_BRIDGE));
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_BRIDGE));
 
     private EnOceanTransceiver transceiver; // holds connection to serial/tcp port and sends/receives messages
     private ScheduledFuture<?> connectorTask; // is used for reconnection if something goes wrong
@@ -149,8 +148,8 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
 
                                 });
 
-                    } catch (Exception e) {
-                        updateState(channelUID, new StringType("Id could not be parsed"));
+                    } catch (IllegalArgumentException e) {
+                        updateState(channelUID, new StringType("BaseId could not be parsed"));
                     }
                 }
                 break;
@@ -164,24 +163,29 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
     public void initialize() {
 
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "trying to connect to gateway...");
-        Object devId = getConfig().get(NEXTSENDERID);
-        if (devId != null) {
-            nextSenderId = ((BigDecimal) devId).intValue();
+        if (this.serialPortManager == null) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                    "SerialPortManager could not be found");
         } else {
-            nextSenderId = 0;
-        }
+            Object devId = getConfig().get(NEXTSENDERID);
+            if (devId != null) {
+                nextSenderId = ((BigDecimal) devId).intValue();
+            } else {
+                nextSenderId = 0;
+            }
 
-        if (connectorTask == null || connectorTask.isDone()) {
-            connectorTask = scheduler.scheduleWithFixedDelay(new Runnable() {
+            if (connectorTask == null || connectorTask.isDone()) {
+                connectorTask = scheduler.scheduleWithFixedDelay(new Runnable() {
 
-                @Override
-                public void run() {
-                    if (thing.getStatus() != ThingStatus.ONLINE) {
-                        initTransceiver();
+                    @Override
+                    public void run() {
+                        if (thing.getStatus() != ThingStatus.ONLINE) {
+                            initTransceiver();
+                        }
                     }
-                }
 
-            }, 0, 60, TimeUnit.SECONDS);
+                }, 0, 60, TimeUnit.SECONDS);
+            }
         }
     }
 
@@ -194,8 +198,7 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
                 transceiver.ShutDown();
             }
 
-            transceiver = new EnOceanSerialTransceiver((String) getThing().getConfiguration().get(PATH), this,
-                    scheduler, serialPortManager);
+            transceiver = new EnOceanSerialTransceiver((String) c.get(PATH), this, scheduler, serialPortManager);
 
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, "opening serial port...");
             transceiver.Initialize();
@@ -250,13 +253,10 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
                     });
 
         } catch (IOException e) {
-            logger.debug("error during bridge init occured", e);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port could not be found");
         } catch (PortInUseException e) {
-            logger.debug("error during bridge init occured", e);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port already in use");
         } catch (Exception e) {
-            logger.debug("error during bridge init occured", e);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port could not be initialized");
             return;
         }
@@ -279,7 +279,7 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
 
     @Override
     public Collection<ConfigStatusMessage> getConfigStatus() {
-        Collection<ConfigStatusMessage> configStatusMessages = new LinkedList<ConfigStatusMessage>();
+        Collection<ConfigStatusMessage> configStatusMessages = new LinkedList<>();
 
         // The serial port must be provided
         String path = (String) getThing().getConfiguration().get(PATH);

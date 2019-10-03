@@ -14,14 +14,8 @@ package org.openhab.binding.enocean.internal.config;
 
 /**
  *
- * @author Daniel Weber - Initial contribution
+ * @author Dominik Vorreiter - Initial contribution
  */
-public class EnOceanChannelVirtualRockerSwitchConfig extends EnOceanChannelRockerSwitchConfigBase {
-
-    public Integer duration;
-
-    public EnOceanChannelVirtualRockerSwitchConfig() {
-        super();
-        duration = 350;
-    }
+public class EnOceanChannelTotalusageConfig {
+    public boolean validateValue = false;
 }
