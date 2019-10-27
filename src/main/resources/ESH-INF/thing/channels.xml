@@ -110,15 +110,15 @@
 	</channel-type>
 
 	<channel-type id="fanSpeedStage">
-		<item-type>String</item-type>
+		<item-type>Number</item-type>
 		<label>Fan Speed</label>
 		<state readOnly="true">
 			<options>
-				<option value="-1">Auto</option>
-				<option value="0">Stage 0</option>
-				<option value="1">Stage 1</option>
-				<option value="2">Stage 2</option>
-				<option value="3">Stage 3</option>
+				<option value="0">Auto</option>
+				<option value="1">Stage 0</option>
+				<option value="2">Stage 1</option>
+				<option value="3">Stage 2</option>
+				<option value="4">Stage 3</option>
 			</options>
 		</state>
 	</channel-type>
@@ -463,6 +463,71 @@
 		<label>Send command</label>
 		<description>You can send telegrams to the device by switching this channel on</description>
 		<category>thermostat</category>
+	</channel-type>
+
+	<channel-type id="setpointType" advanced="true">
+		<item-type>Number</item-type>
+		<label>Setpoint type</label>
+		<description>Defines the type of visualization for setpoint</description>
+		<category>thermostat</category>
+		<state>
+			<options>
+				<option value="0">Temperature correction (real temperature)</option>
+				<option value="1">Temperature setpoint (setpoint shift)</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="heatingState" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Sets the heating state</label>
+		<description>Activates the heating state of the device (in some cases simple displaying an icon)</description>
+	</channel-type>
+
+	<channel-type id="coolingState" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Sets the cooling state</label>
+		<description>Activates the cooling state of the device (in some cases simple displaying an icon)</description>
+	</channel-type>
+
+	<channel-type id="windowState" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Sets the window open state</label>
+		<description>Activates the window open state of the device (in some cases simple displaying an icon)</description>
+	</channel-type>
+
+	<channel-type id="temperatureCorrection">
+		<item-type>Number:Temperature</item-type>
+		<label>Temperature correction</label>
+		<description>Temperature correction described as an offset to desired temperature</description>
+		<state min="-10" max="10" step="0.5" pattern="%.1f %unit%" />
+	</channel-type>
+
+	<channel-type id="validTemperatureCorrection" advanced="true">
+		<item-type>Number</item-type>
+		<label>Valid temperature corection</label>
+		<description>Defines valid range for temperaure setpoint correction</description>
+		<state>
+			<options>
+				<option value="1">-1..1</option>
+				<option value="2">-2..2</option>
+				<option value="3">-3..3</option>
+				<option value="4">-4..4</option>
+				<option value="5">-5..5</option>
+				<option value="6">-6..6</option>
+				<option value="7">-7..7</option>
+				<option value="8">-8..8</option>
+				<option value="9">-9..9</option>
+				<option value="10">-10..10</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="occupancyOverwriteable">
+		<item-type>Switch</item-type>
+		<label>Occupancy</label>
+		<description>Occupancy button pressed or released.</description>
+		<category>Switch</category>
 	</channel-type>
 
 </thing:thing-descriptions>

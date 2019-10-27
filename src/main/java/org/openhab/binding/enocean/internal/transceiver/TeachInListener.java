@@ -12,16 +12,10 @@
  */
 package org.openhab.binding.enocean.internal.transceiver;
 
-import org.openhab.binding.enocean.internal.messages.ESP3Packet;
-import org.openhab.binding.enocean.internal.messages.EventMessage;
-
 /**
  *
  * @author Daniel Weber - Initial contribution
  */
-public interface ESP3PacketListener {
-
-    public void espPacketReceived(ESP3Packet packet);
-
-    public long getSenderIdToListenTo();
+public interface TeachInListener extends ESP3PacketListener, EventMessageListener {
+    
 }

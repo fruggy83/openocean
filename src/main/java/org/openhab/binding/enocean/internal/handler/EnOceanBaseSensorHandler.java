@@ -22,9 +22,11 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -62,6 +64,8 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
     protected Hashtable<RORG, EEPType> receivingEEPTypes = null;
 
     protected ScheduledFuture<?> retryFuture = null;
+
+    protected ScheduledFuture<?> responseFuture = null;
 
     public EnOceanBaseSensorHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
         super(thing, itemChannelLinkRegistry);
@@ -209,6 +213,15 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
                                     break;
                             }
                         });
+
+                if(receivingEEPType.getRequstesResponse()) {
+                    // fire trigger for receive
+                    triggerChannel(prepareAnswer, "requestAnswer");
+                    // Send response after 100ms
+                    if(responseFuture == null || responseFuture.isDone()) {
+                        responseFuture = scheduler.schedule(() -> this.handleCommand(sendAnswer, OnOffType.ON), 100, TimeUnit.MILLISECONDS);
+                    }                    
+                }
             }
         } catch (Exception e) {
             logger.warn("Exception while receiving telegram!", e);

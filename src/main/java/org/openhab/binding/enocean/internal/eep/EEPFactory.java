@@ -13,6 +13,7 @@
 package org.openhab.binding.enocean.internal.eep;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.eep.Base.UTEResponse;
@@ -26,6 +27,9 @@ import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00_EltakoFPE;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_01;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
+import org.openhab.binding.enocean.internal.messages.EventMessage;
+import org.openhab.binding.enocean.internal.messages.EventMessage.EventMessageType;
+import org.openhab.binding.enocean.internal.messages.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,8 +123,8 @@ public class EEPFactory {
             case _4BS: {
                 int db_0 = msg.getPayload()[4];
                 if ((db_0 & _4BSMessage.LRN_Type_Mask) == 0) { // Variation 1
-                    logger.info("Received 4BS Teach In variation 1 without EEP");
-                    return null;
+                    logger.info("Received 4BS Teach In variation 1 without EEP, fallback to generic thing");
+                    return buildEEP(EEPType.Generic4BS, msg);
                 }
 
                 byte db_3 = msg.getPayload()[1];
@@ -172,15 +176,47 @@ public class EEPFactory {
 
                 return buildEEP(eepType, msg);
             }
-            case Unknown:
-            case VLD:
-            case MSC:
-            case SIG:
+            default:
                 return null;
         }
+    }
 
-        return null;
+    public static EEP buildEEPFromTeachInSMACKEvent(EventMessage event) {
+        if (event.getEventMessageType() != EventMessageType.SA_CONFIRM_LEARN) {
+            return null;
+        }
 
+        byte[] payload = event.getPayload();
+        byte manufIdMSB = payload[2];
+        byte manufIdLSB = payload[3];
+        int manufId = ((manufIdMSB & 0b111) << 8) + (manufIdLSB & 0xff);
+        
+        byte rorg = payload[4];
+        int func = payload[5] & 0xFF;
+        int type = payload[6] & 0xFF;
+        
+        byte[] senderId = Arrays.copyOfRange(payload, 12, 12 + 4);        
+
+        logger.info("Received SMACK Teach In with EEP {}}-{}-{} and manufacturerID {}",
+            HexUtils.bytesToHex(new byte[] { (byte) rorg }),    
+            HexUtils.bytesToHex(new byte[] { (byte) func }),
+            HexUtils.bytesToHex(new byte[] { (byte) type }),
+            HexUtils.bytesToHex(new byte[] { (byte) manufId }));
+
+        EEPType eepType = EEPType.getType(RORG.getRORG(rorg), func, type, manufId);
+        if (eepType == null) {
+            logger.info("Received unsupported EEP teach in, trying to fallback to generic thing");
+            RORG r = RORG.getRORG(rorg);
+            if (r == RORG._4BS) {
+                eepType = EEPType.Generic4BS;
+            } else if (r == RORG.VLD) {
+                eepType = EEPType.GenericVLD;
+            } else {
+                return null;
+            }
+        }
+
+        return createEEP(eepType).setSenderId(senderId);
     }
 
     public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, byte[] senderId) {
@@ -198,5 +234,30 @@ public class EEPFactory {
             default:
                 return null;
         }
+    }
+
+    public static Response buildResponseFromSAMCKTeachIn(EventMessage event) {
+        byte[] payload = new byte[4];
+        payload[0]= Response.ResponseType.RET_OK.getValue();
+        //set response time to 250ms
+        payload[1] = 0;
+        payload[2] = (byte)0xFA;
+
+        byte priority = event.getPayload()[1];
+        if((priority & 0b1001) == 0b1001) {
+            // gtw is already postmaster => teach out
+            payload[3] = 0x20;
+        } else if((priority & 0b100) == 0) {
+            // no place for further mailbox
+            payload[3] = 0x12;
+        } else if((priority & 0b10) == 0) {
+            // rssi is not good enough
+            payload[3] = 0x14;
+        } else if ((priority & 0b1) == 0b1) {
+            // gtw is candidate for postmaster => teach in
+            payload[3] = 0x00;
+        }
+        
+        return new Response(payload.length, 0, payload);
     }
 }

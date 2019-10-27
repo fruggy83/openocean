@@ -30,7 +30,10 @@ import org.openhab.binding.enocean.internal.handler.EnOceanBridgeHandler;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.enocean.internal.messages.ESP3Packet;
-import org.openhab.binding.enocean.internal.transceiver.ESP3PacketListener;
+import org.openhab.binding.enocean.internal.messages.EventMessage;
+import org.openhab.binding.enocean.internal.messages.Response;
+import org.openhab.binding.enocean.internal.messages.EventMessage.EventMessageType;
+import org.openhab.binding.enocean.internal.transceiver.TeachInListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Daniel Weber - Initial contribution
  */
 
-public class EnOceanDeviceDiscoveryService extends AbstractDiscoveryService implements ESP3PacketListener {
+public class EnOceanDeviceDiscoveryService extends AbstractDiscoveryService implements TeachInListener {
     private final Logger logger = LoggerFactory.getLogger(EnOceanDeviceDiscoveryService.class);
 
     private EnOceanBridgeHandler bridgeHandler;
@@ -100,10 +103,8 @@ public class EnOceanDeviceDiscoveryService extends AbstractDiscoveryService impl
             return;
         }
 
+        
         String enoceanId = HexUtils.bytesToHex(eep.getSenderId());
-        ThingTypeUID thingTypeUID = eep.getThingTypeUID();
-        ThingUID thingUID = new ThingUID(thingTypeUID, bridgeHandler.getThing().getUID(), enoceanId);
-
         int senderIdOffset = 0;
         boolean broadcastMessages = true;
 
@@ -125,23 +126,27 @@ public class EnOceanDeviceDiscoveryService extends AbstractDiscoveryService impl
             senderIdOffset = sendTeachInResponse(msg, enoceanId);
         }
 
-        DiscoveryResultBuilder discoveryResultBuilder = DiscoveryResultBuilder.create(thingUID)
-                .withRepresentationProperty(enoceanId).withBridge(bridgeHandler.getThing().getUID());
+        createDiscoveryResult(eep, broadcastMessages, senderIdOffset);
+        
+    }
 
-        eep.addConfigPropertiesTo(discoveryResultBuilder);
-        discoveryResultBuilder.withProperty(PARAMETER_BROADCASTMESSAGES, broadcastMessages);
-        discoveryResultBuilder.withProperty(PARAMETER_ENOCEANID, enoceanId);
+    @Override
+    public void eventReceived(EventMessage event) {
+        if(event.getEventMessageType() == EventMessageType.SA_CONFIRM_LEARN) {
+            EEP eep = EEPFactory.buildEEPFromTeachInSMACKEvent(event);
+            if (eep == null) {
+                return;
+            }
 
-        if (senderIdOffset > 0) {
-            // advance config with new device id
-            discoveryResultBuilder.withProperty(PARAMETER_SENDERIDOFFSET, senderIdOffset);
+            Response response = EEPFactory.buildResponseFromSAMCKTeachIn(event);
+            if (response != null) {
+                bridgeHandler.sendMessage(response, null);
+
+                if(response.getPayload().length > 3 && response.getPayload()[4] == 0) {
+                    createDiscoveryResult(eep, false, -1);
+                }
+            }
         }
-
-        thingDiscovered(discoveryResultBuilder.build());
-
-        // As we only support sensors to be teached in, we do not need to send a teach in response => 4bs
-        // bidirectional teach in proc is not supported yet
-        // this is true except for UTE teach in => we always have to send a response here
     }
 
     private int sendTeachInResponse(ERP1Message msg, String enoceanId) {
@@ -163,6 +168,26 @@ public class EnOceanDeviceDiscoveryService extends AbstractDiscoveryService impl
             }
         }
         return offset;
+    }
+
+    protected void createDiscoveryResult(EEP eep, boolean broadcastMessages, int senderIdOffset){
+        String enoceanId = HexUtils.bytesToHex(eep.getSenderId());
+        ThingTypeUID thingTypeUID = eep.getThingTypeUID();
+        ThingUID thingUID = new ThingUID(thingTypeUID, bridgeHandler.getThing().getUID(), enoceanId);
+        
+        DiscoveryResultBuilder discoveryResultBuilder = DiscoveryResultBuilder.create(thingUID)
+                .withRepresentationProperty(enoceanId).withBridge(bridgeHandler.getThing().getUID());
+
+        eep.addConfigPropertiesTo(discoveryResultBuilder);
+        discoveryResultBuilder.withProperty(PARAMETER_BROADCASTMESSAGES, broadcastMessages);
+        discoveryResultBuilder.withProperty(PARAMETER_ENOCEANID, enoceanId);
+
+        if (senderIdOffset > 0) {
+            // advance config with new device id
+            discoveryResultBuilder.withProperty(PARAMETER_SENDERIDOFFSET, senderIdOffset);
+        }
+
+        thingDiscovered(discoveryResultBuilder.build());
     }
 
     @Override

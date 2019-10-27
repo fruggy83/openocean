@@ -51,7 +51,8 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     // List of thing types which support sending of eep messages
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_CENTRALCOMMAND,
-            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_THERMOSTAT));
+            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_THERMOSTAT,
+            THING_TYPE_BIDIRROOMOPERATINGPANEL));
 
     protected byte[] senderId; // base id of bridge + senderIdOffset, used for sending msg
     protected byte[] destinationId; // in case of broadcast FFFFFFFF otherwise the enocean id of the device
@@ -208,7 +209,7 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
         // check if the channel is linked otherwise do nothing
         String channelId = channelUID.getId();
         Channel channel = getThing().getChannel(channelUID);
-        if (channel == null || !isLinked(channelUID)) {
+        if (channel == null || (!channelUID.equals(sendAnswer) && !isLinked(channelUID))) {
             return;
         }
 
@@ -249,7 +250,7 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
                 // Do not repeat refresh msg, as these msg get already repeated during refresh polling
                 if (getConfiguration().retryInterval > 0 && getConfiguration().retryTries > 0
-                        && command != RefreshType.REFRESH) {
+                        && command != RefreshType.REFRESH && !channelUID.equals(sendAnswer)) {
                     RunnableWrapper wrapper = new RunnableWrapper(() -> getBridgeHandler().sendMessage(msg, null),
                             getConfiguration().retryTries);
                     synchronized (wrapper) {

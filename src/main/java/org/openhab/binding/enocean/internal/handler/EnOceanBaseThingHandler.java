@@ -12,11 +12,14 @@
  */
 package org.openhab.binding.enocean.internal.handler;
 
+import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.CHANNEL_SEND_COMMAND;
+import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.CHANNEL_STATUS_REQUEST_EVENT;
+
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,9 +66,16 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
 
     private ItemChannelLinkRegistry itemChannelLinkRegistry;
 
+    @NonNull
+    protected ChannelUID prepareAnswer;
+    @NonNull
+    protected ChannelUID sendAnswer;
+
     public EnOceanBaseThingHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
         super(thing);
         this.itemChannelLinkRegistry = itemChannelLinkRegistry;
+        prepareAnswer = new ChannelUID(thing.getUID(), CHANNEL_STATUS_REQUEST_EVENT);
+        sendAnswer = new ChannelUID(thing.getUID(), CHANNEL_SEND_COMMAND);
     }
 
     @SuppressWarnings("null")

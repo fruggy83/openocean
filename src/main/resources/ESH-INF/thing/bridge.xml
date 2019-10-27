@@ -25,6 +25,11 @@
 				<label>Gateway connected directly to RS485 BUS</label>
 				<default>false</default>
 			</parameter>
+			<parameter name="enableSmack" type="boolean">
+				<advanced>true</advanced>
+				<label>Declare Gateway as a SMACK Postmaster and handle SMACK messages</label>
+				<default>true</default>
+			</parameter>
 			<parameter name="nextSenderId" type="integer">
 				<advanced>true</advanced>
 				<label>Next device Id</label>

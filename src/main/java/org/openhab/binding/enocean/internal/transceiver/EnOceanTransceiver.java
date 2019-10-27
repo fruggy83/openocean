@@ -32,7 +32,10 @@ import org.openhab.binding.enocean.internal.EnOceanException;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.enocean.internal.messages.ESP3Packet;
+import org.openhab.binding.enocean.internal.messages.ESP3Packet.ESPPacketType;
 import org.openhab.binding.enocean.internal.messages.ESP3PacketFactory;
+import org.openhab.binding.enocean.internal.messages.EventMessage;
+import org.openhab.binding.enocean.internal.messages.EventMessage.EventMessageType;
 import org.openhab.binding.enocean.internal.messages.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +98,7 @@ public abstract class EnOceanTransceiver {
                                     HexUtils.bytesToHex(currentRequest.RequestPacket.getOptionalPayload()));
 
                             byte[] b = currentRequest.RequestPacket.serialize();
+                            String packet = HexUtils.bytesToHex(b);
                             outputStream.write(b);
                             outputStream.flush();
 
@@ -127,7 +131,8 @@ public abstract class EnOceanTransceiver {
     Request currentRequest = null;
 
     protected Map<Long, HashSet<ESP3PacketListener>> listeners;
-    protected ESP3PacketListener teachInListener;
+    protected HashSet<EventMessageListener> eventListeners;
+    protected TeachInListener teachInListener;
 
     // Input and output streams, must be created by transceiver implementations
     protected InputStream inputStream;
@@ -146,6 +151,7 @@ public abstract class EnOceanTransceiver {
 
         requestQueue = new RequestQueue(scheduler);
         listeners = new HashMap<>();
+        eventListeners = new HashSet<>();
         teachInListener = null;
         this.errorListener = errorListener;
     }
@@ -297,27 +303,18 @@ public abstract class EnOceanTransceiver {
                                 if (packet != null) {
                                     switch (packet.getPacketType()) {
                                         case COMMON_COMMAND:
+                                            logger.debug("common command");
                                             break;
-                                        case EVENT:
-                                            break;
-                                        case RADIO_ERP1: {
-                                            ERP1Message msg = (ERP1Message) packet;
-
-                                            byte[] d = new byte[dataLength + optionalLength];
-                                            System.arraycopy(dataBuffer, 0, d, 0, d.length);
-
-                                            logger.debug("{} with RORG {} for {} payload {} received",
-                                                    packet.getPacketType().name(), msg.getRORG().name(),
-                                                    HexUtils.bytesToHex(msg.getSenderId()), HexUtils.bytesToHex(d));
-
-                                            informListeners(msg);
-                                        }
+                                        case EVENT:                   
+                                        case RADIO_ERP1:
+                                            informListeners(packet);
                                             break;
                                         case RADIO_ERP2:
                                             break;
                                         case RADIO_MESSAGE:
                                             break;
                                         case RADIO_SUB_TEL:
+                                            logger.debug("received sub tel");
                                             break;
                                         case REMOTE_MAN_COMMAND:
                                             break;
@@ -347,6 +344,7 @@ public abstract class EnOceanTransceiver {
                                         }
                                             break;
                                         case SMART_ACK_COMMAND:
+                                            logger.debug("received smack");
                                             break;
                                         default:
                                             break;
@@ -355,7 +353,8 @@ public abstract class EnOceanTransceiver {
                                     logger.trace("Unknown ESP3Packet");
                                     byte[] d = new byte[dataLength + optionalLength];
                                     System.arraycopy(dataBuffer, 0, d, 0, d.length);
-                                    logger.trace("{}", HexUtils.bytesToHex(d));
+                                    String hex = HexUtils.bytesToHex(d);
+                                    logger.trace("{}", hex);
                                 }
                             } else {
                                 state = _byte == Helper.ENOCEAN_SYNC_BYTE ? ReadingState.ReadingHeader
@@ -395,29 +394,33 @@ public abstract class EnOceanTransceiver {
         requestQueue.enqueRequest(r);
     }
 
-    protected void informListeners(ERP1Message msg) {
+    protected void informListeners(ESP3Packet msg) {
         try {
-            byte[] senderId = msg.getSenderId();
+            
+            if(msg.getPacketType() == ESPPacketType.RADIO_ERP1) {
+                ERP1Message erp1 = (ERP1Message)msg;
 
-            if (senderId != null) {
-                if (filteredDeviceId != null && senderId[0] == filteredDeviceId[0] && senderId[1] == filteredDeviceId[1]
-                        && senderId[2] == filteredDeviceId[2]) {
-                    // filter away own messages which are received through a repeater
-                    return;
+                byte[] senderId = erp1.getSenderId();
+                byte[] d = Helper.concatAll(msg.getPayload(), msg.getOptionalPayload());
+                logger.debug("{} with RORG {} for {} payload {} received",
+                    ESPPacketType.RADIO_ERP1.name(), erp1.getRORG().name(),
+                    HexUtils.bytesToHex(senderId), HexUtils.bytesToHex(d));
+
+                if (senderId != null) {
+                    if (filteredDeviceId != null && senderId[0] == filteredDeviceId[0] && senderId[1] == filteredDeviceId[1]
+                            && senderId[2] == filteredDeviceId[2]) {
+                        // filter away own messages which are received through a repeater
+                        return;
+                    }
                 }
 
-                if (teachInListener != null) {
-                    if (msg.getIsTeachIn() || (msg.getRORG() == RORG.RPS)) {
-                        logger.info("Received teach in message from {}", HexUtils.bytesToHex(msg.getSenderId()));
-                        teachInListener.espPacketReceived(msg);
-                        return;
-                    }
-                } else {
-                    if (msg.getIsTeachIn()) {
-                        logger.info("Discard message because this is a teach-in telegram from {}!",
-                                HexUtils.bytesToHex(msg.getSenderId()));
-                        return;
-                    }
+                if (teachInListener != null && (erp1.getIsTeachIn() || (erp1.getRORG() == RORG.RPS))) {
+                    logger.info("Received teach in message from {}", HexUtils.bytesToHex(senderId));
+                    teachInListener.espPacketReceived(erp1);
+                    return;
+                } else if (teachInListener == null && erp1.getIsTeachIn()) {
+                    logger.info("Discard message because this is a teach-in telegram from {}!", HexUtils.bytesToHex(senderId));
+                    return;
                 }
 
                 long s = Long.parseLong(HexUtils.bytesToHex(senderId), 16);
@@ -425,7 +428,30 @@ public abstract class EnOceanTransceiver {
                 if (pl != null) {
                     pl.forEach(l -> l.espPacketReceived(msg));
                 }
+            } else if (msg.getPacketType() == ESPPacketType.EVENT) {
+                EventMessage event = (EventMessage)msg;
+
+                byte[] d = Helper.concatAll(msg.getPayload(), msg.getOptionalPayload());
+                logger.debug("{} with type {} payload {} received",
+                    ESPPacketType.EVENT.name(), event.getEventMessageType().name(),
+                    HexUtils.bytesToHex(d));
+
+                if(event.getEventMessageType() == EventMessageType.SA_CONFIRM_LEARN) {
+                    byte[] senderId = event.getPayload(EventMessageType.SA_CONFIRM_LEARN.getDataLength() - 5, 4);
+
+                    if(teachInListener != null) {
+                        logger.info("Received smart teach in from {}",  HexUtils.bytesToHex(senderId));
+                        teachInListener.eventReceived(event);
+                        return;
+                    } else {
+                        logger.info("Discard message because this is a smart teach-in telegram from {}!",  HexUtils.bytesToHex(senderId));
+                        return;
+                    }
+                }
+
+                eventListeners.forEach(l -> l.eventReceived(event));
             }
+            
         } catch (Exception e) {
             logger.error("Exception in informListeners", e);
         }
@@ -448,7 +474,15 @@ public abstract class EnOceanTransceiver {
         }
     }
 
-    public void startDiscovery(ESP3PacketListener teachInListener) {
+    public void addEventMessageListener(EventMessageListener listener) {
+        eventListeners.add(listener);
+    }
+
+    public void removeEventMessageListener(EventMessageListener listener) {
+        eventListeners.remove(listener);
+    }
+
+    public void startDiscovery(TeachInListener teachInListener) {
         this.teachInListener = teachInListener;
     }
 

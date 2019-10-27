@@ -78,14 +78,18 @@ public class Helper {
     public static byte[] concatAll(byte[] a, byte[]... rest) {
         int totalLength = a.length;
         for (byte[] b : rest) {
-            totalLength += b.length;
+            if(b != null) {
+                totalLength += b.length;
+            }
         }
 
         byte[] result = Arrays.copyOf(a, totalLength);
         int offset = a.length;
         for (byte[] array : rest) {
-            System.arraycopy(array, 0, result, offset, array.length);
-            offset += array.length;
+            if(array != null) {
+                System.arraycopy(array, 0, result, offset, array.length);
+                offset += array.length;
+            }
         }
         return result;
     }

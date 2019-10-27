@@ -138,6 +138,7 @@ import org.openhab.binding.enocean.internal.eep.D2_01.D2_01_12;
 import org.openhab.binding.enocean.internal.eep.D2_01.D2_01_12_NodON;
 import org.openhab.binding.enocean.internal.eep.D2_03.D2_03_0A;
 import org.openhab.binding.enocean.internal.eep.D2_05.D2_05_00;
+import org.openhab.binding.enocean.internal.eep.D2_11.D2_11_01;
 import org.openhab.binding.enocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.enocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.enocean.internal.eep.F6_02.F6_02_01;
@@ -155,7 +156,7 @@ import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
  * @author Daniel Weber - Initial contribution
  */
 public enum EEPType {
-    Undef(RORG.Unknown, 0, 0, false, null, null, 0),
+    Undef(RORG.Unknown, 0, 0, false, false, null, null, 0),
 
     UTEResponse(RORG.UTE, 0, 0, false, UTEResponse.class, null),
     _4BSTeachInVariation3Response(RORG._4BS, 0, 0, false, _4BSTeachInVariation3Response.class, null),
@@ -353,6 +354,33 @@ public enum EEPType {
             CHANNEL_SETPOINT),
     RoomPanel_A5_10_23(RORG._4BS, 0x10, 0x23, false, A5_10_23.class, THING_TYPE_ROOMOPERATINGPANEL, CHANNEL_TEMPERATURE,
             CHANNEL_SETPOINT, CHANNEL_OCCUPANCY),
+    
+    RoomPanel_D2_11_01(RORG.VLD, 0x11, 0x01, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_TEMPERATURE, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_02(RORG.VLD, 0x11, 0x02, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_03(RORG.VLD, 0x11, 0x03, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_TEMPERATURE, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_04(RORG.VLD, 0x11, 0x04, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_05(RORG.VLD, 0x11, 0x05, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_OCCUPANCY, CHANNEL_TEMPERATURE, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_06(RORG.VLD, 0x11, 0x06, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_FANSPEEDSTAGE, CHANNEL_OCCUPANCY, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_07(RORG.VLD, 0x11, 0x07, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_OCCUPANCY, CHANNEL_TEMPERATURE, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+    RoomPanel_D2_11_08(RORG.VLD, 0x11, 0x08, false, true, D2_11_01.class, THING_TYPE_BIDIRROOMOPERATINGPANEL, CHANNEL_SETPOINTTYPE, 
+            CHANNEL_HEATINGSTATE, CHANNEL_COOLINGSTATE, CHANNEL_WINDOWSTATE, CHANNEL_TEMPERATURECORRECTION, CHANNEL_VALIDTEMPERATURECORRECTION,
+            CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_OCCUPANCY, CHANNEL_TEMPERATURE, CHANNEL_HUMIDITY, CHANNEL_SEND_COMMAND, CHANNEL_STATUS_REQUEST_EVENT),
+
+
 
     AutomatedMeterReading_00(RORG._4BS, 0x12, 0x00, false, A5_12_00.class, THING_TYPE_AUTOMATEDMETERSENSOR,
             CHANNEL_COUNTER, CHANNEL_CURRENTNUMBER),
@@ -372,16 +400,16 @@ public enum EEPType {
     ExtendedLight_A5(RORG._4BS, 0x11, 0x04, false, A5_11_04.class, THING_TYPE_CENTRALCOMMAND, CHANNEL_GENERAL_SWITCHING,
             CHANNEL_DIMMER, CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_COUNTER),
 
-    CentralCommandSwitching(RORG._4BS, 0x38, 0x08, false, A5_38_08_Switching.class, THING_TYPE_CENTRALCOMMAND, 0x01,
+    CentralCommandSwitching(RORG._4BS, 0x38, 0x08, false, false, A5_38_08_Switching.class, THING_TYPE_CENTRALCOMMAND, 0x01,
             CHANNEL_GENERAL_SWITCHING, CHANNEL_TEACHINCMD),
-    CentralCommandDimming(RORG._4BS, 0x38, 0x08, false, A5_38_08_Dimming.class, THING_TYPE_CENTRALCOMMAND, 0x02,
+    CentralCommandDimming(RORG._4BS, 0x38, 0x08, false, false, A5_38_08_Dimming.class, THING_TYPE_CENTRALCOMMAND, 0x02,
             CHANNEL_DIMMER, CHANNEL_TEACHINCMD),
-    CentralCommandBlinds(RORG._4BS, 0x38, 0x08, false, A5_38_08_Blinds.class, THING_TYPE_ROLLERSHUTTER, 0x07,
+    CentralCommandBlinds(RORG._4BS, 0x38, 0x08, false, false, A5_38_08_Blinds.class, THING_TYPE_ROLLERSHUTTER, 0x07,
             CHANNEL_ROLLERSHUTTER, CHANNEL_ANGLE, CHANNEL_TEACHINCMD),
 
     // UniversalCommand(RORG._4BS, 0x3f, 0x7f, false, A5_3F_7F_Universal.class, THING_TYPE_UNIVERSALACTUATOR,
     // CHANNEL_GENERIC_ROLLERSHUTTER, CHANNEL_GENERIC_LIGHT_SWITCHING, CHANNEL_GENERIC_DIMMER, CHANNEL_TEACHINCMD),
-    EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, "EltakoFSB", 0, A5_3F_7F_EltakoFSB.class, THING_TYPE_ROLLERSHUTTER, 0,
+    EltakoFSB(RORG._4BS, 0x3f, 0x7f, false, false, "EltakoFSB", 0, A5_3F_7F_EltakoFSB.class, THING_TYPE_ROLLERSHUTTER, 0,
             new Hashtable<String, Configuration>() {
                 private static final long serialVersionUID = 1L;
                 {
@@ -394,7 +422,7 @@ public enum EEPType {
                 }
             }),
 
-    Thermostat(RORG._4BS, 0x20, 0x04, false, A5_20_04.class, THING_TYPE_THERMOSTAT, CHANNEL_VALVE_POSITION,
+    Thermostat(RORG._4BS, 0x20, 0x04, false, true, A5_20_04.class, THING_TYPE_THERMOSTAT, CHANNEL_VALVE_POSITION,
             CHANNEL_BUTTON_LOCK, CHANNEL_DISPLAY_ORIENTATION, CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_TEMPERATURE,
             CHANNEL_FEED_TEMPERATURE, CHANNEL_MEASUREMENT_CONTROL, CHANNEL_FAILURE_CODE, CHANNEL_WAKEUPCYCLE,
             CHANNEL_SERVICECOMMAND, CHANNEL_STATUS_REQUEST_EVENT, CHANNEL_SEND_COMMAND),
@@ -461,22 +489,29 @@ public enum EEPType {
 
     private boolean supportsRefresh;
 
+    private boolean requestsResponse;
+
     EEPType(RORG rorg, int func, int type, boolean supportsRefresh, Class<? extends EEP> eepClass,
             ThingTypeUID thingTypeUID, String... channelIds) {
-        this(rorg, func, type, supportsRefresh, eepClass, thingTypeUID, -1, channelIds);
+        this(rorg, func, type, supportsRefresh, false, eepClass, thingTypeUID, -1, channelIds);
+    }
+
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, boolean requestsResponse, Class<? extends EEP> eepClass,
+            ThingTypeUID thingTypeUID, String... channelIds) {
+        this(rorg, func, type, supportsRefresh, requestsResponse, eepClass, thingTypeUID, -1, channelIds);
     }
 
     EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix, int manufId,
             Class<? extends EEP> eepClass, ThingTypeUID thingTypeUID, String... channelIds) {
-        this(rorg, func, type, supportsRefresh, manufactorSuffix, manufId, eepClass, thingTypeUID, 0, channelIds);
+        this(rorg, func, type, supportsRefresh, false, manufactorSuffix, manufId, eepClass, thingTypeUID, 0, channelIds);
     }
 
-    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, Class<? extends EEP> eepClass,
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, boolean requestsResponse, Class<? extends EEP> eepClass,
             ThingTypeUID thingTypeUID, int command, String... channelIds) {
-        this(rorg, func, type, supportsRefresh, "", 0, eepClass, thingTypeUID, command, channelIds);
+        this(rorg, func, type, supportsRefresh, requestsResponse, "", 0, eepClass, thingTypeUID, command, channelIds);
     }
 
-    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix, int manufId,
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, boolean requestsResponse, String manufactorSuffix, int manufId,
             Class<? extends EEP> eepClass, ThingTypeUID thingTypeUID, int command, String... channelIds) {
         this.rorg = rorg;
         this.func = func;
@@ -487,6 +522,7 @@ public enum EEPType {
         this.manufactorSuffix = manufactorSuffix;
         this.manufactorId = manufId;
         this.supportsRefresh = supportsRefresh;
+        this.requestsResponse = requestsResponse;
 
         for (String id : channelIds) {
             this.channelIdsWithConfig.put(id, new Configuration());
@@ -503,7 +539,7 @@ public enum EEPType {
         this.supportedChannels.put(CHANNEL_LASTRECEIVED, CHANNELID2CHANNELDESCRIPTION.get(CHANNEL_LASTRECEIVED));
     }
 
-    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, String manufactorSuffix, int manufId,
+    EEPType(RORG rorg, int func, int type, boolean supportsRefresh, boolean requestsResponse, String manufactorSuffix, int manufId,
             Class<? extends EEP> eepClass, ThingTypeUID thingTypeUID, int command,
             Hashtable<String, Configuration> channelConfigs) {
         this.rorg = rorg;
@@ -516,6 +552,7 @@ public enum EEPType {
         this.manufactorSuffix = manufactorSuffix;
         this.manufactorId = manufId;
         this.supportsRefresh = supportsRefresh;
+        this.requestsResponse = requestsResponse;
 
         for (String id : channelConfigs.keySet()) {
             this.supportedChannels.put(id, CHANNELID2CHANNELDESCRIPTION.get(id));
@@ -549,6 +586,10 @@ public enum EEPType {
 
     public boolean getSupportsRefresh() {
         return supportsRefresh;
+    }
+
+    public boolean getRequstesResponse() {
+        return requestsResponse;
     }
 
     public Map<String, EnOceanChannelDescription> GetSupportedChannels() {

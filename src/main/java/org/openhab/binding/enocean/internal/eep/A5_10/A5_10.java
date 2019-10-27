@@ -20,7 +20,6 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.library.unit.SIUnits;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
@@ -46,15 +45,15 @@ public abstract class A5_10 extends _4BSMessage {
         switch (channelId) {
             case CHANNEL_FANSPEEDSTAGE:
                 if (getDB_3Value() > 209) {
-                    return new StringType("-1");
+                    return new DecimalType(0);          // Auto
                 } else if (getDB_3Value() > 189) {
-                    return new StringType("0");
+                    return new DecimalType(1);          // Speed 0 / Off
                 } else if (getDB_3Value() > 164) {
-                    return new StringType("1");
+                    return new DecimalType(2);          // Speed 1
                 } else if (getDB_3Value() > 144) {
-                    return new StringType("2");
+                    return new DecimalType(3);          // Speed 2
                 } else {
-                    return new StringType("3");
+                    return new DecimalType(4);          // Speed 3
                 }
 
             case CHANNEL_SETPOINT:

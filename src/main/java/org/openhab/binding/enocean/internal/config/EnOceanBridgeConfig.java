@@ -10,18 +10,23 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.enocean.internal.transceiver;
+package org.openhab.binding.enocean.internal.config;
 
-import org.openhab.binding.enocean.internal.messages.ESP3Packet;
-import org.openhab.binding.enocean.internal.messages.EventMessage;
+import org.eclipse.smarthome.config.core.Configuration;
 
 /**
  *
  * @author Daniel Weber - Initial contribution
  */
-public interface ESP3PacketListener {
+public class EnOceanBridgeConfig extends Configuration {
 
-    public void espPacketReceived(ESP3Packet packet);
+    public String path;
+    public boolean rs485;
+    public Integer nextSenderId;
+    public boolean enableSmack;
 
-    public long getSenderIdToListenTo();
+    public EnOceanBridgeConfig() {
+        enableSmack = true;
+    }
+    
 }

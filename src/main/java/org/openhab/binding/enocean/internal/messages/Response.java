@@ -39,7 +39,7 @@ public class Response extends ESP3Packet {
             this.value = value;
         }
 
-        public int getValue() {
+        public byte getValue() {
             return this.value;
         }
 
@@ -58,7 +58,7 @@ public class Response extends ESP3Packet {
     protected ResponseType responseType;
     protected boolean _isValid = false;
 
-    Response(int dataLength, int optionalDataLength, byte[] payload) {
+    public Response(int dataLength, int optionalDataLength, byte[] payload) {
         super(dataLength, optionalDataLength, ESPPacketType.RESPONSE, payload);
 
         try {
