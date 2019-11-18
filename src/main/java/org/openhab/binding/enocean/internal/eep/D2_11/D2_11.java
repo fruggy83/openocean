@@ -182,7 +182,7 @@ public abstract class D2_11 extends _VLDMessage {
     protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command,
             Function<String, State> getCurrentStateFunc, Configuration config) {
 
-        if (channelId.equals(CHANNEL_SEND_COMMAND)) {
+        if (CHANNEL_SEND_COMMAND.equals(channelId)) {
             byte db_3 = MID.ID1.value;
             if(getCurrentStateFunc.apply(CHANNEL_HEATINGSTATE) == OnOffType.ON) {
                 db_3 += 0b01000000;

@@ -176,6 +176,8 @@ public class EnOceanBindingConstants {
     public final static String CHANNEL_VALIDTEMPERATURECORRECTION = "validTemperatureCorrection";
     public final static String CHANNEL_OCCUPANCYOVERWRITABLE = "occupancyOverwriteable";
 
+    public final static String CHANNEL_LOW_BATTERY = "lowBattery";    
+
     public static final Map<String, EnOceanChannelDescription> CHANNELID2CHANNELDESCRIPTION = Collections
             .unmodifiableMap(new HashMap<String, EnOceanChannelDescription>() {
                 private static final long serialVersionUID = 1L;
@@ -352,6 +354,9 @@ public class EnOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_VALIDTEMPERATURECORRECTION), CoreItemFactory.NUMBER));
                     put(CHANNEL_OCCUPANCYOVERWRITABLE, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_OCCUPANCYOVERWRITABLE), CoreItemFactory.SWITCH));
+
+                    put(CHANNEL_LOW_BATTERY, new EnOceanChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_CHANNEL_LOW_BATTERY.getUID(), 
+                            CoreItemFactory.SWITCH));
 
                     put(CHANNEL_REPEATERMODE, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_REPEATERMODE), CoreItemFactory.STRING));

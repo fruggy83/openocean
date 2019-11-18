@@ -106,6 +106,7 @@ import org.openhab.binding.enocean.internal.eep.A5_14.A5_14_01;
 import org.openhab.binding.enocean.internal.eep.A5_14.A5_14_01_ELTAKO;
 import org.openhab.binding.enocean.internal.eep.A5_14.A5_14_09;
 import org.openhab.binding.enocean.internal.eep.A5_14.A5_14_0A;
+import org.openhab.binding.enocean.internal.eep.A5_20.A5_20_01;
 import org.openhab.binding.enocean.internal.eep.A5_20.A5_20_04;
 import org.openhab.binding.enocean.internal.eep.A5_38.A5_38_08_Blinds;
 import org.openhab.binding.enocean.internal.eep.A5_38.A5_38_08_Dimming;
@@ -422,6 +423,8 @@ public enum EEPType {
                 }
             }),
 
+    Thermostat01(RORG._4BS, 0x20, 0x01, false, true, A5_20_04.class, THING_TYPE_THERMOSTAT, CHANNEL_VALVE_POSITION,
+            CHANNEL_TEMPERATURE, CHANNEL_LOW_BATTERY, CHANNEL_CONTACT, CHANNEL_STATUS_REQUEST_EVENT, CHANNEL_SEND_COMMAND),
     Thermostat(RORG._4BS, 0x20, 0x04, false, true, A5_20_04.class, THING_TYPE_THERMOSTAT, CHANNEL_VALVE_POSITION,
             CHANNEL_BUTTON_LOCK, CHANNEL_DISPLAY_ORIENTATION, CHANNEL_TEMPERATURE_SETPOINT, CHANNEL_TEMPERATURE,
             CHANNEL_FEED_TEMPERATURE, CHANNEL_MEASUREMENT_CONTROL, CHANNEL_FAILURE_CODE, CHANNEL_WAKEUPCYCLE,

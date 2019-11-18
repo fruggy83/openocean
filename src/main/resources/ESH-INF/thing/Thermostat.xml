@@ -27,6 +27,7 @@
 				<label>EEP</label>
 				<description>EEP which is used by sensor</description>
 				<options>
+					<option value="A5_20_01">Battery Powered Actuator</option>
 					<option value="A5_20_04">Heating radiator valve actuating drive with feed and room temperature measurement, local set point control and display</option>
 				</options>
 				<default>"A5_20_04"</default>
@@ -36,6 +37,7 @@
 			<parameter name="sendingEEPId" type="text">
 				<label>EEP for sending commands</label>
 				<options>
+					<option value="A5_20_01">Battery Powered Actuator</option>
 					<option value="A5_20_04">Heating radiator valve actuating drive with feed and room temperature measurement, local set point control and display</option>
 				</options>
 				<default>"A5_20_04"</default>
