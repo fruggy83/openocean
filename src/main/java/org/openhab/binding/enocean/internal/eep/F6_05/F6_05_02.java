@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2010-2019 Contributors to the openHAB project
- *5 * See the NOTICE file(s) distributed with this work for additional
+ *
+ * See the NOTICE file(s) distributed with this work for additional
  * information.
  *
  * This program and the accompanying materials are made available under the
