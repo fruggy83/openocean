@@ -252,12 +252,12 @@ public class ESP2Packet {
         }
     }
 
-    public static boolean checkSum(byte data[], int length, byte sum) {
-        int checkSum = 0;
+    public static boolean validateCheckSum(byte data[], int length, byte checkSum) {
+        int sum = 0;
         for (int i = 0; i < length; i++) {
-            checkSum += (data[i] & 0xff);
+            sum += (data[i] & 0xff);
         }
 
-        return (checkSum & 0xff) == (sum & 0xff);
+        return (sum & 0xff) == (checkSum & 0xff);
     }
 }

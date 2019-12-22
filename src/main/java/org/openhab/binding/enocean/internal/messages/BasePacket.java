@@ -103,7 +103,7 @@ public abstract class BasePacket {
         return Arrays.copyOfRange(data, offset, offset + length);
     }
 
-    public final byte[] getPayload() {
+    public byte[] getPayload() {
         return data;
     }
 
@@ -113,7 +113,7 @@ public abstract class BasePacket {
         return result;
     }
 
-    public final byte[] getOptionalPayload() {
+    public byte[] getOptionalPayload() {
         return optionalData;
     }
 }

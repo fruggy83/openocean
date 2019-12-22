@@ -16,7 +16,8 @@ import org.openhab.binding.enocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
 /**
- *
+ * Base class for A5-13 EEP message handling
+ * 
  * @author Daniel Weber - Initial contribution
  */
 public abstract class A5_13 extends _4BSMessage {

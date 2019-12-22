@@ -26,7 +26,8 @@ import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
 /**
- *
+ * Convertes EEP A5-13 messages of type 0x01 into Temperature, Illumination, Wind Speed and Temperature states
+ * 
  * @author Daniel Weber - Initial contribution
  */
 public class A5_13_01 extends A5_13 {
@@ -68,7 +69,8 @@ public class A5_13_01 extends A5_13 {
     }
 
     @Override
-    public State convertToState(String channelId, String channelTypeId, Configuration config, Function<String, State> getCurrentStateFunc) {
+    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
+            Configuration config) {
 
         if (isPartOne()) {
             switch (channelId) {

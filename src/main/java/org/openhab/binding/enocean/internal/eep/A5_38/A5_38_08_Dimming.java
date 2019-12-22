@@ -67,7 +67,7 @@ public class A5_38_08_Dimming extends _4BSMessage {
                 } else if (outputCommand instanceof IncreaseDecreaseType) {
                     dimmValue = ((IncreaseDecreaseType) outputCommand == IncreaseDecreaseType.INCREASE)
                             ? Switch100Percent
-                            : Zero;
+                            : ZERO;
                 } else if (outputCommand instanceof UpDownType) {
                     dimmValue = ((UpDownType) outputCommand == UpDownType.UP) ? Switch100Percent : ZERO;
                 } else {
@@ -91,7 +91,7 @@ public class A5_38_08_Dimming extends _4BSMessage {
                 }
 
                 byte rampingTime = Integer.valueOf(c.rampingTime).byteValue();
-                byte switchingCommand = (dimmValue == Zero) ? SwitchOff : SwitchOn;
+                byte switchingCommand = (dimmValue == ZERO) ? SwitchOff : SwitchOn;
 
                 setData(CommandId, dimmValue, rampingTime, (byte) (TeachInBit | storeByte | switchingCommand));
 

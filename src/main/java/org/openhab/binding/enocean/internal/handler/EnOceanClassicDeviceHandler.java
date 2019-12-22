@@ -258,7 +258,7 @@ public class EnOceanClassicDeviceHandler extends EnOceanBaseActuatorHandler {
             }
 
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            logger.debug("{}", e.getMessage());
         }
     }
 
