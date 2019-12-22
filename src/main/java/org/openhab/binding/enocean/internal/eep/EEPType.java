@@ -142,6 +142,7 @@ import org.openhab.binding.enocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.enocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.enocean.internal.eep.F6_02.F6_02_01;
 import org.openhab.binding.enocean.internal.eep.F6_02.F6_02_02;
+import org.openhab.binding.enocean.internal.eep.F6_05.F6_05_02;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00_EltakoFPE;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_01;
@@ -200,6 +201,8 @@ public enum EEPType {
             CHANNEL_CONTACT),
     ContactAndSwitch03(RORG.RPS, 0x10, 0x00, false, "EltakoFPE", ELTAKOID, F6_10_00_EltakoFPE.class, THING_TYPE_CONTACT, CHANNEL_CONTACT),
     
+    SmokeDetection(RORG.RPS, 0x05, 0x02, false, F6_05_02.class, null, CHANNEL_SMOKDEDETECTION, CHANNEL_BATTERYLOW),
+
     BatteryStatus(RORG._4BS, 0x14, 0x01, false, "ELTAKO", ELTAKOID, A5_14_01_ELTAKO.class, THING_TYPE_CONTACT,
             CHANNEL_BATTERY_VOLTAGE, CHANNEL_ENERGY_STORAGE),
     SigBatteryStatus(RORG.SIG, 0x06, 0x00, false, D0_06.class, null, CHANNEL_BATTERY_LEVEL),

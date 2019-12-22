@@ -65,16 +65,16 @@ public class EnOceanBindingConstants {
     public final static ThingTypeUID THING_TYPE_AUTOMATEDMETERSENSOR = new ThingTypeUID(BINDING_ID,
             "automatedMeterSensor");
     public final static ThingTypeUID THING_TYPE_THERMOSTAT = new ThingTypeUID(BINDING_ID, "thermostat");
-
     public final static ThingTypeUID THING_TYPE_OCCUPANCYSENSOR = new ThingTypeUID(BINDING_ID, "occupancySensor");
     public final static ThingTypeUID THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR = new ThingTypeUID(BINDING_ID,
             "lightTemperatureOccupancySensor");
     public final static ThingTypeUID THING_TYPE_LIGHTSENSOR = new ThingTypeUID(BINDING_ID, "lightSensor");
-
     public final static ThingTypeUID THING_TYPE_ENVIRONMENTALSENSOR = new ThingTypeUID(BINDING_ID,
             "environmentalSensor");
     public final static ThingTypeUID THING_TYPE_GENERICTHING = new ThingTypeUID(BINDING_ID, "genericThing");
     public final static ThingTypeUID THING_TYPE_ROLLERSHUTTER = new ThingTypeUID(BINDING_ID, "rollershutter");
+    public final static ThingTypeUID THING_TYPE_MULTFUNCTIONSMOKEDETECTOR = new ThingTypeUID(BINDING_ID,
+            "multiFunctionSmokeDetector");
 
     public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = new HashSet<>(
             Arrays.asList(THING_TYPE_PUSHBUTTON, THING_TYPE_ROCKERSWITCH, THING_TYPE_CLASSICDEVICE,
@@ -82,7 +82,8 @@ public class EnOceanBindingConstants {
                     THING_TYPE_CONTACT, THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_TEMPERATURESENSOR,
                     THING_TYPE_TEMPERATUREHUMIDITYSENSOR, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER,
                     THING_TYPE_OCCUPANCYSENSOR, THING_TYPE_LIGHTTEMPERATUREOCCUPANCYSENSOR, THING_TYPE_LIGHTSENSOR,
-                    THING_TYPE_AUTOMATEDMETERSENSOR, THING_TYPE_THERMOSTAT, THING_TYPE_ENVIRONMENTALSENSOR));
+                    THING_TYPE_AUTOMATEDMETERSENSOR, THING_TYPE_THERMOSTAT, THING_TYPE_ENVIRONMENTALSENSOR,
+                    THING_TYPE_MULTFUNCTIONSMOKEDETECTOR));
 
     // List of all Channel Type Ids, these type ids are also used as channel ids during dynamic creation of channels
     // this makes it a lot easier as we do not have to manage a type id and an id, drawback long channel names
@@ -111,6 +112,7 @@ public class EnOceanBindingConstants {
     public final static String CHANNEL_RAINSTATUS = "rainStatus";
     public final static String CHANNEL_COUNTER = "counter";
     public final static String CHANNEL_CURRENTNUMBER = "currentNumber";
+    public final static String CHANNEL_SMOKDEDETECTION = "smokeDetection";
 
     public final static String CHANNEL_PUSHBUTTON = "pushButton";
     public final static String CHANNEL_DOUBLEPRESS = "doublePress";
@@ -136,6 +138,7 @@ public class EnOceanBindingConstants {
     public final static String CHANNEL_BATTERY_VOLTAGE = "batteryVoltage";
     public final static String CHANNEL_ENERGY_STORAGE = "energyStorage";
     public final static String CHANNEL_BATTERY_LEVEL = "batteryLevel";
+    public final static String CHANNEL_BATTERYLOW = "batteryLow";
 
     public final static String CHANNEL_AUTOOFF = "autoOFF";
     public final static String CHANNEL_DELAYRADIOOFF = "delayRadioOFF";
@@ -214,6 +217,8 @@ public class EnOceanBindingConstants {
                             CoreItemFactory.NUMBER));
                     put(CHANNEL_CURRENTNUMBER, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_CURRENTNUMBER), CoreItemFactory.NUMBER));
+                    put(CHANNEL_SMOKDEDETECTION, new EnOceanChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_SMOKDEDETECTION), CoreItemFactory.SWITCH));
                     put(CHANNEL_SETPOINT, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_SETPOINT), CoreItemFactory.NUMBER));
                     put(CHANNEL_CONTACT, new EnOceanChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_CONTACT),
@@ -226,6 +231,8 @@ public class EnOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_ENERGY_STORAGE), CoreItemFactory.NUMBER + ItemUtil.EXTENSION_SEPARATOR + ElectricPotential.class.getSimpleName()));
                     put(CHANNEL_BATTERY_LEVEL, new EnOceanChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_CHANNEL_BATTERY_LEVEL.getUID(), 
                             CoreItemFactory.NUMBER));
+                    put(CHANNEL_BATTERYLOW, new EnOceanChannelDescription(DefaultSystemChannelTypeProvider.SYSTEM_CHANNEL_LOW_BATTERY.getUID(), 
+                            CoreItemFactory.SWITCH));
                     put(CHANNEL_TEACHINCMD, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_TEACHINCMD), CoreItemFactory.SWITCH));
 

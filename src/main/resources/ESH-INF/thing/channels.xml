@@ -464,4 +464,12 @@
 		<category>thermostat</category>
 	</channel-type>
 
+	<channel-type id="smokeDetection">
+		<item-type>Switch</item-type>
+		<label>Smoke Detected</label>
+		<description>Smoke detection sensor state.</description>
+		<category>Switch</category>
+		<state readOnly="true" />
+	</channel-type>
+
 </thing:thing-descriptions>
