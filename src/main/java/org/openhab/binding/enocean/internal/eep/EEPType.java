@@ -97,10 +97,7 @@ import org.openhab.binding.enocean.internal.eep.A5_10.A5_10_22;
 import org.openhab.binding.enocean.internal.eep.A5_10.A5_10_23;
 import org.openhab.binding.enocean.internal.eep.A5_11.A5_11_03;
 import org.openhab.binding.enocean.internal.eep.A5_11.A5_11_04;
-import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_00;
-import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_01;
-import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_02;
-import org.openhab.binding.enocean.internal.eep.A5_12.A5_12_03;
+import org.openhab.binding.enocean.internal.eep.A5_12.*;
 import org.openhab.binding.enocean.internal.eep.A5_13.A5_13_01;
 import org.openhab.binding.enocean.internal.eep.A5_14.A5_14_01;
 import org.openhab.binding.enocean.internal.eep.A5_14.A5_14_01_ELTAKO;
@@ -365,6 +362,8 @@ public enum EEPType {
             CHANNEL_CUMULATIVEVALUE, CHANNEL_CURRENTFLOW),
     AutomatedMeterReading_03(RORG._4BS, 0x12, 0x03, false, A5_12_03.class, THING_TYPE_AUTOMATEDMETERSENSOR,
             CHANNEL_CUMULATIVEVALUE, CHANNEL_CURRENTFLOW),
+    AutomatedMeterReading_04(RORG._4BS, 0x12, 0x01, false, "Eltako", ELTAKOID, A5_12_01_Eltako.class, THING_TYPE_AUTOMATEDMETERSENSOR,
+            CHANNEL_TOTALUSAGE, CHANNEL_INSTANTPOWER, CHANNEL_INSTANTPOWER_ALTERNATETARIFF, CHANNEL_TOTALUSAGE_ALTERNATETARIFF),
 
     EnvironmentalSensor_01(RORG._4BS, 0x13, 0x01, false, A5_13_01.class, THING_TYPE_ENVIRONMENTALSENSOR,
             CHANNEL_ILLUMINATION, CHANNEL_TEMPERATURE, CHANNEL_WINDSPEED, CHANNEL_RAINSTATUS, CHANNEL_ILLUMINATIONWEST,
