@@ -190,13 +190,6 @@
 		<label>Total Usage Secondary Tariff</label>
 		<description>Used energy in Kilowatt hours on the secondary tariff</description>
 		<state pattern="%d %unit%" readOnly="true" />
-		<config-description>
-			<parameter name="validateValue" type="boolean">
-				<label>Validate Value</label>
-				<description>Filter out increases more than 10.0 kWh and decreases less than 1.0 kWh</description>
-				<default>false</default>
-			</parameter>
-		</config-description>
 	</channel-type>
 
 	<channel-type id="batteryVoltage">
