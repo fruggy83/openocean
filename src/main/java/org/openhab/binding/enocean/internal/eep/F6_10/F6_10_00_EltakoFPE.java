@@ -62,4 +62,8 @@ public class F6_10_00_EltakoFPE extends _RPSMessage {
         return super.validateData(bytes)  && ((bytes[0] & (byte) 0xEF) == (byte) 0x00);
     }
 
+    @Override
+    public boolean validateForTeachIn() {
+        return ((bytes[0] & (byte) 0xEF) == (byte) 0x00);
+    }
 }

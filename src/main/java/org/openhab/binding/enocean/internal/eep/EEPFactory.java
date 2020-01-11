@@ -20,9 +20,11 @@ import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.enocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.enocean.internal.eep.Base._4BSTeachInVariation3Response;
+import org.openhab.binding.enocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.enocean.internal.eep.D5_00.D5_00_01;
 import org.openhab.binding.enocean.internal.eep.F6_01.F6_01_01;
 import org.openhab.binding.enocean.internal.eep.F6_02.F6_02_01;
+import org.openhab.binding.enocean.internal.eep.F6_05.F6_05_02;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00_EltakoFPE;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_01;
@@ -78,42 +80,53 @@ public class EEPFactory {
         switch (msg.getRORG()) {
             case RPS:
                 try {
-                    EEP result = new F6_01_01(msg);
-                    if (result.isValid()) { // check if t21 is set, nu not set, and data == 0x10 or 0x00
+                    _RPSMessage result = new F6_10_00(msg);
+                    if (result.validateForTeachIn()) {
                         return result;
                     }
                 } catch (Exception e) {
                 }
 
                 try {
-                    EEP result = new F6_02_01(msg);
-                    if (result.isValid()) { // check if highest bit is not set
+                    _RPSMessage result = new F6_10_01(msg);
+                    if (result.validateForTeachIn()) {
                         return result;
                     }
                 } catch (Exception e) {
                 }
 
                 try {
-                    EEP result = new F6_10_00(msg);
-                    if (result.isValid()) {
+                    _RPSMessage result = new F6_02_01(msg);
+                    if (result.validateForTeachIn()) { 
                         return result;
                     }
                 } catch (Exception e) {
                 }
+
                 try {
-                    EEP result = new F6_10_00_EltakoFPE(msg);
-                    if (result.isValid()) { // check if data == 0x10 or 0x00
+                    _RPSMessage result = new F6_05_02(msg);
+                    if (result.validateForTeachIn()) { 
                         return result;
                     }
                 } catch (Exception e) {
-                }
+                }                
+
                 try {
-                    EEP result = new F6_10_01(msg);
-                    if (result.isValid()) {
+                    _RPSMessage result = new F6_01_01(msg);
+                    if (result.validateForTeachIn()) { 
                         return result;
                     }
                 } catch (Exception e) {
                 }
+                
+                try {
+                    _RPSMessage result = new F6_10_00_EltakoFPE(msg);
+                    if (result.validateForTeachIn()) { 
+                        return result;
+                    }
+                } catch (Exception e) {
+                }
+                
 
                 return null;
             case _1BS:

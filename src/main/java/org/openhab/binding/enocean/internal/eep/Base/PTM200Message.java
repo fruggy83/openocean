@@ -56,9 +56,6 @@ public class PTM200Message extends _RPSMessage {
     @Override
     protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
             Configuration config) {
-        if (!isValid()) {
-            return UnDefType.UNDEF;
-        }
 
         switch (channelId) {
             case CHANNEL_GENERAL_SWITCHING:
@@ -77,5 +74,10 @@ public class PTM200Message extends _RPSMessage {
         }
 
         return UnDefType.UNDEF;
+    }
+
+    @Override
+    public boolean validateForTeachIn() {    
+        return false;   // Never treat RPS messages as PTM200 messages during Teach in
     }
 }

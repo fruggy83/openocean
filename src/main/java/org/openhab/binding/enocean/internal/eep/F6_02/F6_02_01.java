@@ -55,9 +55,6 @@ public class F6_02_01 extends _RPSMessage {
     @Override
     protected String convertToEventImpl(String channelId, String channelTypeId, String lastEvent,
             Configuration config) {
-        if (!isValid()) {
-            return null;
-        }
 
         if (t21 && nu) {
 
@@ -115,10 +112,6 @@ public class F6_02_01 extends _RPSMessage {
         // this method is used by the classic device listener channels to convert an rocker switch message into an
         // appropriate item update
         State currentState = getCurrentStateFunc.apply(channelId);
-
-        if (!isValid()) {
-            return UnDefType.UNDEF;
-        }
 
         if (t21 && nu) {
             EnOceanChannelVirtualRockerSwitchConfig c = config.as(EnOceanChannelVirtualRockerSwitchConfig.class);
@@ -181,5 +174,28 @@ public class F6_02_01 extends _RPSMessage {
     @Override
     protected boolean validateData(byte[] bytes) {
         return super.validateData(bytes) && !getBit(bytes[0], 7);
+    }
+
+    @Override
+    public boolean validateForTeachIn() {
+        if (t21 && nu) {
+            // just treat press as teach in => DB0.4 has to be set
+            if(!getBit(bytes[0], 4)) {
+                return false;
+            }
+            // A1, A0, B1 or B0 must be pressed
+            if((bytes[0] >>> 5) > B0) {
+                return false;
+            }
+        } else if (t21 && !nu) {
+            // just treat press as teach in => DB0.4 has to be set
+            if(!getBit(bytes[0], 4)) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
     }
 }
