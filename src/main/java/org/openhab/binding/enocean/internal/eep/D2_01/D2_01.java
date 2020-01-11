@@ -48,6 +48,9 @@ public abstract class D2_01 extends _VLDMessage {
     protected final byte CMD_ACTUATOR_STATUS_RESPONE = 0x04;
     protected final byte CMD_ACTUATOR_MEASUREMENT_QUERY = 0x06;
     protected final byte CMD_ACTUATOR_MEASUREMENT_RESPONE = 0x07;
+    protected final byte CMD_ACTUATOR_SET_PILOTWIRE = 0x08;
+    protected final byte CMD_ACTUATOR_PILOTWIRE_QUERY = 0x09;
+    protected final byte CMD_ACTUATOR_PILOTWIRE_RESPONSE = 0x0A;
 
     protected final byte AllChannels_Mask = 0x1e;
     protected final byte ChannelA_Mask = 0x00;
@@ -56,6 +59,9 @@ public abstract class D2_01 extends _VLDMessage {
     protected final byte STATUS_SWITCHING_ON = 0x01;
     protected final byte STATUS_SWITCHING_OFF = 0x00;
     protected final byte STATUS_DIMMING_100 = 0x64;
+
+    protected final byte PILOTWIRE_OFF = 0x00;
+    protected final byte PILOTWIRE_COMFORT2 = 0x05;
 
     public D2_01() {
         super();
@@ -130,6 +136,27 @@ public abstract class D2_01 extends _VLDMessage {
         return UnDefType.UNDEF;
     }
 
+    protected void setPilotWireQueryData() {
+        setData(CMD_ACTUATOR_PILOTWIRE_QUERY);
+    }
+
+    protected void setPilotWireData(Command command, Configuration config) {
+        if (command instanceof DecimalType) {
+            byte value = ((DecimalType) command).byteValue();
+            if(value >= PILOTWIRE_OFF && value <= PILOTWIRE_COMFORT2) {
+                setData(CMD_ACTUATOR_SET_PILOTWIRE, value);
+            }
+        }
+    }
+
+    protected State getPilotWireData() {
+        if (getCMD() == CMD_ACTUATOR_PILOTWIRE_RESPONSE) {
+            return new DecimalType((bytes[bytes.length - 1]));
+        }
+
+        return UnDefType.UNDEF;
+    }
+
     protected void setEnergyMeasurementQueryData(byte outputChannel) {
         setData(CMD_ACTUATOR_MEASUREMENT_QUERY, outputChannel);
     }
@@ -199,34 +226,52 @@ public abstract class D2_01 extends _VLDMessage {
     protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command,
             Function<String, State> getCurrentStateFunc, Configuration config) {
 
-        if (channelId.equals(CHANNEL_GENERAL_SWITCHING)) {
-            if (command == RefreshType.REFRESH) {
-                setSwitchingQueryData(AllChannels_Mask);
-            } else {
-                setSwitchingData((OnOffType) command, AllChannels_Mask);
-            }
-        } else if (channelId.equals(CHANNEL_GENERAL_SWITCHINGA)) {
-            if (command == RefreshType.REFRESH) {
-                setSwitchingQueryData(ChannelA_Mask);
-            } else {
-                setSwitchingData((OnOffType) command, ChannelA_Mask);
-            }
-        } else if (channelId.equals(CHANNEL_GENERAL_SWITCHINGB)) {
-            if (command == RefreshType.REFRESH) {
-                setSwitchingQueryData(ChannelB_Mask);
-            } else {
-                setSwitchingData((OnOffType) command, ChannelB_Mask);
-            }
-        } else if (channelId.equals(CHANNEL_DIMMER)) {
-            if (command == RefreshType.REFRESH) {
-                setSwitchingQueryData(AllChannels_Mask);
-            } else {
-                setDimmingData(command, AllChannels_Mask, config);
-            }
-        } else if (channelId.equals(CHANNEL_INSTANTPOWER) && command == RefreshType.REFRESH) {
-            setPowerMeasurementQueryData(AllChannels_Mask);
-        } else if (channelId.equals(CHANNEL_TOTALUSAGE) && command == RefreshType.REFRESH) {
-            setEnergyMeasurementQueryData(AllChannels_Mask);
+        switch(channelId) {
+            case CHANNEL_GENERAL_SWITCHING:
+                if (command == RefreshType.REFRESH) {
+                    setSwitchingQueryData(AllChannels_Mask);
+                } else {
+                    setSwitchingData((OnOffType) command, AllChannels_Mask);
+                }
+            break;
+            case CHANNEL_GENERAL_SWITCHINGA:
+                if (command == RefreshType.REFRESH) {
+                    setSwitchingQueryData(ChannelA_Mask);
+                } else {
+                    setSwitchingData((OnOffType) command, ChannelA_Mask);
+                }
+            break;
+            case CHANNEL_GENERAL_SWITCHINGB:
+                if (command == RefreshType.REFRESH) {
+                    setSwitchingQueryData(ChannelB_Mask);
+                } else {
+                    setSwitchingData((OnOffType) command, ChannelB_Mask);
+                }
+            break;
+            case CHANNEL_DIMMER:
+                if (command == RefreshType.REFRESH) {
+                    setSwitchingQueryData(AllChannels_Mask);
+                } else {
+                    setDimmingData(command, AllChannels_Mask, config);
+                }
+            break;
+            case CHANNEL_PILOTWIREMODE:
+                if (command == RefreshType.REFRESH) {
+                    setPilotWireQueryData();
+                } else {
+                    setPilotWireData(command, config);
+                }
+            break;
+            case CHANNEL_INSTANTPOWER:
+                if(command == RefreshType.REFRESH){
+                    setPowerMeasurementQueryData(AllChannels_Mask);
+                }
+            break;
+            case CHANNEL_TOTALUSAGE:
+                if(command == RefreshType.REFRESH) {
+                    setEnergyMeasurementQueryData(AllChannels_Mask);
+                }
+            break;
         }
     }
 

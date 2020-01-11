@@ -113,6 +113,7 @@ public class EnOceanBindingConstants {
     public final static String CHANNEL_COUNTER = "counter";
     public final static String CHANNEL_CURRENTNUMBER = "currentNumber";
     public final static String CHANNEL_SMOKDEDETECTION = "smokeDetection";
+    public final static String CHANNEL_PILOTWIREMODE = "pilotWireMode";
 
     public final static String CHANNEL_PUSHBUTTON = "pushButton";
     public final static String CHANNEL_DOUBLEPRESS = "doublePress";
@@ -219,6 +220,8 @@ public class EnOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_CURRENTNUMBER), CoreItemFactory.NUMBER));
                     put(CHANNEL_SMOKDEDETECTION, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_SMOKDEDETECTION), CoreItemFactory.SWITCH));
+                    put(CHANNEL_PILOTWIREMODE, new EnOceanChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_PILOTWIREMODE), CoreItemFactory.NUMBER));
                     put(CHANNEL_SETPOINT, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_SETPOINT), CoreItemFactory.NUMBER));
                     put(CHANNEL_CONTACT, new EnOceanChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_CONTACT),
