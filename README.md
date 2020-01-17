@@ -230,7 +230,7 @@ The channels of a thing are determined automatically based on the chosen EEP.
 | occupancy           | Switch             | Occupancy button pressed (ON) or released (OFF) |
 | motionDetection     | Switch             | On=Motion detected, Off=not |
 | setPoint            | Number             | linear set point |
-| fanSpeedStage       | String             | Fan speed: -1 (Auto), 0, 1, 2, 3 |
+| fanSpeedStage       | Number             | Fan speed: -1 (Auto), 0, 1, 2, 3, 4, 5, 6 |
 | dimmer              | Dimmer             | Dimmer value in percent |
 | generalSwitch(/A/B) | Switch             | Switch something (channel A/B) ON/OFF |
 | rollershutter       | Rollershutter      | Shut time (shutTime) in seconds can be configured |
@@ -246,6 +246,7 @@ The channels of a thing are determined automatically based on the chosen EEP.
 | batteryVoltage       | Number:ElectricPotential | Battery voltage for things with battery |
 | energyStorage        | Number:ElectricPotential | Energy storage, don't know what this means... |
 | batterLevel          | Number             | Battery level in percent |
+| dayNightModeState    | Number             | 0 = Night mode on, 1 = day mode on |
 | rssi                 | Number                   | Received Signal Strength Indication (dBm) of last received message |
 | repeatCount          | Number                   | Number of repeaters involved in the transmission of the telegram |
 | lastReceived         | DateTime                 | Date and time the last telegram was received |

@@ -12,6 +12,9 @@
  */
 package org.openhab.binding.enocean.internal.eep.A5_10;
 
+import org.eclipse.smarthome.core.library.types.QuantityType;
+import org.eclipse.smarthome.core.library.unit.SIUnits;
+import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
 /**
@@ -22,5 +25,17 @@ public class A5_10_15 extends A5_10 {
 
     public A5_10_15(ERP1Message packet) {
         super(packet);
+    }
+
+    @Override
+    protected int getSetPointValue() {
+        return getDB_2Value() >>> 2;
+    }
+
+    @Override
+    protected State getTemperature() {
+        int value = ((getDB_2Value() & 0b11) << 8) + getDB_1Value();
+        double temp = 41.2 - (value * (41.2 + 10.0) / 1023.0);
+        return new QuantityType<>(temp, SIUnits.CELSIUS);
     }
 }

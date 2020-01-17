@@ -18,9 +18,14 @@ import org.openhab.binding.enocean.internal.messages.ERP1Message;
  *
  * @author Daniel Weber - Initial contribution
  */
-public class A5_10_1D extends A5_10 {
+public class A5_10_1D extends A5_10_18 {
 
     public A5_10_1D(ERP1Message packet) {
         super(packet);
+    }
+
+    @Override
+    protected double getHumidityValue() {
+        return getDB_3Value();
     }
 }

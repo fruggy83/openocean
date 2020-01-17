@@ -12,15 +12,22 @@
  */
 package org.openhab.binding.enocean.internal.eep.A5_10;
 
+import org.eclipse.smarthome.core.library.types.DecimalType;
+import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
 /**
  *
  * @author Daniel Weber - Initial contribution
  */
-public class A5_10_22 extends A5_10 {
+public class A5_10_22 extends A5_10_10 {
 
     public A5_10_22(ERP1Message packet) {
         super(packet);
+    }
+
+    @Override
+    protected State getFanSpeedStage(){
+        return new DecimalType((getDB_0Value() >>> 5) -1);
     }
 }

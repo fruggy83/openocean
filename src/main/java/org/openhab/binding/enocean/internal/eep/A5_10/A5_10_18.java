@@ -12,6 +12,8 @@
  */
 package org.openhab.binding.enocean.internal.eep.A5_10;
 
+import org.eclipse.smarthome.core.library.types.DecimalType;
+import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 
 /**
@@ -22,5 +24,20 @@ public class A5_10_18 extends A5_10 {
 
     public A5_10_18(ERP1Message packet) {
         super(packet);
+    }
+
+    @Override
+    protected int getMaxUnscaledValue() {
+        return 250;
+    }
+
+    @Override
+    protected double getTempScalingFactor() {
+        return -6.25; // 250/40
+    }
+
+    @Override
+    protected State getFanSpeedStage(){
+        return new DecimalType((getDB_0Value() >>> 4) -1);
     }
 }

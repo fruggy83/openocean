@@ -114,6 +114,7 @@ public class EnOceanBindingConstants {
     public final static String CHANNEL_CURRENTNUMBER = "currentNumber";
     public final static String CHANNEL_SMOKDEDETECTION = "smokeDetection";
     public final static String CHANNEL_PILOTWIREMODE = "pilotWireMode";
+    public final static String CHANNEL_DAYNIGHTMODESTATE = "dayNightModeState";
 
     public final static String CHANNEL_PUSHBUTTON = "pushButton";
     public final static String CHANNEL_DOUBLEPRESS = "doublePress";
@@ -195,7 +196,7 @@ public class EnOceanBindingConstants {
                     put(CHANNEL_HUMIDITY, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_HUMIDITY), CoreItemFactory.NUMBER));
                     put(CHANNEL_FANSPEEDSTAGE, new EnOceanChannelDescription(
-                            new ChannelTypeUID(BINDING_ID, CHANNEL_FANSPEEDSTAGE), CoreItemFactory.STRING));
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_FANSPEEDSTAGE), CoreItemFactory.NUMBER));
                     put(CHANNEL_OCCUPANCY, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_OCCUPANCY), CoreItemFactory.SWITCH));
                     put(CHANNEL_MOTIONDETECTION, new EnOceanChannelDescription(
@@ -222,6 +223,8 @@ public class EnOceanBindingConstants {
                             new ChannelTypeUID(BINDING_ID, CHANNEL_SMOKDEDETECTION), CoreItemFactory.SWITCH));
                     put(CHANNEL_PILOTWIREMODE, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_PILOTWIREMODE), CoreItemFactory.NUMBER));
+                    put(CHANNEL_DAYNIGHTMODESTATE, new EnOceanChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_DAYNIGHTMODESTATE), CoreItemFactory.NUMBER));
                     put(CHANNEL_SETPOINT, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_SETPOINT), CoreItemFactory.NUMBER));
                     put(CHANNEL_CONTACT, new EnOceanChannelDescription(new ChannelTypeUID(BINDING_ID, CHANNEL_CONTACT),
