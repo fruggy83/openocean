@@ -134,7 +134,9 @@ public class EnOceanBindingConstants {
     public final static String CHANNEL_CONTACT = "contact";
     public final static String CHANNEL_TEACHINCMD = "teachInCMD";
     public final static String CHANNEL_INSTANTPOWER = "instantpower";
+    public final static String CHANNEL_INSTANTPOWER_ALTERNATETARIFF = "instantpowerAlternateTariff";
     public final static String CHANNEL_TOTALUSAGE = "totalusage";
+    public final static String CHANNEL_TOTALUSAGE_ALTERNATETARIFF = "totalusageAlternateTariff";
     public final static String CHANNEL_CURRENTFLOW = "currentFlow";
     public final static String CHANNEL_CUMULATIVEVALUE = "cumulativeValue";
     public final static String CHANNEL_BATTERY_VOLTAGE = "batteryVoltage";
@@ -278,8 +280,12 @@ public class EnOceanBindingConstants {
 
                     put(CHANNEL_INSTANTPOWER, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER), CoreItemFactory.NUMBER + ItemUtil.EXTENSION_SEPARATOR + Power.class.getSimpleName()));
+                    put(CHANNEL_INSTANTPOWER_ALTERNATETARIFF, new EnOceanChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_INSTANTPOWER_ALTERNATETARIFF), CoreItemFactory.NUMBER + ItemUtil.EXTENSION_SEPARATOR + Power.class.getSimpleName()));
                     put(CHANNEL_TOTALUSAGE, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_TOTALUSAGE), CoreItemFactory.NUMBER + ItemUtil.EXTENSION_SEPARATOR + Energy.class.getSimpleName()));
+                    put(CHANNEL_TOTALUSAGE_ALTERNATETARIFF, new EnOceanChannelDescription(
+                            new ChannelTypeUID(BINDING_ID, CHANNEL_TOTALUSAGE_ALTERNATETARIFF), CoreItemFactory.NUMBER + ItemUtil.EXTENSION_SEPARATOR + Energy.class.getSimpleName()));
                     put(CHANNEL_CURRENTFLOW, new EnOceanChannelDescription(
                             new ChannelTypeUID(BINDING_ID, CHANNEL_CURRENTFLOW), CoreItemFactory.NUMBER + ItemUtil.EXTENSION_SEPARATOR + VolumetricFlowRate.class.getSimpleName()));
                     put(CHANNEL_CUMULATIVEVALUE, new EnOceanChannelDescription(

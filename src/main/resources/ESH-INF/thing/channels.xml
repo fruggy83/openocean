@@ -167,6 +167,13 @@
 		<state pattern="%d %unit%" readOnly="true" />
 	</channel-type>
 
+	<channel-type id="instantpowerAlternateTariff">
+		<item-type>Number:Power</item-type>
+		<label>Instant Power Secondary Tariff</label>
+		<description>Instant power consumption in Watts on the secondary tariff</description>
+		<state pattern="%d %unit%" readOnly="true" />
+	</channel-type>
+
 	<channel-type id="totalusage">
 		<item-type>Number:Energy</item-type>
 		<label>Total Usage</label>
@@ -179,6 +186,13 @@
 				<default>false</default>
 			</parameter>
 		</config-description>
+	</channel-type>
+
+	<channel-type id="totalusageAlternateTariff">
+		<item-type>Number:Energy</item-type>
+		<label>Total Usage Secondary Tariff</label>
+		<description>Used energy in Kilowatt hours on the secondary tariff</description>
+		<state pattern="%d %unit%" readOnly="true" />
 	</channel-type>
 
 	<channel-type id="batteryVoltage">
