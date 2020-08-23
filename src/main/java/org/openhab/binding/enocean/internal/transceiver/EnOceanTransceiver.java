@@ -131,7 +131,7 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
                         sendNext();
                     }
                 } catch (EnOceanException e) {
-                    logger.error("exception while sending data {}", e);
+                    logger.error("exception while sending data {}", e.getMessage());
                 }
             }
         }
