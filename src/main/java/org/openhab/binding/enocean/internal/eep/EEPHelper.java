@@ -14,12 +14,12 @@ package org.openhab.binding.enocean.internal.eep;
 
 import javax.measure.quantity.Energy;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.config.EnOceanChannelTotalusageConfig;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 
 /**
  *

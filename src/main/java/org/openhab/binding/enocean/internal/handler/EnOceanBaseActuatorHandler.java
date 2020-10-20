@@ -24,22 +24,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.thing.Channel;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
-import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
-import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.config.EnOceanActuatorConfig;
 import org.openhab.binding.enocean.internal.eep.EEP;
 import org.openhab.binding.enocean.internal.eep.EEPFactory;
 import org.openhab.binding.enocean.internal.eep.EEPType;
 import org.openhab.binding.enocean.internal.messages.BasePacket;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.thing.Channel;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
+import org.openhab.core.thing.type.ChannelTypeUID;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
+import org.openhab.core.util.HexUtils;
 
 /**
  *
@@ -50,7 +50,7 @@ import org.openhab.binding.enocean.internal.messages.BasePacket;
 public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     // List of thing types which support sending of eep messages
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_CENTRALCOMMAND,
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_CENTRALCOMMAND,
             THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_THERMOSTAT));
 
     protected byte[] senderId; // base id of bridge + senderIdOffset, used for sending msg
@@ -100,20 +100,21 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
         if (sendingEEPType == null) {
             return r;
         }
-        
-        return Collections.unmodifiableCollection(Stream.concat(r.stream(), Collections.singletonList(sendingEEPType).stream()).collect(Collectors.toList()));
+
+        return Collections.unmodifiableCollection(Stream
+                .concat(r.stream(), Collections.singletonList(sendingEEPType).stream()).collect(Collectors.toList()));
     }
 
     @Override
     boolean validateConfig() {
 
         EnOceanActuatorConfig config = getConfiguration();
-        if(config == null) {
+        if (config == null) {
             configurationErrorDescription = "Configuration is not valid";
             return false;
         }
 
-        if(config.sendingEEPId == null || config.sendingEEPId.isEmpty()) {
+        if (config.sendingEEPId == null || config.sendingEEPId.isEmpty()) {
             configurationErrorDescription = "Sending EEP must be provided";
             return false;
         }
@@ -124,7 +125,7 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
             configurationErrorDescription = "Sending EEP is not supported";
             return false;
         }
-        
+
         if (super.validateConfig()) {
 
             try {
@@ -251,13 +252,11 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
             EEP eep = EEPFactory.createEEP(sendingEEPType);
             if (eep.convertFromCommand(channelId, channelTypeId, command, id -> getCurrentState(id), channelConfig)
-                   .hasData()) {
-                BasePacket msg = eep.setSenderId(senderId)
-                                    .setDestinationId(destinationId)
-                                    .setSuppressRepeating(getConfiguration().suppressRepeating)
-                                    .getERP1Message();
-            
-                getBridgeHandler().sendMessage(msg, null);            
+                    .hasData()) {
+                BasePacket msg = eep.setSenderId(senderId).setDestinationId(destinationId)
+                        .setSuppressRepeating(getConfiguration().suppressRepeating).getERP1Message();
+
+                getBridgeHandler().sendMessage(msg, null);
 
                 // Do not repeat refresh msg, as these msg get already repeated during refresh polling
                 if (getConfiguration().retryInterval > 0 && getConfiguration().retryTries > 0

@@ -18,16 +18,16 @@ import java.util.function.Function;
 
 import javax.measure.quantity.Temperature;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.SIUnits;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.SIUnits;
+import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 
 /**
  * Heating radiator valve actuating drive with feed and room temperature measurement, local set point control and
@@ -174,7 +174,8 @@ public class A5_20_04 extends A5_20 {
             byte db3 = getPos(getCurrentStateFunc);
             byte db2 = getTsp(getCurrentStateFunc);
             byte db1 = (byte) (0x00 | getMc(getCurrentStateFunc) | getWuc(getCurrentStateFunc));
-            byte db0 = (byte) (0x00 | getDso(getCurrentStateFunc) | TeachInBit | getBlc(getCurrentStateFunc) | getSer(getCurrentStateFunc));
+            byte db0 = (byte) (0x00 | getDso(getCurrentStateFunc) | TeachInBit | getBlc(getCurrentStateFunc)
+                    | getSer(getCurrentStateFunc));
 
             setData(db3, db2, db1, db0);
 
@@ -183,8 +184,8 @@ public class A5_20_04 extends A5_20 {
     }
 
     @Override
-    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
-            Configuration config) {
+    protected State convertToStateImpl(String channelId, String channelTypeId,
+            Function<String, State> getCurrentStateFunc, Configuration config) {
 
         switch (channelId) {
             case CHANNEL_VALVE_POSITION:

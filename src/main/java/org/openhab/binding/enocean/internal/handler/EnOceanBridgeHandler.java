@@ -24,21 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.binding.ConfigStatusBridgeHandler;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
-import org.eclipse.smarthome.core.util.HexUtils;
-import org.eclipse.smarthome.io.transport.serial.PortInUseException;
-import org.eclipse.smarthome.io.transport.serial.SerialPortManager;
 import org.openhab.binding.enocean.internal.EnOceanConfigStatusMessage;
 import org.openhab.binding.enocean.internal.config.EnOceanBaseConfig;
 import org.openhab.binding.enocean.internal.config.EnOceanBridgeConfig;
@@ -57,6 +42,21 @@ import org.openhab.binding.enocean.internal.transceiver.PacketListener;
 import org.openhab.binding.enocean.internal.transceiver.ResponseListener;
 import org.openhab.binding.enocean.internal.transceiver.ResponseListenerIgnoringTimeouts;
 import org.openhab.binding.enocean.internal.transceiver.TransceiverErrorListener;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.config.core.status.ConfigStatusMessage;
+import org.openhab.core.io.transport.serial.PortInUseException;
+import org.openhab.core.io.transport.serial.SerialPortManager;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.binding.ConfigStatusBridgeHandler;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
 
     private Logger logger = LoggerFactory.getLogger(EnOceanBridgeHandler.class);
 
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_BRIDGE));
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_BRIDGE));
 
     private EnOceanTransceiver transceiver; // holds connection to serial/tcp port and sends/receives messages
     private ScheduledFuture<?> connectorTask; // is used for reconnection if something goes wrong
@@ -119,7 +119,6 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
                                         updateState(channelUID, (StringType) command);
                                     }
                                 }
-
                             });
                 }
                 break;
@@ -147,7 +146,6 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
                                             updateState(channelUID, new StringType("No more change possible"));
                                         }
                                     }
-
                                 });
 
                     } catch (IllegalArgumentException e) {
@@ -185,7 +183,6 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
                             initTransceiver();
                         }
                     }
-
                 }, 0, 60, TimeUnit.SECONDS);
             }
         }
@@ -398,6 +395,5 @@ public class EnOceanBridgeHandler extends ConfigStatusBridgeHandler implements T
         transceiver.ShutDown();
         transceiver = null;
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, exception.getMessage());
-
     }
 }

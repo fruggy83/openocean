@@ -4,7 +4,7 @@
 	xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
 
 	<name>OpenOcean Binding</name>
-	<description>The EnOcean binding integrates the EnOcean system into openHab. Version 2.5.0.2</description>
+	<description>The EnOcean binding integrates the EnOcean system into openHAB. Version 3.0.0.0</description>
 	<author>Daniel Weber</author>
 
 </binding:binding>

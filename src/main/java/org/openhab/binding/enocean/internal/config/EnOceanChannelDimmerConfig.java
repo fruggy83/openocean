@@ -22,5 +22,4 @@ public class EnOceanChannelDimmerConfig {
     public int rampingTime = 0;
     public boolean eltakoDimmer = true;
     public boolean storeValue = false;
-
 }

@@ -12,35 +12,35 @@
  */
 package org.openhab.binding.enocean.internal.handler;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.config.core.status.ConfigStatusMessage;
-import org.eclipse.smarthome.core.items.Item;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Channel;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.ThingStatusInfo;
-import org.eclipse.smarthome.core.thing.binding.ConfigStatusThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
-import org.eclipse.smarthome.core.thing.binding.builder.ThingBuilder;
-import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
-import org.eclipse.smarthome.core.thing.type.ChannelKind;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.EnOceanChannelDescription;
 import org.openhab.binding.enocean.internal.config.EnOceanBaseConfig;
 import org.openhab.binding.enocean.internal.eep.EEPType;
+import org.openhab.core.config.core.status.ConfigStatusMessage;
+import org.openhab.core.items.Item;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Channel;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.ThingStatusInfo;
+import org.openhab.core.thing.binding.ConfigStatusThingHandler;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.builder.ChannelBuilder;
+import org.openhab.core.thing.binding.builder.ThingBuilder;
+import org.openhab.core.thing.link.ItemChannelLinkRegistry;
+import org.openhab.core.thing.type.ChannelKind;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,36 +135,41 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
         }
 
         // First remove channels which are no longer supported by current selected eeps of thing
-        AtomicBoolean channelListChanged = new AtomicBoolean(channelList.removeIf(channel -> !eeps.stream().anyMatch(eep -> eep.isChannelSupported(channel))));
- 
+        AtomicBoolean channelListChanged = new AtomicBoolean(
+                channelList.removeIf(channel -> !eeps.stream().anyMatch(eep -> eep.isChannelSupported(channel))));
+
         // Next create supported channels of each selected eep
-        eeps.stream().flatMap(eep -> eep.GetSupportedChannels().keySet().stream().map(id -> new SimpleEntry<String, EEPType>(id, eep))).forEach(entry -> {
-            String channelId = entry.getKey();
-            EnOceanChannelDescription cd = entry.getValue().GetSupportedChannels().get(channelId);;
+        eeps.stream().flatMap(eep -> eep.GetSupportedChannels().keySet().stream().map(id -> new SimpleEntry<>(id, eep)))
+                .forEach(entry -> {
+                    String channelId = entry.getKey();
+                    EnOceanChannelDescription cd = entry.getValue().GetSupportedChannels().get(channelId);
+                    ;
 
-            // if we do not need to auto create channel => skip
-            if (!cd.autoCreate) {
-                return;
-            }
+                    // if we do not need to auto create channel => skip
+                    if (!cd.autoCreate) {
+                        return;
+                    }
 
-            // if we already created a channel with the same type and id => skip
-            if (channelList.stream().anyMatch(channel -> cd.channelTypeUID.equals(channel.getChannelTypeUID()) && channelId.equals(channel.getUID().getId()))){
-                return;
-            }
+                    // if we already created a channel with the same type and id => skip
+                    if (channelList.stream().anyMatch(channel -> cd.channelTypeUID.equals(channel.getChannelTypeUID())
+                            && channelId.equals(channel.getUID().getId()))) {
+                        return;
+                    }
 
-            // create channel and add it to the channelList
-            Channel channel = ChannelBuilder
-                    .create(new ChannelUID(this.getThing().getUID(), channelId), cd.acceptedItemType)
-                    .withConfiguration(entry.getValue().getChannelConfig(channelId)).withType(cd.channelTypeUID)
-                    .withKind(cd.isStateChannel ? ChannelKind.STATE : ChannelKind.TRIGGER).withLabel(cd.label).build();
+                    // create channel and add it to the channelList
+                    Channel channel = ChannelBuilder
+                            .create(new ChannelUID(this.getThing().getUID(), channelId), cd.acceptedItemType)
+                            .withConfiguration(entry.getValue().getChannelConfig(channelId)).withType(cd.channelTypeUID)
+                            .withKind(cd.isStateChannel ? ChannelKind.STATE : ChannelKind.TRIGGER).withLabel(cd.label)
+                            .build();
 
-            channelList.add(channel);
-            channelListChanged.set(true);
+                    channelList.add(channel);
+                    channelListChanged.set(true);
 
-            if (!cd.isStateChannel) {
-                lastEvents.putIfAbsent(channelId, "");
-            }
-        });
+                    if (!cd.isStateChannel) {
+                        lastEvents.putIfAbsent(channelId, "");
+                    }
+                });
 
         if (channelListChanged.get()) {
             ThingBuilder thingBuilder = editThing();

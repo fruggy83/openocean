@@ -16,10 +16,10 @@ import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
 import java.util.function.Function;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.types.State;
 
 /**
  * Window/Door-Sensor with States Open/Closed/Tilt, Supply voltage monitor and
@@ -38,10 +38,10 @@ public class A5_14_0A extends A5_14_09 {
     }
 
     @Override
-    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
-            Configuration config) {
+    protected State convertToStateImpl(String channelId, String channelTypeId,
+            Function<String, State> getCurrentStateFunc, Configuration config) {
         if (channelId.equals(CHANNEL_VIBRATION)) {
-                return getVibration();
+            return getVibration();
         }
 
         return super.convertToStateImpl(channelId, channelTypeId, getCurrentStateFunc, config);

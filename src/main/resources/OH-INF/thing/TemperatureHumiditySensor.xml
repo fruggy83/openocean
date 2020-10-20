@@ -4,14 +4,13 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<!-- RockerSwitch -->
-	<thing-type id="pushButton">
+	<thing-type id="temperatureHumiditySensor">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Simple Push Button</label>
-		<description>Represents a physical Push Button (EEP: F6-01, D2-03)</description>
+		<label>Temperature/Humidity Sensor</label>
+		<description>Sensor which sends temperature and humidity data (EEP: A5-04)</description>
 
 		<config-description>
 			<parameter name="enoceanId" type="text">
@@ -19,18 +18,22 @@
 				<description>EnOceanId of device this thing belongs to</description>
 				<required>true</required>
 			</parameter>
-			<parameter name="receivingEEPId" type="text">
+			<parameter name="receivingEEPId" type="text" multiple="true">
 				<label>EEP</label>
-				<description>EEP which is used by push button</description>
+				<description>EEP which is used by sensor</description>
 				<options>
-					<option value="F6_01_01">F6-01-01</option>
-					<option value="D2_03_0A">D2-03-0A</option>
+					<option value="A5_04_01">A5-04-01 temperature sensor range [0;40]</option>
+					<option value="A5_04_02">A5-04-02 temperature sensor range [-20;60]</option>
+					<option value="A5_04_02_ELTAKO">A5-04-02 temperature sensor range [-20;60] with battery indicator</option>
+					<option value="A5_04_03">A5-04-03 temperature sensor range (10 bit) [-20;60]</option>
+					<option value="D0_06_00">D0-06 signal message for battery status</option>
 				</options>
+				<multipleLimit>2</multipleLimit>
 				<limitToOptions>true</limitToOptions>
-				<default>F6_01_01</default>
 				<required>true</required>
 			</parameter>
 		</config-description>
+
 	</thing-type>
 
 </thing:thing-descriptions>

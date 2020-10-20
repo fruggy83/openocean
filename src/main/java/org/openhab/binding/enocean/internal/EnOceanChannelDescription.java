@@ -13,7 +13,7 @@
 package org.openhab.binding.enocean.internal;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
+import org.openhab.core.thing.type.ChannelTypeUID;
 
 /**
  *

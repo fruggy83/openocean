@@ -4,13 +4,13 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="contact">
+	<thing-type id="automatedMeterSensor">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Single Input Contact</label>
-		<description>Single input contact sensor (EEP: D5-00)</description>
+		<label>Automated Meter Sensor</label>
+		<description>Sensor for different meters like energy measurement (EEP: A5-12)</description>
 
 		<config-description>
 			<parameter name="enoceanId" type="text">
@@ -18,19 +18,15 @@
 				<description>EnOceanId of device this thing belongs to</description>
 				<required>true</required>
 			</parameter>
-			<parameter name="receivingEEPId" type="text" multiple="true">
+			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
-				<description>EEP which is used by contact</description>
+				<description>EEP which is used by panel</description>
 				<options>
-					<option value="D5_00_01">D5-00-01 single input</option>
-					<option value="A5_14_01">A5-14-01 Single input contact, supply voltage monitor</option>
-					<option value="A5_14_01_ELTAKO">Eltako battery status</option>
-					<option value="F6_10_00_EltakoFPE">F6-10-00 Eltako FPE-X</option>
-					<option value="F6_10_00_EltakoFTKE">F6-10-00 Eltako FTKE</option>
-					<option value="D0_06_00">D0-06 signal message for battery status</option>
+					<option value="A5_12_00">A5-12-00 Counter</option>
+					<option value="A5_12_01">A5-12-01 Electricity</option>
+					<option value="A5_12_02">A5-12-02 Gas</option>
+					<option value="A5_12_03">A5-12-03 Water</option>
 				</options>
-				<default>D5_00_01</default>
-				<multipleLimit>2</multipleLimit>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
 			</parameter>

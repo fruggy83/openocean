@@ -16,18 +16,18 @@ import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
 import java.util.function.Function;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.library.types.UpDownType;
-import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.config.EnOceanChannelRockerSwitchConfigBase.Channel;
 import org.openhab.binding.enocean.internal.config.EnOceanChannelVirtualRockerSwitchConfig;
 import org.openhab.binding.enocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.library.types.UpDownType;
+import org.openhab.core.thing.CommonTriggerEvents;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 
 /**
  *
@@ -180,16 +180,16 @@ public class F6_02_01 extends _RPSMessage {
     public boolean validateForTeachIn() {
         if (t21 && nu) {
             // just treat press as teach in => DB0.4 has to be set
-            if(!getBit(bytes[0], 4)) {
+            if (!getBit(bytes[0], 4)) {
                 return false;
             }
             // A1, A0, B1 or B0 must be pressed
-            if((bytes[0] >>> 5) > B0) {
+            if ((bytes[0] >>> 5) > B0) {
                 return false;
             }
         } else if (t21 && !nu) {
             // just treat press as teach in => DB0.4 has to be set
-            if(!getBit(bytes[0], 4)) {
+            if (!getBit(bytes[0], 4)) {
                 return false;
             }
         } else {

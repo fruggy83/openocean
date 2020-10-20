@@ -4,14 +4,13 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<!-- MechanicalHandle -->
-	<thing-type id="mechanicalHandle">
+	<thing-type id="multiFunctionSmokeDetector">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Mechanical Handle</label>
-		<description>Mechanical handle sensor for window/door handles</description>
+		<label>Multi Function Smoke Detector</label>
+		<description>Multi Function Sensor like a Smoke Detector (EEP: F6-05, D2-14)</description>
 
 		<config-description>
 			<parameter name="enoceanId" type="text">
@@ -19,17 +18,12 @@
 				<description>EnOceanId of device this thing belongs to</description>
 				<required>true</required>
 			</parameter>
-			<parameter name="receivingEEPId" type="text" multiple="true">
+			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
-				<description>EEP which is used by handle</description>
+				<description>EEP which is used by sensor</description>
 				<options>
-					<option value="F6_10_00">F6-10-00</option>
-					<option value="F6_10_01">F6-10-01</option>
-					<option value="A5_14_09">A5-14-09</option>
-					<option value="A5_14_0A">A5-14-0A</option>
-					<option value="D0_06_00">D0-06 signal message for battery status</option>
+					<option value="F6_05_02">F6-05-02 smoke detector</option>
 				</options>
-				<multipleLimit>2</multipleLimit>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
 			</parameter>

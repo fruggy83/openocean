@@ -12,12 +12,12 @@
  */
 package org.openhab.binding.enocean.internal.eep.Base;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.config.EnOceanChannelTeachInConfig;
 import org.openhab.binding.enocean.internal.eep.EEP;
 import org.openhab.binding.enocean.internal.eep.EEPType;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.util.HexUtils;
 
 /**
  *
@@ -107,6 +107,5 @@ public abstract class _4BSMessage extends EEP {
             } catch (Exception e) {
             }
         }
-
     }
 }

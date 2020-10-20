@@ -16,7 +16,7 @@ import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.EMPTY
 
 import java.util.List;
 
-import org.eclipse.smarthome.core.util.HexUtils;
+import org.openhab.core.util.HexUtils;
 
 /**
  *

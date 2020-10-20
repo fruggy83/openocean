@@ -15,7 +15,7 @@ package org.openhab.binding.enocean.internal.messages;
 import java.util.Arrays;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.core.util.HexUtils;
+import org.openhab.core.util.HexUtils;
 
 /**
  *

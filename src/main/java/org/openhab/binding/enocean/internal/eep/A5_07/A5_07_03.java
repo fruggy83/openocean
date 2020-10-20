@@ -12,10 +12,10 @@
  */
 package org.openhab.binding.enocean.internal.eep.A5_07;
 
-import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
-import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.types.State;
 
 /**
  *

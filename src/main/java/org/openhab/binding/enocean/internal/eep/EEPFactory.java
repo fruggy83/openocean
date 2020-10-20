@@ -16,7 +16,6 @@ import static org.openhab.binding.enocean.internal.messages.ESP3Packet.*;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.eep.Base.UTEResponse;
 import org.openhab.binding.enocean.internal.eep.Base._4BSMessage;
 import org.openhab.binding.enocean.internal.eep.Base._4BSTeachInVariation3Response;
@@ -30,6 +29,7 @@ import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_00_EltakoFPE;
 import org.openhab.binding.enocean.internal.eep.F6_10.F6_10_01;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
 import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +97,7 @@ public class EEPFactory {
 
                 try {
                     _RPSMessage result = new F6_02_01(msg);
-                    if (result.validateForTeachIn()) { 
+                    if (result.validateForTeachIn()) {
                         return result;
                     }
                 } catch (Exception e) {
@@ -105,28 +105,27 @@ public class EEPFactory {
 
                 try {
                     _RPSMessage result = new F6_05_02(msg);
-                    if (result.validateForTeachIn()) { 
+                    if (result.validateForTeachIn()) {
                         return result;
                     }
                 } catch (Exception e) {
-                }                
+                }
 
                 try {
                     _RPSMessage result = new F6_01_01(msg);
-                    if (result.validateForTeachIn()) { 
+                    if (result.validateForTeachIn()) {
                         return result;
                     }
                 } catch (Exception e) {
                 }
-                
+
                 try {
                     _RPSMessage result = new F6_10_00_EltakoFPE(msg);
-                    if (result.validateForTeachIn()) { 
+                    if (result.validateForTeachIn()) {
                         return result;
                     }
                 } catch (Exception e) {
                 }
-                
 
                 return null;
             case _1BS:
@@ -196,7 +195,6 @@ public class EEPFactory {
         }
 
         return null;
-
     }
 
     public static EEP buildResponseEEPFromTeachInERP1(ERP1Message msg, byte[] senderId) {

@@ -12,10 +12,10 @@
  */
 package org.openhab.binding.enocean.internal.eep.F6_01;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.openhab.binding.enocean.internal.eep.Base._RPSMessage;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.thing.CommonTriggerEvents;
 
 /**
  *

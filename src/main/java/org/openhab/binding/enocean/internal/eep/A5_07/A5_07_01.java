@@ -12,10 +12,10 @@
  */
 package org.openhab.binding.enocean.internal.eep.A5_07;
 
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 
 /**
  *
@@ -47,5 +47,4 @@ public class A5_07_01 extends A5_07 {
 
         return getSupplyVoltage(getDB_3Value());
     }
-
 }

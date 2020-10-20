@@ -4,23 +4,13 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<!-- RockerSwitch -->
-	<thing-type id="rockerSwitch">
+	<thing-type id="environmentalSensor">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Rocker Switch</label>
-		<description>Represents a physical Rocker Switch (EEP: F6-02)</description>
-
-		<channels>
-			<channel typeId="system.rawrocker" id="rockerswitchA">
-				<label>Rocker Switch - Channel A</label>
-			</channel>
-			<channel typeId="system.rawrocker" id="rockerswitchB">
-				<label>Rocker Switch - Channel B</label>
-			</channel>
-		</channels>
+		<label>Environmental Sensor</label>
+		<description>Sensor for different environmental sensors like a weather station (EEP: A5-13)</description>
 
 		<config-description>
 			<parameter name="enoceanId" type="text">
@@ -30,15 +20,15 @@
 			</parameter>
 			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
-				<description>EEP which is used by rocker switch</description>
+				<description>EEP which is used by sensor</description>
 				<options>
-					<option value="F6_02_01">F6-02-01 (upper rocker => DIR1)</option>
-					<option value="F6_02_02">F6-02-02 (upper rocker => DIR2)</option>
+					<option value="A5_13_01">A5-13-01 Weather station</option>
 				</options>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
 			</parameter>
 		</config-description>
+
 	</thing-type>
 
 </thing:thing-descriptions>

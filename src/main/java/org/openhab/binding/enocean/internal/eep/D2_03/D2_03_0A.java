@@ -16,14 +16,14 @@ import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
 import java.util.function.Function;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
-import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.enocean.internal.eep.Base._VLDMessage;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.thing.CommonTriggerEvents;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 
 /**
  *
@@ -45,7 +45,8 @@ public class D2_03_0A extends _VLDMessage {
     }
 
     @Override
-    protected String convertToEventImpl(String channelId, String channelTypeId, String lastEvent, Configuration config) {
+    protected String convertToEventImpl(String channelId, String channelTypeId, String lastEvent,
+            Configuration config) {
         switch (channelId) {
             case CHANNEL_PUSHBUTTON:
                 return (bytes[1] == ShortPress) ? CommonTriggerEvents.PRESSED : null;
@@ -53,14 +54,15 @@ public class D2_03_0A extends _VLDMessage {
                 return (bytes[1] == DoublePress) ? CommonTriggerEvents.PRESSED : null;
             case CHANNEL_LONGPRESS:
                 return (bytes[1] == LongPress) ? CommonTriggerEvents.PRESSED
-                    : ((bytes[1] == LongRelease) ? CommonTriggerEvents.RELEASED : null);
+                        : ((bytes[1] == LongRelease) ? CommonTriggerEvents.RELEASED : null);
             default:
                 return null;
         }
     }
 
     @Override
-    public State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc, Configuration config) {
+    public State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
+            Configuration config) {
         if (CHANNEL_BATTERY_LEVEL.equals(channelId)) {
             return new QuantityType<>(bytes[0] & 0xFF, SmartHomeUnits.PERCENT);
         }

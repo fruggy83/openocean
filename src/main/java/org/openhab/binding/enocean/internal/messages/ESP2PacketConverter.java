@@ -15,11 +15,11 @@ package org.openhab.binding.enocean.internal.messages;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.messages.BasePacket.ESPPacketType;
 import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.enocean.internal.messages.ESP2Packet.ESP2PacketType;
 import org.openhab.binding.enocean.internal.messages.Response.ResponseType;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

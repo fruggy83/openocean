@@ -16,15 +16,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.eclipse.smarthome.core.util.HexUtils;
-import org.eclipse.smarthome.io.transport.serial.SerialPortManager;
 import org.openhab.binding.enocean.internal.EnOceanException;
 import org.openhab.binding.enocean.internal.messages.BasePacket;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
 import org.openhab.binding.enocean.internal.messages.ESP3Packet;
 import org.openhab.binding.enocean.internal.messages.ESP3PacketFactory;
 import org.openhab.binding.enocean.internal.messages.Response;
-import org.openhab.binding.enocean.internal.messages.ERP1Message.RORG;
+import org.openhab.core.io.transport.serial.SerialPortManager;
+import org.openhab.core.util.HexUtils;
 
 /**
  *
@@ -150,7 +150,7 @@ public class EnOceanESP3Transceiver extends EnOceanTransceiver {
                                                     HexUtils.bytesToHex(msg.getSenderId()), HexUtils.bytesToHex(
                                                             Arrays.copyOf(dataBuffer, dataLength + optionalLength)));
 
-                                            if(msg.getRORG() != RORG.Unknown) {
+                                            if (msg.getRORG() != RORG.Unknown) {
                                                 informListeners(msg);
                                             }
                                         }

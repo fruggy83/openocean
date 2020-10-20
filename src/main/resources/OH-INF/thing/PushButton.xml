@@ -4,13 +4,14 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="occupancySensor">
+	<!-- RockerSwitch -->
+	<thing-type id="pushButton">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="bridge" />
+			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Occupancy Sensor</label>
-		<description>Sensor which sends light, supply voltage and occupancy data (EEP: A5-07)</description>
+		<label>Simple Push Button</label>
+		<description>Represents a physical Push Button (EEP: F6-01, D2-03)</description>
 
 		<config-description>
 			<parameter name="enoceanId" type="text">
@@ -18,21 +19,18 @@
 				<description>EnOceanId of device this thing belongs to</description>
 				<required>true</required>
 			</parameter>
-			<parameter name="receivingEEPId" type="text" multiple="true">
+			<parameter name="receivingEEPId" type="text">
 				<label>EEP</label>
-				<description>EEP which is used by sensor</description>
+				<description>EEP which is used by push button</description>
 				<options>
-					<option value="A5_07_01">A5-07-01 battery voltage (optional)</option>
-					<option value="A5_07_02">A5-07-02 battery voltage</option>
-					<option value="A5_07_03">A5-07-03 battery voltage, lux range [0;1000]</option>
-					<option value="D0_06_00">D0-06 signal message for battery status</option>
+					<option value="F6_01_01">F6-01-01</option>
+					<option value="D2_03_0A">D2-03-0A</option>
 				</options>
-				<multipleLimit>2</multipleLimit>
 				<limitToOptions>true</limitToOptions>
+				<default>F6_01_01</default>
 				<required>true</required>
 			</parameter>
 		</config-description>
-
 	</thing-type>
 
 </thing:thing-descriptions>

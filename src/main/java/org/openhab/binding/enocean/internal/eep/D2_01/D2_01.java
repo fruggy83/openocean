@@ -16,22 +16,22 @@ import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
 import java.util.function.Function;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.PercentType;
-import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.UnDefType;
-import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.enocean.internal.config.EnOceanChannelDimmerConfig;
-import org.openhab.binding.enocean.internal.eep.EEPHelper;
 import org.openhab.binding.enocean.internal.eep.Base._VLDMessage;
+import org.openhab.binding.enocean.internal.eep.EEPHelper;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.PercentType;
+import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
+import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
+import org.openhab.core.util.HexUtils;
 
 /**
  *
@@ -143,7 +143,7 @@ public abstract class D2_01 extends _VLDMessage {
     protected void setPilotWireData(Command command, Configuration config) {
         if (command instanceof DecimalType) {
             byte value = ((DecimalType) command).byteValue();
-            if(value >= PILOTWIRE_OFF && value <= PILOTWIRE_COMFORT2) {
+            if (value >= PILOTWIRE_OFF && value <= PILOTWIRE_COMFORT2) {
                 setData(CMD_ACTUATOR_SET_PILOTWIRE, value);
             }
         }
@@ -226,58 +226,58 @@ public abstract class D2_01 extends _VLDMessage {
     protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command,
             Function<String, State> getCurrentStateFunc, Configuration config) {
 
-        switch(channelId) {
+        switch (channelId) {
             case CHANNEL_GENERAL_SWITCHING:
                 if (command == RefreshType.REFRESH) {
                     setSwitchingQueryData(AllChannels_Mask);
                 } else {
                     setSwitchingData((OnOffType) command, AllChannels_Mask);
                 }
-            break;
+                break;
             case CHANNEL_GENERAL_SWITCHINGA:
                 if (command == RefreshType.REFRESH) {
                     setSwitchingQueryData(ChannelA_Mask);
                 } else {
                     setSwitchingData((OnOffType) command, ChannelA_Mask);
                 }
-            break;
+                break;
             case CHANNEL_GENERAL_SWITCHINGB:
                 if (command == RefreshType.REFRESH) {
                     setSwitchingQueryData(ChannelB_Mask);
                 } else {
                     setSwitchingData((OnOffType) command, ChannelB_Mask);
                 }
-            break;
+                break;
             case CHANNEL_DIMMER:
                 if (command == RefreshType.REFRESH) {
                     setSwitchingQueryData(AllChannels_Mask);
                 } else {
                     setDimmingData(command, AllChannels_Mask, config);
                 }
-            break;
+                break;
             case CHANNEL_PILOTWIREMODE:
                 if (command == RefreshType.REFRESH) {
                     setPilotWireQueryData();
                 } else {
                     setPilotWireData(command, config);
                 }
-            break;
+                break;
             case CHANNEL_INSTANTPOWER:
-                if(command == RefreshType.REFRESH){
+                if (command == RefreshType.REFRESH) {
                     setPowerMeasurementQueryData(AllChannels_Mask);
                 }
-            break;
+                break;
             case CHANNEL_TOTALUSAGE:
-                if(command == RefreshType.REFRESH) {
+                if (command == RefreshType.REFRESH) {
                     setEnergyMeasurementQueryData(AllChannels_Mask);
                 }
-            break;
+                break;
         }
     }
 
     @Override
-    protected State convertToStateImpl(String channelId, String channelTypeId, Function<String, State> getCurrentStateFunc,
-            Configuration config) {
+    protected State convertToStateImpl(String channelId, String channelTypeId,
+            Function<String, State> getCurrentStateFunc, Configuration config) {
 
         switch (channelId) {
             case CHANNEL_GENERAL_SWITCHING:
@@ -298,5 +298,4 @@ public abstract class D2_01 extends _VLDMessage {
 
         return UnDefType.UNDEF;
     }
-
 }

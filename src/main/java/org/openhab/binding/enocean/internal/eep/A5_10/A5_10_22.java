@@ -12,9 +12,9 @@
  */
 package org.openhab.binding.enocean.internal.eep.A5_10;
 
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.enocean.internal.messages.ERP1Message;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.types.State;
 
 /**
  *
@@ -27,7 +27,7 @@ public class A5_10_22 extends A5_10_10 {
     }
 
     @Override
-    protected State getFanSpeedStage(){
-        return new DecimalType((getDB_0Value() >>> 5) -1);
+    protected State getFanSpeedStage() {
+        return new DecimalType((getDB_0Value() >>> 5) - 1);
     }
 }
