@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -23,8 +23,9 @@ import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.QuantityType;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.library.unit.SIUnits;
-import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.library.unit.Units;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
 
@@ -58,15 +59,15 @@ public abstract class A5_10 extends _4BSMessage {
 
     protected State getFanSpeedStage() {
         if (getDB_3Value() > 209) {
-            return new DecimalType(-1);
+            return new StringType("-1");
         } else if (getDB_3Value() > 189) {
-            return new DecimalType(0);
+            return new StringType("0");
         } else if (getDB_3Value() > 164) {
-            return new DecimalType(1);
+            return new StringType("1");
         } else if (getDB_3Value() > 144) {
-            return new DecimalType(2);
+            return new StringType("2");
         } else {
-            return new DecimalType(3);
+            return new StringType("3");
         }
     }
 
@@ -75,7 +76,7 @@ public abstract class A5_10 extends _4BSMessage {
     }
 
     protected State getIllumination() {
-        return new QuantityType<>(getIlluminationValue() * 4, SmartHomeUnits.LUX);
+        return new QuantityType<>(getIlluminationValue() * 4, Units.LUX);
     }
 
     protected double getHumidityValue() {
@@ -84,7 +85,7 @@ public abstract class A5_10 extends _4BSMessage {
 
     protected State getSupplyVoltage() {
         double voltage = ((double) getDB_3Value()) / 50.0;
-        return new QuantityType<>(voltage, SmartHomeUnits.VOLT);
+        return new QuantityType<>(voltage, Units.VOLT);
     }
 
     @Override

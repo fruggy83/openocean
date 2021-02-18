@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -34,8 +34,8 @@ public class ERP1Message extends BasePacket {
         VLD((byte) 0xD2, -1),
         // ADT(0xA6, -1),
         UTE((byte) 0xD4, -1),
-        MSC((byte) 0xD1, -1),
-        SIG((byte) 0xD0, -1);
+        SIG((byte) 0xD0, -1),
+        MSC((byte) 0xD1, -1);
 
         private byte value;
         private int dataLength;

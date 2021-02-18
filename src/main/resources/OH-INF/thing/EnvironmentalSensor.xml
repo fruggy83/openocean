@@ -28,7 +28,6 @@
 				<required>true</required>
 			</parameter>
 		</config-description>
-
 	</thing-type>
 
 </thing:thing-descriptions>

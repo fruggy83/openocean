@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -126,7 +126,6 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
     abstract Collection<EEPType> getEEPTypes();
 
     protected void updateChannels() {
-
         @NonNull
         List<@NonNull Channel> channelList = new LinkedList<>(this.getThing().getChannels());
         Collection<EEPType> eeps = getEEPTypes();
@@ -143,7 +142,6 @@ public abstract class EnOceanBaseThingHandler extends ConfigStatusThingHandler {
                 .forEach(entry -> {
                     String channelId = entry.getKey();
                     EnOceanChannelDescription cd = entry.getValue().GetSupportedChannels().get(channelId);
-                    ;
 
                     // if we do not need to auto create channel => skip
                     if (!cd.autoCreate) {

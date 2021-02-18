@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -42,7 +42,6 @@ public class EEPFactory {
     private static final Logger logger = LoggerFactory.getLogger(EEPFactory.class);
 
     public static EEP createEEP(EEPType eepType) {
-
         try {
             Class<? extends EEP> cl = eepType.getEEPClass();
             if (cl == null) {

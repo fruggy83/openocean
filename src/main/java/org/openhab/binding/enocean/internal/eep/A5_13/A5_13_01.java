@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -21,13 +21,13 @@ import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.SIUnits;
-import org.openhab.core.library.unit.SmartHomeUnits;
+import org.openhab.core.library.unit.Units;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
 
 /**
  * Convertes EEP A5-13 messages of type 0x01 into Temperature, Illumination, Wind Speed and Temperature states
- * 
+ *
  * @author Daniel Weber - Initial contribution
  */
 public class A5_13_01 extends A5_13 {
@@ -37,11 +37,11 @@ public class A5_13_01 extends A5_13 {
     }
 
     protected State getIllumination() {
-        return new QuantityType<>(((getDB_3Value() * 1000.0) / 255.0), SmartHomeUnits.LUX);
+        return new QuantityType<>(((getDB_3Value() * 1000.0) / 255.0), Units.LUX);
     }
 
     protected State getIllumination(double value) {
-        return new QuantityType<>(((value * 1000.0 * 150.0) / 255.0), SmartHomeUnits.LUX);
+        return new QuantityType<>(((value * 1000.0 * 150.0) / 255.0), Units.LUX);
     }
 
     protected State getIlluminationWest() {
@@ -61,7 +61,7 @@ public class A5_13_01 extends A5_13 {
     }
 
     protected State getWindSpeed() {
-        return new QuantityType<>(((getDB_1Value() * 70.0) / 255.0), SmartHomeUnits.METRE_PER_SECOND);
+        return new QuantityType<>(((getDB_1Value() * 70.0) / 255.0), Units.METRE_PER_SECOND);
     }
 
     protected State getRainStatus() {
@@ -71,7 +71,6 @@ public class A5_13_01 extends A5_13 {
     @Override
     protected State convertToStateImpl(String channelId, String channelTypeId,
             Function<String, State> getCurrentStateFunc, Configuration config) {
-
         if (isPartOne()) {
             switch (channelId) {
                 case CHANNEL_ILLUMINATION:

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -14,10 +14,8 @@ package org.openhab.binding.enocean.internal.handler;
 
 import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -50,8 +48,9 @@ import org.openhab.core.util.HexUtils;
 public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     // List of thing types which support sending of eep messages
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(Arrays.asList(THING_TYPE_CENTRALCOMMAND,
-            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_THERMOSTAT));
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Set.of(THING_TYPE_CENTRALCOMMAND,
+            THING_TYPE_MEASUREMENTSWITCH, THING_TYPE_GENERICTHING, THING_TYPE_ROLLERSHUTTER, THING_TYPE_THERMOSTAT,
+            THING_TYPE_HEATRECOVERYVENTILATION);
 
     protected byte[] senderId; // base id of bridge + senderIdOffset, used for sending msg
     protected byte[] destinationId; // in case of broadcast FFFFFFFF otherwise the enocean id of the device
@@ -75,7 +74,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
         }
 
         if (senderIdOffset > 0 && senderIdOffset < 128) {
-
             EnOceanBridgeHandler bridgeHandler = getBridgeHandler();
             if (bridgeHandler != null) {
                 return !bridgeHandler.existsSender(senderIdOffset, this.thing);
@@ -107,7 +105,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     @Override
     boolean validateConfig() {
-
         EnOceanActuatorConfig config = getConfiguration();
         if (config == null) {
             configurationErrorDescription = "Configuration is not valid";
@@ -121,13 +118,12 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
         try {
             sendingEEPType = EEPType.getType(getConfiguration().sendingEEPId);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             configurationErrorDescription = "Sending EEP is not supported";
             return false;
         }
 
         if (super.validateConfig()) {
-
             try {
                 if (sendingEEPType.getSupportsRefresh()) {
                     if (getConfiguration().pollingInterval > 0) {
@@ -135,7 +131,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
                             try {
                                 refreshStates();
                             } catch (Exception e) {
-
                             }
                         }, 30, getConfiguration().pollingInterval, TimeUnit.SECONDS);
                     }
@@ -146,7 +141,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
                 } else {
                     destinationId = HexUtils.hexToBytes(config.enoceanId);
                 }
-
             } catch (Exception e) {
                 configurationErrorDescription = "Configuration is not valid";
                 return false;
@@ -201,7 +195,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
     }
 
     private void refreshStates() {
-
         logger.debug("polling channels");
         if (thing.getStatus().equals(ThingStatus.ONLINE)) {
             for (Channel channel : this.getThing().getChannels()) {
@@ -212,7 +205,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
         // We must have a valid sendingEEPType and sender id to send commands
         if (sendingEEPType == null || senderId == null) {
             return;
@@ -257,7 +249,6 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
                         .setSuppressRepeating(getConfiguration().suppressRepeating).getERP1Message();
 
                 getBridgeHandler().sendMessage(msg, null);
-
                 // Do not repeat refresh msg, as these msg get already repeated during refresh polling
                 if (getConfiguration().retryInterval > 0 && getConfiguration().retryTries > 0
                         && command != RefreshType.REFRESH) {
@@ -271,7 +262,8 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
                     }
                 }
             }
-        } catch (Exception e) {
+
+        } catch (IllegalArgumentException e) {
             logger.warn("Exception while sending telegram!", e);
         }
     }
@@ -290,7 +282,7 @@ public class EnOceanBaseActuatorHandler extends EnOceanBaseSensorHandler {
 
     @Override
     public void dispose() {
-        if (refreshJob != null && !refreshJob.isDone()) {
+        if (refreshJob != null && !refreshJob.isCancelled()) {
             refreshJob.cancel(true);
         }
         refreshJob = null;

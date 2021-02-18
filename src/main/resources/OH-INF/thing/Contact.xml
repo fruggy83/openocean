@@ -27,12 +27,15 @@
 					<option value="A5_14_01_ELTAKO">Eltako battery status</option>
 					<option value="F6_10_00_EltakoFPE">F6-10-00 Eltako FPE-X</option>
 					<option value="F6_10_00_EltakoFTKE">F6-10-00 Eltako FTKE</option>
-					<option value="D0_06_00">D0-06 signal message for battery status</option>
 				</options>
 				<default>D5_00_01</default>
 				<multipleLimit>2</multipleLimit>
 				<limitToOptions>true</limitToOptions>
 				<required>true</required>
+			</parameter>
+			<parameter name="receivingSIGEEP" type="boolean">
+				<label>Receive Battery Status Signal Messages</label>
+				<default>false</default>
 			</parameter>
 		</config-description>
 

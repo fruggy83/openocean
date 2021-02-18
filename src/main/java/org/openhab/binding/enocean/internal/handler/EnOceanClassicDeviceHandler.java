@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -14,8 +14,6 @@ package org.openhab.binding.enocean.internal.handler;
 
 import static org.openhab.binding.enocean.internal.EnOceanBindingConstants.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -56,8 +54,7 @@ import org.openhab.core.util.HexUtils;
 public class EnOceanClassicDeviceHandler extends EnOceanBaseActuatorHandler {
 
     // List of thing types which support sending of eep messages
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = new HashSet<>(
-            Arrays.asList(THING_TYPE_CLASSICDEVICE));
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Set.of(THING_TYPE_CLASSICDEVICE);
 
     private StringType lastTriggerEvent = StringType.valueOf(CommonTriggerEvents.DIR1_PRESSED);
     ScheduledFuture<?> releaseFuture = null;
@@ -126,7 +123,6 @@ public class EnOceanClassicDeviceHandler extends EnOceanBaseActuatorHandler {
                 getBridgeHandler().addPacketListener(this, Long.parseLong(config.enoceanId, 16));
                 return true;
             } catch (NumberFormatException e) {
-
             }
 
             return false;
@@ -208,58 +204,48 @@ public class EnOceanClassicDeviceHandler extends EnOceanBaseActuatorHandler {
 
     @Override
     public void handleCommand(@NonNull ChannelUID channelUID, @NonNull Command command) {
-
         // We must have a valid sendingEEPType and sender id to send commands
         if (sendingEEPType == null || senderId == null || command == RefreshType.REFRESH) {
             return;
         }
 
-        try {
-            String channelId = channelUID.getId();
-            Channel channel = getThing().getChannel(channelUID);
-            if (channel == null) {
-                return;
-            }
+        String channelId = channelUID.getId();
+        Channel channel = getThing().getChannel(channelUID);
+        if (channel == null) {
+            return;
+        }
 
-            ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
-            String channelTypeId = (channelTypeUID != null) ? channelTypeUID.getId() : "";
-            if (channelTypeId.contains("Listener")) {
-                return;
-            }
+        ChannelTypeUID channelTypeUID = channel.getChannelTypeUID();
+        String channelTypeId = (channelTypeUID != null) ? channelTypeUID.getId() : "";
+        if (channelTypeId.contains("Listener")) {
+            return;
+        }
 
-            EnOceanChannelVirtualRockerSwitchConfig channelConfig = channel.getConfiguration()
-                    .as(EnOceanChannelVirtualRockerSwitchConfig.class);
+        EnOceanChannelVirtualRockerSwitchConfig channelConfig = channel.getConfiguration()
+                .as(EnOceanChannelVirtualRockerSwitchConfig.class);
 
-            StringType result = convertToPressedCommand(command, channelConfig.getSwitchMode());
+        StringType result = convertToPressedCommand(command, channelConfig.getSwitchMode());
 
-            if (result != null) {
-                lastTriggerEvent = result;
+        if (result != null) {
+            lastTriggerEvent = result;
 
-                EEP eep = EEPFactory.createEEP(sendingEEPType);
-                if (eep.setSenderId(senderId).setDestinationId(destinationId).convertFromCommand(channelId,
-                        channelTypeId, result, id -> this.getCurrentState(id), channel.getConfiguration()).hasData()) {
+            EEP eep = EEPFactory.createEEP(sendingEEPType);
+            if (eep.setSenderId(senderId).setDestinationId(destinationId).convertFromCommand(channelId, channelTypeId,
+                    result, id -> this.getCurrentState(id), channel.getConfiguration()).hasData()) {
+                BasePacket press = eep.setSuppressRepeating(getConfiguration().suppressRepeating).getERP1Message();
 
-                    BasePacket press = eep.setSuppressRepeating(getConfiguration().suppressRepeating).getERP1Message();
+                getBridgeHandler().sendMessage(press, null);
 
-                    getBridgeHandler().sendMessage(press, null);
-
-                    if (channelConfig.duration > 0) {
-                        releaseFuture = scheduler.schedule(() -> {
-                            if (eep.convertFromCommand(channelId, channelTypeId,
-                                    convertToReleasedCommand(lastTriggerEvent), id -> this.getCurrentState(id),
-                                    channel.getConfiguration()).hasData()) {
-
-                                BasePacket release = eep.getERP1Message();
-
-                                getBridgeHandler().sendMessage(release, null);
-                            }
-                        }, channelConfig.duration, TimeUnit.MILLISECONDS);
-                    }
+                if (channelConfig.duration > 0) {
+                    releaseFuture = scheduler.schedule(() -> {
+                        if (eep.convertFromCommand(channelId, channelTypeId, convertToReleasedCommand(lastTriggerEvent),
+                                id -> this.getCurrentState(id), channel.getConfiguration()).hasData()) {
+                            BasePacket release = eep.getERP1Message();
+                            getBridgeHandler().sendMessage(release, null);
+                        }
+                    }, channelConfig.duration, TimeUnit.MILLISECONDS);
                 }
             }
-
-        } catch (Exception e) {
-            logger.debug("{}", e.getMessage());
         }
     }
 

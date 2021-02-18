@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -52,13 +52,11 @@ public class EnOceanESP2Transceiver extends EnOceanTransceiver {
 
     @Override
     protected void processMessage(byte firstByte) {
-
         byte[] readingBuffer = new byte[ENOCEAN_MAX_DATA];
         int bytesRead = -1;
         byte _byte;
 
         try {
-
             readingBuffer[0] = firstByte;
 
             bytesRead = this.inputStream.read(readingBuffer, 1, inputStream.available());
@@ -112,6 +110,8 @@ public class EnOceanESP2Transceiver extends EnOceanTransceiver {
 
                                             if (msg.getRORG() != RORG.Unknown) {
                                                 informListeners(msg);
+                                            } else {
+                                                logger.debug("Received unknown RORG");
                                             }
                                         }
                                             break;

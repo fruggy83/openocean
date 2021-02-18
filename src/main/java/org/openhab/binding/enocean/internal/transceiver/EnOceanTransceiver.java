@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -95,12 +95,10 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
 
         private synchronized void send() throws IOException {
             if (!queue.isEmpty()) {
-
                 currentRequest = queue.peek();
                 try {
                     if (currentRequest != null && currentRequest.RequestPacket != null) {
                         synchronized (currentRequest) {
-
                             logger.debug("Sending data, type {}, payload {}{}",
                                     currentRequest.RequestPacket.getPacketType().name(),
                                     HexUtils.bytesToHex(currentRequest.RequestPacket.getPayload()),
@@ -150,7 +148,6 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
 
     public EnOceanTransceiver(String path, TransceiverErrorListener errorListener, ScheduledExecutorService scheduler,
             SerialPortManager serialPortManager) {
-
         requestQueue = new RequestQueue(scheduler);
 
         listeners = new HashMap<>();
@@ -163,7 +160,6 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
 
     public void Initialize()
             throws UnsupportedCommOperationException, PortInUseException, IOException, TooManyListenersException {
-
         SerialPortIdentifier id = serialPortManager.getIdentifier(path);
         if (id == null) {
             throw new IOException("Could not find a gateway on given path '" + path + "', "
@@ -188,10 +184,8 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
     }
 
     public void StartReceiving(ScheduledExecutorService scheduler) {
-
         if (readingTask == null || readingTask.isCancelled()) {
             readingTask = scheduler.submit(new Runnable() {
-
                 @Override
                 public void run() {
                     receivePackets();
@@ -255,7 +249,6 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
         byte[] buffer = new byte[1];
 
         while (readingTask != null && !readingTask.isCancelled()) {
-
             int bytesRead = read(buffer, 1);
             if (bytesRead > 0) {
                 processMessage(buffer[0]);
@@ -274,7 +267,6 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
     }
 
     protected void informListeners(ERP1Message msg) {
-
         try {
             byte[] senderId = msg.getSenderId();
 
@@ -331,7 +323,6 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
 
     public void sendBasePacket(BasePacket packet, ResponseListener<? extends Response> responseCallback)
             throws IOException {
-
         if (packet == null) {
             return;
         }
@@ -348,7 +339,6 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
     protected abstract byte[] serializePacket(BasePacket packet) throws EnOceanException;
 
     public void addPacketListener(PacketListener listener, long senderIdToListenTo) {
-
         if (listeners.computeIfAbsent(senderIdToListenTo, k -> new HashSet<>()).add(listener)) {
             logger.debug("Listener added: {}", senderIdToListenTo);
         }
@@ -380,9 +370,7 @@ public abstract class EnOceanTransceiver implements SerialPortEventListener {
 
     @Override
     public void serialEvent(SerialPortEvent event) {
-
         if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-
             synchronized (this) {
                 this.notify();
             }

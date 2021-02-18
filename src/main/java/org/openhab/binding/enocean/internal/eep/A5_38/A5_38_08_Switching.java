@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -44,7 +44,6 @@ public class A5_38_08_Switching extends _4BSMessage {
     @Override
     protected void convertFromCommandImpl(String channelId, String channelTypeId, Command outputCommand,
             Function<String, State> getCurrentStateFunc, Configuration config) {
-
         if ((OnOffType) outputCommand == OnOffType.ON) {
             setData(CommandId, ZERO, ZERO, (byte) (TeachInBit | SwitchOn));
         } else {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -28,7 +28,6 @@ public class UTEResponse extends _VLDMessage {
     public static final byte TeachIn_NotSpecified = 0x20;
 
     public UTEResponse(ERP1Message packet) {
-
         int dataLength = packet.getPayload().length - ESP3_SENDERID_LENGTH - ESP3_RORG_LENGTH - ESP3_STATUS_LENGTH;
 
         setData(packet.getPayload(ESP3_RORG_LENGTH, dataLength));

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -24,7 +24,6 @@ import org.openhab.binding.enocean.internal.handler.EnOceanBaseActuatorHandler;
 import org.openhab.binding.enocean.internal.handler.EnOceanBaseSensorHandler;
 import org.openhab.binding.enocean.internal.handler.EnOceanBridgeHandler;
 import org.openhab.binding.enocean.internal.handler.EnOceanClassicDeviceHandler;
-import org.openhab.binding.enocean.internal.handler.EnOceanDebugHandler;
 import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.io.transport.serial.SerialPortManager;
 import org.openhab.core.thing.Bridge;
@@ -68,7 +67,6 @@ public class EnOceanHandlerFactory extends BaseThingHandlerFactory {
 
     @Override
     protected ThingHandler createHandler(Thing thing) {
-
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
         if (EnOceanBridgeHandler.SUPPORTED_THING_TYPES.contains(thingTypeUID)) {

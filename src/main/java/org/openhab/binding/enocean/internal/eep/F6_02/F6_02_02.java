@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -54,7 +54,6 @@ public class F6_02_02 extends _RPSMessage {
             Configuration config) {
 
         if (t21 && nu) {
-
             byte dir1 = channelId.equals(CHANNEL_ROCKERSWITCH_CHANNELA) ? AI : BI;
             byte dir2 = channelId.equals(CHANNEL_ROCKERSWITCH_CHANNELA) ? A0 : B0;
 
@@ -79,9 +78,7 @@ public class F6_02_02 extends _RPSMessage {
     @Override
     protected void convertFromCommandImpl(String channelId, String channelTypeId, Command command,
             Function<String, State> getCurrentStateFunc, Configuration config) {
-
         if (command instanceof StringType) {
-
             StringType s = (StringType) command;
 
             if (s.equals(CommonTriggerEvents.DIR1_RELEASED) || s.equals(CommonTriggerEvents.DIR2_RELEASED)) {
