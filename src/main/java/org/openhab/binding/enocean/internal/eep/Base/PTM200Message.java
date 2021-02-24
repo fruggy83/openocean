@@ -76,7 +76,7 @@ public class PTM200Message extends _RPSMessage {
     }
 
     @Override
-    public boolean validateForTeachIn() {
-        return false; // Never treat RPS messages as PTM200 messages during Teach in
+    public boolean isValidForTeachIn() {
+        return false;
     }
 }

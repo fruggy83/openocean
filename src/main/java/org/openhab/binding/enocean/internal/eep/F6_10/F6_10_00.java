@@ -81,7 +81,7 @@ public class F6_10_00 extends _RPSMessage {
     }
 
     @Override
-    public boolean validateForTeachIn() {
+    public boolean isValidForTeachIn() {
         return t21 && !nu && getBit(bytes[0], 7) && getBit(bytes[0], 6);
     }
 }

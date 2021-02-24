@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="enocean"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="biDirRoomOperatingPanel">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Bi-Directional Room Operating Panel</label>
+		<description>Room operating panel which sends different sensor data and receives control commands</description>
+
+		<config-description>
+			<parameter name="enoceanId" type="text">
+				<label>EnOceanId</label>
+				<description>EnOceanId of device this thing belongs to</description>
+				<required>true</required>
+			</parameter>
+			<parameter name="receivingEEPId" type="text">
+				<label>EEP</label>
+				<description>EEP which is used by panel</description>
+				<options>
+					<option value="D2_11_01">D2-11-01 temperature sensor, set point</option>
+					<option value="D2_11_02">D2-11-02 temperature sensor, set point, humidity</option>
+					<option value="D2_11_03">D2-11-03 temperature sensor, set point, fan speed</option>
+					<option value="D2_11_04">D2-11-04 temperature sensor, set point, humidity, fan speed</option>
+					<option value="D2_11_05">D2-11-05 temperature sensor, set point, fan speed, occupancy</option>
+					<option value="D2_11_06">D2-11-06 temperature sensor, set point, humidity, fan speed, occupancy</option>
+					<option value="D2_11_07">D2-11-07 temperature sensor, set point, occupancy</option>
+					<option value="D2_11_08">D2-11-08 temperature sensor, set point, humidity, occupancy</option>
+				</options>
+				<limitToOptions>true</limitToOptions>
+				<required>true</required>
+			</parameter>
+			<parameter name="sendingEEPId" type="text">
+				<label>EEP for sending commands</label>
+				<options>
+					<option value="D2_11_01">D2-11-01 temperature sensor, set point</option>
+					<option value="D2_11_02">D2-11-02 temperature sensor, set point, humidity</option>
+					<option value="D2_11_03">D2-11-03 temperature sensor, set point, fan speed</option>
+					<option value="D2_11_04">D2-11-04 temperature sensor, set point, humidity, fan speed</option>
+					<option value="D2_11_05">D2-11-05 temperature sensor, set point, fan speed, occupancy</option>
+					<option value="D2_11_06">D2-11-06 temperature sensor, set point, humidity, fan speed, occupancy</option>
+					<option value="D2_11_07">D2-11-07 temperature sensor, set point, occupancy</option>
+					<option value="D2_11_08">D2-11-08 temperature sensor, set point, humidity, occupancy</option>
+				</options>
+				<limitToOptions>true</limitToOptions>
+				<required>true</required>
+			</parameter>
+			<parameter name="receivingSIGEEP" type="boolean">
+				<label>Receive Battery Status Signal Messages</label>
+				<default>false</default>
+			</parameter>
+			<parameter name="broadcastMessages" type="boolean">
+				<label>Send broadcast messages</label>
+				<default>true</default>
+			</parameter>
+			<parameter name="suppressRepeating" type="boolean">
+				<label>Suppress repeating of messages</label>
+				<default>false</default>
+			</parameter>
+		</config-description>
+
+	</thing-type>
+
+</thing:thing-descriptions>

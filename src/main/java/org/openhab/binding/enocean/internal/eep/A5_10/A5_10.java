@@ -23,7 +23,6 @@ import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.library.types.StringType;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.types.State;
@@ -59,15 +58,15 @@ public abstract class A5_10 extends _4BSMessage {
 
     protected State getFanSpeedStage() {
         if (getDB_3Value() > 209) {
-            return new StringType("-1");
+            return new DecimalType(-1);
         } else if (getDB_3Value() > 189) {
-            return new StringType("0");
+            return new DecimalType(0);
         } else if (getDB_3Value() > 164) {
-            return new StringType("1");
+            return new DecimalType(1);
         } else if (getDB_3Value() > 144) {
-            return new StringType("2");
+            return new DecimalType(2);
         } else {
-            return new StringType("3");
+            return new DecimalType(3);
         }
     }
 

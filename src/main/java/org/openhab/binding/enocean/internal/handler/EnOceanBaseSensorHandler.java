@@ -20,8 +20,10 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.openhab.binding.enocean.internal.config.EnOceanBaseConfig;
 import org.openhab.binding.enocean.internal.eep.EEP;
 import org.openhab.binding.enocean.internal.eep.EEPFactory;
@@ -58,6 +60,8 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
 
     protected ScheduledFuture<?> retryFuture = null;
     protected final Hashtable<RORG, EEPType> receivingEEPTypes = new Hashtable<>();
+
+    protected ScheduledFuture<?> responseFuture = null;
 
     public EnOceanBaseSensorHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
         super(thing, itemChannelLinkRegistry);
@@ -106,7 +110,7 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
     }
 
     @Override
-    public long getSenderIdToListenTo() {
+    public long getEnOceanIdToListenTo() {
         return Long.parseLong(config.enoceanId, 16);
     }
 
@@ -129,6 +133,10 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
             boolean result = eepType.GetSupportedChannels().containsKey(c.getUID().getId());
             return (isLinked(c.getUID()) || c.getKind() == ChannelKind.TRIGGER) && result;
         };
+    }
+
+    protected void sendRequestResponse() {
+        throw new NotImplementedException("Sensor cannot send responses");
     }
 
     @Override
@@ -181,6 +189,15 @@ public class EnOceanBaseSensorHandler extends EnOceanBaseThingHandler implements
                                 break;
                         }
                     });
+
+            if (receivingEEPType.getRequstesResponse()) {
+                // fire trigger for receive
+                triggerChannel(prepareAnswer, "requestAnswer");
+                // Send response after 100ms
+                if (responseFuture == null || responseFuture.isDone()) {
+                    responseFuture = scheduler.schedule(this::sendRequestResponse, 100, TimeUnit.MILLISECONDS);
+                }
+            }
         }
     }
 }

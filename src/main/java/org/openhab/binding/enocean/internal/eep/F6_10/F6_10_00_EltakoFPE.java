@@ -63,7 +63,8 @@ public class F6_10_00_EltakoFPE extends _RPSMessage {
     }
 
     @Override
-    public boolean validateForTeachIn() {
-        return ((bytes[0] & (byte) 0xEF) == (byte) 0x00);
+    public boolean isValidForTeachIn() {
+        // just treat CLOSED as teach in
+        return bytes[0] == CLOSED;
     }
 }

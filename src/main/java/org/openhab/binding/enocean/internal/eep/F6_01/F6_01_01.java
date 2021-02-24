@@ -44,7 +44,7 @@ public class F6_01_01 extends _RPSMessage {
     }
 
     @Override
-    public boolean validateForTeachIn() {
+    public boolean isValidForTeachIn() {
         // just treat press as teach in, ignore release
         return t21 && !nu && bytes[0] == 0x10;
     }

@@ -61,7 +61,7 @@ public class F6_05_02 extends _RPSMessage {
     }
 
     @Override
-    public boolean validateForTeachIn() {
+    public boolean isValidForTeachIn() {
         // just treat the first message with ALARM_ON as teach in
         return !t21 && !nu && bytes[0] == ALARM_ON;
     }
